@@ -36,6 +36,13 @@ export default function GoalQuestion({
   onBack,
   loading,
 }) {
+  /* MARK: Skip */
+
+  const handleSkip = () => {
+    onChange("");
+    onNext();
+  };
+
   return (
     <main className={styles.container}>
       <div className={styles.content}>
@@ -103,6 +110,20 @@ export default function GoalQuestion({
       {/* MARK: Footer */}
 
       <div className={styles.footer}>
+
+        {/* Skip */}
+
+        <button
+          type="button"
+          className={styles.skipButton}
+          disabled={loading}
+          onClick={handleSkip}
+        >
+          ข้ามไปก่อน
+        </button>
+
+        {/* Analyze */}
+
         <button
           type="button"
           className={styles.nextButton}
@@ -113,6 +134,7 @@ export default function GoalQuestion({
             ? "กำลังวิเคราะห์..."
             : "วิเคราะห์ผิว"}
         </button>
+
       </div>
     </main>
   );

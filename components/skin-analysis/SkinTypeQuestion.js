@@ -36,6 +36,18 @@ export default function SkinTypeQuestion({
   onNext,
   onBack,
 }) {
+  /*
+   * MARK: Skip
+   *
+   * ถ้าผู้ใช้ไม่ต้องการระบุสภาพผิว
+   * ให้ส่งค่า "" ไปยัง parent
+   * และไป step ถัดไปทันที
+   */
+  const handleSkip = () => {
+    onChange("");
+    onNext();
+  };
+
   return (
     <main className={styles.container}>
       <div className={styles.content}>
@@ -109,6 +121,19 @@ export default function SkinTypeQuestion({
       {/* MARK: Footer */}
 
       <div className={styles.footer}>
+
+        {/* Skip */}
+
+        <button
+          type="button"
+          className={styles.skipButton}
+          onClick={handleSkip}
+        >
+          ข้ามไปก่อน
+        </button>
+
+        {/* Next */}
+
         <button
           type="button"
           className={styles.nextButton}
@@ -117,6 +142,7 @@ export default function SkinTypeQuestion({
         >
           ถัดไป
         </button>
+
       </div>
     </main>
   );

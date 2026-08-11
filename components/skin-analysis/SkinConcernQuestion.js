@@ -43,14 +43,12 @@ export default function SkinConcernQuestion({
   onNext,
   onBack,
 }) {
-    
   const selectedValues = value
     ? value
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean)
     : [];
-
 
   /* MARK: Select */
 
@@ -71,6 +69,12 @@ export default function SkinConcernQuestion({
     onChange(nextValues.join(","));
   };
 
+  /* MARK: Skip */
+
+  const handleSkip = () => {
+    onChange("");
+    onNext();
+  };
 
   return (
     <main className={styles.container}>
@@ -137,16 +141,28 @@ export default function SkinConcernQuestion({
       {/* MARK: Footer */}
 
       <div className={styles.footer}>
+
+        {/* Skip */}
+
+        <button
+          type="button"
+          className={styles.skipButton}
+          onClick={handleSkip}
+        >
+          ข้ามไปก่อน
+        </button>
+
+        {/* Next */}
+
         <button
           type="button"
           className={styles.nextButton}
-          disabled={
-            selectedValues.length === 0
-          }
+          disabled={selectedValues.length === 0}
           onClick={onNext}
         >
           ถัดไป
         </button>
+
       </div>
     </main>
   );

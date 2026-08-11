@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_SKIN_AI_API_URL;
+const API_URL =
+  process.env.NEXT_PUBLIC_SKIN_AI_API_URL;
 
 export async function apiFetch(
   endpoint,
@@ -10,12 +11,34 @@ export async function apiFetch(
     );
   }
 
+  const url = `${API_URL}${endpoint}`;
+
+  console.log("API Request:", url);
+
   const response = await fetch(
-    `${API_URL}${endpoint}`,
+    url,
     options
   );
 
-  const data = await response.json();
+  const contentType =
+    response.headers.get("content-type") || "";
+
+  let data = null;
+
+  if (contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    const text = await response.text();
+
+    console.error(
+      "API returned non-JSON:",
+      text
+    );
+
+    data = {
+      detail: text,
+    };
+  }
 
   if (!response.ok) {
     const detail = data?.detail;

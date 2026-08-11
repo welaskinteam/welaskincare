@@ -311,6 +311,47 @@
   cursor: not-allowed;
 }
 
+/* MARK: Skip Button */
+
+.skipButton {
+  width: 100%;
+  max-width: 520px;
+
+  height: 40px;
+
+  margin: 0 auto var(--space-2);
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--color-text-secondary);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.skipButton:hover {
+  color: var(--color-primary);
+}
+
+.skipButton:active {
+  opacity: 0.6;
+}
+
 
 /* MARK: Tablet */
 
