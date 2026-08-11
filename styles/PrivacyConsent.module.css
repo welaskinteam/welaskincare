@@ -1,0 +1,279 @@
+.container {
+  width: 100%;
+  min-height: 100dvh;
+
+  background: var(--color-background);
+}
+
+.content {
+  width: 100%;
+  max-width: var(--content-width);
+
+  min-height: 100dvh;
+
+  margin: 0 auto;
+  padding:
+    var(--page-padding-y)
+    var(--page-padding-x)
+    var(--space-10);
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* MARK: Header */
+
+.eyebrow {
+  margin: 0 0 var(--space-6);
+
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+
+  color: var(--color-text-primary);
+}
+
+.title {
+  margin: 0;
+
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+
+  letter-spacing: -0.5px;
+
+  color: var(--color-text-primary);
+}
+
+.description {
+  margin: var(--space-4) 0 0;
+
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-relaxed);
+
+  color: var(--color-text-secondary);
+}
+
+/* MARK: Features */
+
+.featureList {
+  margin-top: var(--space-10);
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-6);
+}
+
+.feature {
+  display: flex;
+  align-items: flex-start;
+
+  gap: var(--space-4);
+}
+
+.iconWrapper {
+  width: var(--feature-icon-size);
+  min-width: var(--feature-icon-size);
+  height: var(--feature-icon-size);
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-surface-soft);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+
+  object-fit: contain;
+}
+
+.featureContent {
+  padding-top: var(--space-1);
+}
+
+.featureContent h2 {
+  margin: 0;
+
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+
+  color: var(--color-text-primary);
+}
+
+.featureContent p {
+  margin: var(--space-1) 0 0;
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-relaxed);
+
+  color: var(--color-text-secondary);
+}
+
+/* MARK: Consent */
+
+.consentBox {
+  margin-top: var(--space-8);
+
+  padding: var(--space-4);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface-soft);
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-4);
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+
+  gap: var(--space-3);
+
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+
+  color: var(--color-text-primary);
+
+  cursor: pointer;
+}
+
+.checkboxRow input {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+
+  margin: 2px 0 0;
+
+  border:
+    var(--border-width)
+    solid
+    var(--color-text-primary);
+
+  border-radius: var(--radius-sm);
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.checkboxRow input:checked {
+  position: relative;
+
+  background: var(--color-primary);
+
+  border-color: var(--color-primary);
+}
+
+.checkboxRow input:checked::after {
+  content: "";
+
+  position: absolute;
+
+  left: 6px;
+  top: 2px;
+
+  width: 6px;
+  height: 11px;
+
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+
+  transform: rotate(45deg);
+}
+
+.checkboxRow a {
+  color: var(--color-error);
+
+  font-weight: var(--font-weight-medium);
+
+  text-decoration: none;
+}
+
+/* MARK: Button */
+
+.acceptButton {
+  width: 100%;
+  height: var(--button-height);
+
+  margin-top: var(--space-8);
+
+  border: none;
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-primary);
+
+  color: #ffffff;
+
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+.acceptButton:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.acceptButton:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+/* MARK: Tablet */
+
+@media (min-width: 768px) {
+  .featureList {
+    gap: var(--space-7);
+  }
+
+  .feature {
+    gap: var(--space-5);
+  }
+
+  .featureContent p {
+    font-size: var(--font-size-md);
+  }
+
+  .consentBox {
+    padding: var(--space-5);
+  }
+
+  .checkboxRow {
+    font-size: var(--font-size-md);
+  }
+}
+
+/* MARK: Desktop */
+
+@media (min-width: 1024px) {
+  .content {
+    padding-top: var(--space-6);
+  }
+
+  .featureList {
+    margin-top: var(--space-12);
+  }
+
+  .acceptButton {
+    height: 64px;
+  }
+}
