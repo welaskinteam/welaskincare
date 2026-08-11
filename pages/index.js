@@ -92,7 +92,10 @@ export default function Home() {
     case "result":
       return (
         <SkinAnalysisResult
+          image={image}
           result={result}
+          onViewAllDetails={() => {}}
+          onViewAllProducts={() => {}}
         />
       );
 
