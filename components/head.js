@@ -60,7 +60,7 @@ const Head = () => {
 
       <meta property="og:image:height" content="630" />
 
-      <met
+      <meta
         property="og:image:alt"
         content="Wela Skincare - AI Skin Analysis"
       />
