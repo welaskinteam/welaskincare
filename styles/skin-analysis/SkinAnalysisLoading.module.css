@@ -96,7 +96,7 @@
   font-family: var(--font-family);
 
   font-size: clamp(
-    26px,
+    24px,
     6vw,
     38px
   );
