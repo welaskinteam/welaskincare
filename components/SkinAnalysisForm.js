@@ -26,7 +26,6 @@ export default function SkinAnalysisForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Validate form
     if (!formData.image) {
       setError("Please select an image.");
       return;
@@ -79,7 +78,7 @@ export default function SkinAnalysisForm() {
 
         const API_URL = process.env.NEXT_PUBLIC_SKIN_AI_API_URL;
 
-        const response = await fetch(API_URL, {
+        const response = await fetch(`${API_URL}/predict`, {
             method: "POST",
             body: data,
         });
