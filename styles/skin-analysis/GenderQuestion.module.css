@@ -1,0 +1,334 @@
+/* MARK: Container */
+
+.container {
+  width: 100%;
+  min-height: 100dvh;
+
+  background: var(--color-background);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  width: 100%;
+  max-width: var(--content-width);
+
+  margin: 0 auto;
+
+  padding:
+    var(--space-6)
+    var(--page-padding-x)
+    140px;
+}
+
+
+/* MARK: Header */
+
+.header {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-4);
+}
+
+.backButton {
+  width: 24px;
+  height: 32px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--color-primary);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  cursor: pointer;
+}
+
+.backButton svg {
+  width: 10px;
+  height: 18px;
+
+  display: block;
+}
+
+
+/* MARK: Progress */
+
+.progress {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-4);
+}
+
+.progressTrack {
+  flex: 1;
+
+  height: 9px;
+
+  overflow: hidden;
+
+  border-radius: var(--radius-full);
+
+  background: #eadeda;
+}
+
+.progressValue {
+  width: 20%;
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: var(--color-primary);
+}
+
+.progress > span {
+  min-width: 30px;
+
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+
+  color: var(--color-primary);
+
+  text-align: right;
+}
+
+
+/* MARK: Question */
+
+.question {
+  margin-top: var(--space-12);
+
+  text-align: center;
+}
+
+.question h1 {
+  margin: 0;
+
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+
+  color: var(--color-text-primary);
+}
+
+.question p {
+  margin:
+    var(--space-4)
+    0
+    0;
+
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-relaxed);
+
+  color: var(--color-text-secondary);
+}
+
+
+/* MARK: Options */
+
+.options {
+  margin-top: var(--space-10);
+
+  display: flex;
+  flex-direction: column;
+
+  gap: var(--space-4);
+}
+
+.option {
+  width: 100%;
+  min-height: 108px;
+
+  padding:
+    var(--space-5)
+    var(--space-8);
+
+  border:
+    var(--border-width)
+    solid
+    var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-primary);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-6);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.option:active {
+  transform: scale(0.99);
+}
+
+
+/* MARK: Icon */
+
+.optionIcon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+/*
+ * SVG ที่ใช้ width="1em" height="1em"
+ * จะถูกกำหนดขนาดจากตรงนี้
+ */
+.optionIcon svg {
+  display: block;
+
+  width: 32px;
+  height: 32px;
+
+  flex-shrink: 0;
+}
+
+
+/* MARK: Selected */
+
+.optionSelected {
+  border-color: var(--color-primary);
+
+  background: var(--color-primary);
+
+  color: #ffffff;
+}
+
+/*
+ * SVG ของ genderOptions มี fill เป็น #47191f
+ * จึงกลับเป็นสีขาวเมื่อ selected
+ */
+.optionSelected .optionIcon svg {
+  filter: brightness(0) invert(1);
+}
+
+
+/* MARK: Footer */
+
+.footer {
+  position: fixed;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 20;
+
+  padding:
+    var(--space-4)
+    var(--page-padding-x)
+    calc(
+      var(--space-4) +
+      env(safe-area-inset-bottom)
+    );
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      var(--color-background) 28%
+    );
+}
+
+.nextButton {
+  width: 100%;
+  max-width: 520px;
+  height: 60px;
+
+  margin: 0 auto;
+
+  border: none;
+  border-radius: var(--radius-full);
+
+  background: var(--color-primary);
+
+  color: #ffffff;
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+.nextButton:active {
+  transform: scale(0.99);
+}
+
+.nextButton:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* MARK: Tablet */
+
+@media (min-width: 768px) {
+  .content {
+    padding-top: var(--space-8);
+  }
+
+  .options {
+    max-width: 600px;
+
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .question {
+    margin-top: var(--space-16);
+  }
+}
+
+
+/* MARK: Desktop */
+
+@media (min-width: 1024px) {
+  .content {
+    padding-top: var(--space-10);
+  }
+}

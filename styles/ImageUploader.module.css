@@ -1,0 +1,144 @@
+/* MARK: Container */
+
+.container {
+  width: 100%;
+}
+
+
+/* MARK: Input */
+
+.input {
+  display: none;
+}
+
+
+/* MARK: Upload Button */
+
+.uploadButton {
+  width: 100%;
+  min-height: 260px;
+
+  padding: var(--space-8);
+
+  border: 2px dashed var(--color-primary-light);
+  border-radius: var(--radius-xl);
+
+  background: var(--color-surface-soft);
+  color: var(--color-text-primary);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+
+/* MARK: Upload Icon */
+
+.uploadIcon {
+  width: 64px;
+  height: 64px;
+
+  margin-bottom: var(--space-4);
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-primary);
+
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 32px;
+  font-weight: var(--font-weight-light);
+  line-height: 1;
+}
+
+
+/* MARK: Upload Text */
+
+.uploadText {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+
+.uploadDescription {
+  margin-top: var(--space-2);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-normal);
+
+  color: var(--color-text-secondary);
+
+  text-align: center;
+}
+
+
+/* MARK: Preview */
+
+.previewContainer {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.preview {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+
+  object-fit: cover;
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface-soft);
+}
+
+
+/* MARK: Change Button */
+
+.changeButton {
+  width: 100%;
+  height: var(--button-height);
+
+  margin-top: var(--space-4);
+
+  border: none;
+  border-radius: var(--radius-full);
+
+  background: var(--color-surface);
+
+  color: var(--color-primary);
+
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* MARK: Tablet */
+
+@media (min-width: 768px) {
+  .uploadButton {
+    min-height: 320px;
+  }
+}
+
+
+/* MARK: Desktop */
+
+@media (min-width: 1024px) {
+  .uploadButton {
+    min-height: 360px;
+  }
+}

@@ -1,0 +1,260 @@
+/* MARK: Container */
+
+.container {
+  width: 100%;
+  min-height: 100dvh;
+
+  background: var(--color-background);
+}
+
+.content {
+  width: 100%;
+  max-width: var(--content-width);
+
+  min-height: 100dvh;
+
+  margin: 0 auto;
+  padding:
+    var(--space-8)
+    var(--page-padding-x)
+    var(--space-8);
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* MARK: Header */
+
+.header {
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0;
+
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+
+  color: var(--color-text-primary);
+}
+
+.header p {
+  margin: var(--space-3) 0 0;
+
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-normal);
+
+  color: var(--color-text-primary);
+}
+
+
+/* MARK: Face Preview */
+
+.facePreview {
+  position: relative;
+
+  width: 100%;
+
+  margin-top: var(--space-8);
+
+  aspect-ratio: 1 / 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.facePreview img {
+  width: 82%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* MARK: Scan Frame */
+
+.scanFrame {
+  position: absolute;
+
+  inset: 9%;
+
+  pointer-events: none;
+}
+
+.scanFrame span {
+  position: absolute;
+
+  width: 44px;
+  height: 44px;
+
+  border-color: var(--color-primary);
+  border-style: solid;
+}
+
+.scanFrame span:nth-child(1) {
+  top: 0;
+  left: 0;
+
+  border-width: 4px 0 0 4px;
+
+  border-radius: 8px 0 0 0;
+}
+
+.scanFrame span:nth-child(2) {
+  top: 0;
+  right: 0;
+
+  border-width: 4px 4px 0 0;
+
+  border-radius: 0 8px 0 0;
+}
+
+.scanFrame span:nth-child(3) {
+  bottom: 0;
+  left: 0;
+
+  border-width: 0 0 4px 4px;
+
+  border-radius: 0 0 0 8px;
+}
+
+.scanFrame span:nth-child(4) {
+  right: 0;
+  bottom: 0;
+
+  border-width: 0 4px 4px 0;
+
+  border-radius: 0 0 8px 0;
+}
+
+
+/* MARK: Instructions */
+
+.instructions {
+  width: 100%;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.instruction {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+}
+
+.instruction + .instruction {
+  border-left: var(--border-default);
+}
+
+.instructionIcon {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 32px;
+}
+
+.instruction p {
+  margin: var(--space-2) 0 0;
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+
+  color: var(--color-text-primary);
+}
+
+
+/* MARK: Start Button */
+
+.startButton {
+  width: 100%;
+  height: 64px;
+
+  margin-top: var(--space-6);
+
+  border: none;
+  border-radius: var(--radius-full);
+
+  background: var(--color-primary);
+
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-3);
+
+  font-family: var(--font-family);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+
+  transition:
+    transform 0.1s ease,
+    opacity 0.2s ease;
+}
+
+
+/* MARK: Start Icon */
+
+.startIcon {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  display: block;
+}
+
+
+/* MARK: Start Button State */
+
+.startButton:active {
+  transform: scale(0.98);
+}
+
+.startButton:hover {
+  opacity: 0.92;
+}
+
+
+/* MARK: Tablet */
+
+@media (min-width: 768px) {
+  .content {
+    padding-top: var(--space-12);
+  }
+
+  .facePreview {
+    max-width: 480px;
+
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .instruction p {
+    font-size: var(--font-size-sm);
+  }
+}
+
+
+/* MARK: Desktop */
+
+@media (min-width: 1024px) {
+  .content {
+    padding-top: var(--space-16);
+  }
+}

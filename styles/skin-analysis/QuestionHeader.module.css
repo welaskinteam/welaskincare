@@ -1,0 +1,41 @@
+/* MARK: Header */
+
+.header {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-4);
+}
+
+
+/* MARK: Back Button */
+
+.backButton {
+  width: 24px;
+  height: 32px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--color-primary);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  cursor: pointer;
+}
+
+.backButton svg {
+  width: 10px;
+  height: 18px;
+
+  display: block;
+}

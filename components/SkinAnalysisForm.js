@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ImageUploader from "./ImageUploader";
 
 export default function SkinAnalysisForm() {
   const [formData, setFormData] = useState({
@@ -110,20 +111,14 @@ export default function SkinAnalysisForm() {
       <form onSubmit={handleSubmit}>
         <h1>Skin Analysis</h1>
 
-        {/* Image */}
-        <div>
-          <label htmlFor="image">Image</label>
-          <br />
-
-          <input
-            id="image"
-            name="image"
-            type="file"
-            accept="image/*"
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <ImageUploader
+        onImageChange={(file) => {
+            setFormData((prev) => ({
+            ...prev,
+            image: file,
+            }));
+        }}
+        />
 
         <br />
 

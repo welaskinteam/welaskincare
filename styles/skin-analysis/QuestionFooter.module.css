@@ -1,0 +1,36 @@
+.footer {
+  position: relative;
+
+  width: 100%;
+  min-height: 280px;
+
+  margin-top: auto;
+
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+
+  left: 50%;
+  bottom: 20px;
+
+  width: 120%;
+  min-width: 600px;
+
+  transform: translateX(-50%);
+
+  z-index: 0;
+
+  pointer-events: none;
+}
+
+.buttonWrapper {
+  position: relative;
+
+  width: 100%;
+
+  padding: 20px 45px 0;
+
+  z-index: 1;
+}
