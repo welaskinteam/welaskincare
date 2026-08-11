@@ -122,17 +122,18 @@ const Head = () => {
         content="https://welaskincare.vercel.app/images/face-analysis.png"
       />
 
-      {/* MARK: Icons */}
+        {/* MARK: Icons */}
 
-      <link
-        rel="icon"
-        href="/favicon.ico"
-      />
+        <link
+            rel="icon"
+            type="image/png"
+            href="/icons/wela-icon.png"
+        />
 
-      <link
-        rel="apple-touch-icon"
-        href="/favicon.ico"
-      />
+        <link
+            rel="apple-touch-icon"
+            href="/icons/wela-icon.png"
+        />
 
     </head>
   );
