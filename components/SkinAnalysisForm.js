@@ -62,47 +62,47 @@ export default function SkinAnalysisForm() {
     setResult(null);
 
     try {
-        const data = new FormData();
+      const data = new FormData();
 
-        data.append("image", formData.image);
-        data.append("gender", formData.gender);
-        data.append("ageRange", formData.ageRange);
-        data.append("skinType", formData.skinType);
-        data.append("concerns", formData.concerns);
-        data.append("goal", formData.goal);
+      data.append("image", formData.image);
+      data.append("gender", formData.gender);
+      data.append("ageRange", formData.ageRange);
+      data.append("skinType", formData.skinType);
+      data.append("concerns", formData.concerns);
+      data.append("goal", formData.goal);
 
-        console.log("FormData:");
+      console.log("FormData:");
 
-        for (const [key, value] of data.entries()) {
+      for (const [key, value] of data.entries()) {
         console.log(key, value);
-        }
+      }
 
-        const API_URL = process.env.NEXT_PUBLIC_SKIN_AI_API_URL;
+      const API_URL = process.env.NEXT_PUBLIC_SKIN_AI_API_URL;
 
-        const response = await fetch(`${API_URL}/predict`, {
-            method: "POST",
-            body: data,
-        });
+      const response = await fetch(`${API_URL}/predict`, {
+        method: "POST",
+        body: data,
+      });
 
-        const responseData = await response.json();
+      const responseData = await response.json();
 
-        console.log("Status:", response.status);
-        console.log("API Response:", responseData);
+      console.log("Status:", response.status);
+      console.log("API Response:", responseData);
 
-        if (!response.ok) {
+      if (!response.ok) {
         throw new Error(
-            responseData.detail
+          responseData.detail
             ? JSON.stringify(responseData.detail)
-            : `API Error: ${response.status}`
+            : `API Error: ${response.status}`,
         );
-        }
+      }
 
-        setResult(responseData);
+      setResult(responseData);
     } catch (error) {
-        console.error("API Error:", error);
-        setError(error.message);
+      console.error("API Error:", error);
+      setError(error.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -112,12 +112,12 @@ export default function SkinAnalysisForm() {
         <h1>Skin Analysis</h1>
 
         <ImageUploader
-        onImageChange={(file) => {
+          onImageChange={(file) => {
             setFormData((prev) => ({
-            ...prev,
-            image: file,
+              ...prev,
+              image: file,
             }));
-        }}
+          }}
         />
 
         <br />
@@ -249,9 +249,7 @@ export default function SkinAnalysisForm() {
         <div>
           <h2>Analysis Result</h2>
 
-          <pre>
-            {JSON.stringify(result, null, 2)}
-          </pre>
+          <pre>{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
     </div>

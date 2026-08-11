@@ -54,9 +54,7 @@ export default function Home() {
       return (
         <>
           <Head />
-          <PrivacyConsent
-            onAccept={handleAcceptPrivacy}
-          />
+          <PrivacyConsent onAccept={handleAcceptPrivacy} />
         </>
       );
 
@@ -64,9 +62,7 @@ export default function Home() {
       return (
         <>
           <Head />
-          <ScanIntro
-            onStart={handleStartScan}
-          />
+          <ScanIntro onStart={handleStartScan} />
         </>
       );
 
@@ -74,9 +70,7 @@ export default function Home() {
       return (
         <>
           <Head />
-          <FaceCamera
-            onImageSelected={handleImageSelected}
-          />
+          <FaceCamera onImageSelected={handleImageSelected} />
         </>
       );
 

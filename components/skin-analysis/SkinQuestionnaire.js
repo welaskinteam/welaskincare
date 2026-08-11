@@ -30,7 +30,6 @@ export default function SkinQuestionnaire({
     setError("");
   };
 
-
   /* MARK: Validation */
 
   const validateStep = () => {
@@ -55,7 +54,6 @@ export default function SkinQuestionnaire({
     return true;
   };
 
-
   /* MARK: Next */
 
   const handleNext = () => {
@@ -74,7 +72,6 @@ export default function SkinQuestionnaire({
     // Step 5 → วิเคราะห์
     handleAnalyze();
   };
-
 
   /* MARK: Skip */
 
@@ -96,7 +93,6 @@ export default function SkinQuestionnaire({
     });
   };
 
-
   /* MARK: Back */
 
   const handleBack = () => {
@@ -110,14 +106,11 @@ export default function SkinQuestionnaire({
     setStep((prev) => prev - 1);
   };
 
-
   /* MARK: Analyze */
 
   const handleAnalyze = async (overrideValues = {}) => {
     if (!image) {
-      setError(
-        "ไม่พบรูปภาพ กรุณากลับไปถ่ายรูปใหม่"
-      );
+      setError("ไม่พบรูปภาพ กรุณากลับไปถ่ายรูปใหม่");
       return;
     }
 
@@ -128,72 +121,44 @@ export default function SkinQuestionnaire({
       const analysisData = {
         image,
 
-        gender:
-          overrideValues.gender ??
-          value.gender ??
-          "",
+        gender: overrideValues.gender ?? value.gender ?? "",
 
-        ageRange:
-          overrideValues.ageRange ??
-          value.ageRange ??
-          "",
+        ageRange: overrideValues.ageRange ?? value.ageRange ?? "",
 
-        skinType:
-          overrideValues.skinType ??
-          value.skinType ??
-          "",
+        skinType: overrideValues.skinType ?? value.skinType ?? "",
 
-        concerns:
-          overrideValues.concerns ??
-          value.concerns?.trim() ??
-          "",
+        concerns: overrideValues.concerns ?? value.concerns?.trim() ?? "",
 
-        goal:
-          overrideValues.goal ??
-          value.goal ??
-          "",
+        goal: overrideValues.goal ?? value.goal ?? "",
       };
 
-      console.log(
-        "Questionnaire completed:",
-        {
-          gender: analysisData.gender,
-          ageRange: analysisData.ageRange,
-          skinType: analysisData.skinType,
-          concerns: analysisData.concerns,
-          goal: analysisData.goal,
-        }
-      );
+      console.log("Questionnaire completed:", {
+        gender: analysisData.gender,
+        ageRange: analysisData.ageRange,
+        skinType: analysisData.skinType,
+        concerns: analysisData.concerns,
+        goal: analysisData.goal,
+      });
 
-      const result = await analyzeSkin(
-        analysisData
-      );
+      const result = await analyzeSkin(analysisData);
 
       onResult(result);
-
     } catch (error) {
-      console.error(
-        "Skin Analysis Error:",
-        error
-      );
+      console.error("Skin Analysis Error:", error);
 
       setError(
-        error instanceof Error
-          ? error.message
-          : "ไม่สามารถวิเคราะห์ผิวได้"
+        error instanceof Error ? error.message : "ไม่สามารถวิเคราะห์ผิวได้",
       );
 
       setLoading(false);
     }
   };
 
-
   /* MARK: Loading */
 
   if (loading) {
     return <SkinAnalysisLoading />;
   }
-
 
   /* MARK: Error */
 
@@ -215,7 +180,6 @@ export default function SkinQuestionnaire({
     </div>
   ) : null;
 
-
   /* MARK: Step 1 */
 
   if (step === 1) {
@@ -223,12 +187,7 @@ export default function SkinQuestionnaire({
       <>
         <GenderQuestion
           value={value.gender}
-          onChange={(gender) =>
-            updateField(
-              "gender",
-              gender
-            )
-          }
+          onChange={(gender) => updateField("gender", gender)}
           onNext={handleNext}
           onBack={handleBack}
         />
@@ -237,7 +196,6 @@ export default function SkinQuestionnaire({
       </>
     );
   }
-
 
   /* MARK: Step 2 */
 
@@ -246,12 +204,7 @@ export default function SkinQuestionnaire({
       <>
         <AgeQuestion
           value={value.ageRange}
-          onChange={(ageRange) =>
-            updateField(
-              "ageRange",
-              ageRange
-            )
-          }
+          onChange={(ageRange) => updateField("ageRange", ageRange)}
           onNext={handleNext}
           onBack={handleBack}
         />
@@ -260,7 +213,6 @@ export default function SkinQuestionnaire({
       </>
     );
   }
-
 
   /* MARK: Step 3 */
 
@@ -269,24 +221,16 @@ export default function SkinQuestionnaire({
       <>
         <SkinTypeQuestion
           value={value.skinType}
-          onChange={(skinType) =>
-            updateField(
-              "skinType",
-              skinType
-            )
-          }
+          onChange={(skinType) => updateField("skinType", skinType)}
           onNext={handleNext}
           onBack={handleBack}
-          onSkip={() =>
-            handleSkip("skinType")
-          }
+          onSkip={() => handleSkip("skinType")}
         />
 
         {errorMessage}
       </>
     );
   }
-
 
   /* MARK: Step 4 */
 
@@ -295,24 +239,16 @@ export default function SkinQuestionnaire({
       <>
         <SkinConcernQuestion
           value={value.concerns}
-          onChange={(concerns) =>
-            updateField(
-              "concerns",
-              concerns
-            )
-          }
+          onChange={(concerns) => updateField("concerns", concerns)}
           onNext={handleNext}
           onBack={handleBack}
-          onSkip={() =>
-            handleSkip("concerns")
-          }
+          onSkip={() => handleSkip("concerns")}
         />
 
         {errorMessage}
       </>
     );
   }
-
 
   /* MARK: Step 5 */
 
@@ -321,17 +257,10 @@ export default function SkinQuestionnaire({
       <>
         <GoalQuestion
           value={value.goal}
-          onChange={(goal) =>
-            updateField(
-              "goal",
-              goal
-            )
-          }
+          onChange={(goal) => updateField("goal", goal)}
           onNext={handleNext}
           onBack={handleBack}
-          onSkip={() =>
-            handleSkip("goal")
-          }
+          onSkip={() => handleSkip("goal")}
           loading={loading}
         />
 

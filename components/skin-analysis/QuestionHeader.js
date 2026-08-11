@@ -2,11 +2,7 @@ import QuestionProgress from "./QuestionProgress";
 
 import styles from "../../styles/skin-analysis/QuestionHeader.module.css";
 
-export default function QuestionHeader({
-  step,
-  total = 5,
-  onBack,
-}) {
+export default function QuestionHeader({ step, total = 5, onBack }) {
   return (
     <header className={styles.header}>
       <button
@@ -33,10 +29,7 @@ export default function QuestionHeader({
         </svg>
       </button>
 
-      <QuestionProgress
-        step={step}
-        total={total}
-      />
+      <QuestionProgress step={step} total={total} />
     </header>
   );
 }

@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/skin-analysis/ScanResultPreview.module.css";
 
-export default function ScanResultPreview({
-  image,
-  onContinue,
-  onAnalyzeNow,
-}) {
+export default function ScanResultPreview({ image, onContinue, onAnalyzeNow }) {
   const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
@@ -30,7 +26,6 @@ export default function ScanResultPreview({
   return (
     <main className={styles.container}>
       <section className={styles.content}>
-
         {/* MARK: Image */}
 
         <div className={styles.imageWrapper}>
@@ -43,15 +38,12 @@ export default function ScanResultPreview({
           )}
         </div>
 
-
         {/* MARK: Result */}
 
         <section className={styles.result}>
-
           {/* Status */}
 
           <div className={styles.status}>
-
             <div className={styles.statusIcon}>
               <svg
                 width="14"
@@ -70,12 +62,8 @@ export default function ScanResultPreview({
               </svg>
             </div>
 
-            <h1>
-              เสร็จสิ้นพร้อมวิเคราะห์
-            </h1>
-
+            <h1>เสร็จสิ้นพร้อมวิเคราะห์</h1>
           </div>
-
 
           {/* Description */}
 
@@ -83,14 +71,11 @@ export default function ScanResultPreview({
             ตอบคำถามไลฟ์สไตล์ของคุณจะช่วยให้ AI วิเคราะห์
             และแนะนำการดูแลผิวได้ตรงกับคุณมากยิ่งขึ้น
           </p>
-
         </section>
-
 
         {/* MARK: Actions */}
 
         <section className={styles.actions}>
-
           <button
             type="button"
             className={styles.primaryButton}
@@ -106,9 +91,7 @@ export default function ScanResultPreview({
           >
             รับผลวิเคราะห์ทันที
           </button>
-
         </section>
-
       </section>
     </main>
   );

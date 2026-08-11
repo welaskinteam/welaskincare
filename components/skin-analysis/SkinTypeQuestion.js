@@ -30,12 +30,7 @@ const skinTypeOptions = [
   },
 ];
 
-export default function SkinTypeQuestion({
-  value,
-  onChange,
-  onNext,
-  onBack,
-}) {
+export default function SkinTypeQuestion({ value, onChange, onNext, onBack }) {
   /*
    * MARK: Skip
    *
@@ -51,22 +46,14 @@ export default function SkinTypeQuestion({
   return (
     <main className={styles.container}>
       <div className={styles.content}>
-
         {/* MARK: Header */}
 
-        <QuestionHeader
-          step={3}
-          total={5}
-          onBack={onBack}
-        />
-
+        <QuestionHeader step={3} total={5} onBack={onBack} />
 
         {/* MARK: Question */}
 
         <section className={styles.question}>
-          <h1>
-            ลักษณะผิวของคุณเป็นแบบใด
-          </h1>
+          <h1>ลักษณะผิวของคุณเป็นแบบใด</h1>
 
           <p>
             ข้อมูลนี้จะช่วยให้ AI วิเคราะห์สภาพผิวของคุณ
@@ -75,53 +62,36 @@ export default function SkinTypeQuestion({
           </p>
         </section>
 
-
         {/* MARK: Skin Type Options */}
 
-        <section
-          className={styles.options}
-          aria-label="เลือกสภาพผิว"
-        >
+        <section className={styles.options} aria-label="เลือกสภาพผิว">
           {skinTypeOptions.map((option) => {
-            const selected =
-              value === option.value;
+            const selected = value === option.value;
 
             return (
               <button
                 key={option.value}
                 type="button"
                 className={`${styles.option} ${
-                  selected
-                    ? styles.optionSelected
-                    : ""
+                  selected ? styles.optionSelected : ""
                 }`}
-                onClick={() =>
-                  onChange(option.value)
-                }
+                onClick={() => onChange(option.value)}
                 aria-pressed={selected}
               >
                 <div className={styles.imageWrapper}>
-                  <img
-                    src={option.image}
-                    alt=""
-                    className={styles.skinImage}
-                  />
+                  <img src={option.image} alt="" className={styles.skinImage} />
                 </div>
 
-                <span className={styles.label}>
-                  {option.label}
-                </span>
+                <span className={styles.label}>{option.label}</span>
               </button>
             );
           })}
         </section>
       </div>
 
-
       {/* MARK: Footer */}
 
       <div className={styles.footer}>
-
         {/* Skip */}
 
         <button
@@ -142,7 +112,6 @@ export default function SkinTypeQuestion({
         >
           ถัดไป
         </button>
-
       </div>
     </main>
   );

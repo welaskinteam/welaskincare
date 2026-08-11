@@ -5,7 +5,6 @@ export default function SkinAnalysisLoading() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-
     const duration = 30000;
     const intervalTime = 300;
 
@@ -38,36 +37,24 @@ export default function SkinAnalysisLoading() {
 
       <div className={styles.overlay} />
 
-
       {/* MARK: Content */}
 
       <section className={styles.content}>
-
         <header className={styles.header}>
-          <h1>
-            กำลังวิเคราะห์สภาพผิวของคุณ
-          </h1>
+          <h1>กำลังวิเคราะห์สภาพผิวของคุณ</h1>
 
-          <p>
-            ใช้เวลาประมาณ 15 - 30 วินาที
-          </p>
+          <p>ใช้เวลาประมาณ 15 - 30 วินาที</p>
         </header>
-
 
         {/* MARK: Progress */}
 
         <div className={styles.progressSection}>
-          <p className={styles.progressLabel}>
-            Scanning Your Skin...
-          </p>
+          <p className={styles.progressLabel}>Scanning Your Skin...</p>
 
           <div className={styles.progressCircle}>
-            <span>
-              {Math.round(progress)}%
-            </span>
+            <span>{Math.round(progress)}%</span>
           </div>
         </div>
-
       </section>
     </main>
   );

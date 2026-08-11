@@ -36,28 +36,18 @@ export default function PrivacyConsent({ onAccept }) {
         <div className={styles.featureList}>
           <div className={styles.feature}>
             <div className={styles.iconWrapper}>
-              <img
-                src="/icons/face-scan.svg"
-                alt=""
-                className={styles.icon}
-              />
+              <img src="/icons/face-scan.svg" alt="" className={styles.icon} />
             </div>
 
             <div className={styles.featureContent}>
               <h2>ใช้รูปภาพเพื่อวิเคราะห์สภาพผิวเท่านั้น</h2>
-              <p>
-                ไม่ใช้เพื่อวัตถุประสงค์อื่นนอกเหนือจากการวิเคราะห์ผิว
-              </p>
+              <p>ไม่ใช้เพื่อวัตถุประสงค์อื่นนอกเหนือจากการวิเคราะห์ผิว</p>
             </div>
           </div>
 
           <div className={styles.feature}>
             <div className={styles.iconWrapper}>
-              <img
-                src="/icons/lock.svg"
-                alt=""
-                className={styles.icon}
-              />
+              <img src="/icons/lock.svg" alt="" className={styles.icon} />
             </div>
 
             <div className={styles.featureContent}>
@@ -68,11 +58,7 @@ export default function PrivacyConsent({ onAccept }) {
 
           <div className={styles.feature}>
             <div className={styles.iconWrapper}>
-              <img
-                src="/icons/shield.svg"
-                alt=""
-                className={styles.icon}
-              />
+              <img src="/icons/shield.svg" alt="" className={styles.icon} />
             </div>
 
             <div className={styles.featureContent}>
@@ -83,11 +69,7 @@ export default function PrivacyConsent({ onAccept }) {
 
           <div className={styles.feature}>
             <div className={styles.iconWrapper}>
-              <img
-                src="/icons/trash.svg"
-                alt=""
-                className={styles.icon}
-              />
+              <img src="/icons/trash.svg" alt="" className={styles.icon} />
             </div>
 
             <div className={styles.featureContent}>
@@ -105,18 +87,14 @@ export default function PrivacyConsent({ onAccept }) {
               onChange={(event) => setImageConsent(event.target.checked)}
             />
 
-            <span>
-              ฉันยินยอมให้ Wela ใช้รูปภาพของฉันเพื่อวิเคราะห์สภาพผิว
-            </span>
+            <span>ฉันยินยอมให้ Wela ใช้รูปภาพของฉันเพื่อวิเคราะห์สภาพผิว</span>
           </label>
 
           <label className={styles.checkboxRow}>
             <input
               type="checkbox"
               checked={privacyConsent}
-              onChange={(event) =>
-                setPrivacyConsent(event.target.checked)
-              }
+              onChange={(event) => setPrivacyConsent(event.target.checked)}
             />
 
             <span>

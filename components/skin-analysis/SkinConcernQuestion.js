@@ -56,14 +56,9 @@ export default function SkinConcernQuestion({
     let nextValues;
 
     if (selectedValues.includes(concern)) {
-      nextValues = selectedValues.filter(
-        (item) => item !== concern
-      );
+      nextValues = selectedValues.filter((item) => item !== concern);
     } else {
-      nextValues = [
-        ...selectedValues,
-        concern,
-      ];
+      nextValues = [...selectedValues, concern];
     }
 
     onChange(nextValues.join(","));
@@ -79,69 +74,44 @@ export default function SkinConcernQuestion({
   return (
     <main className={styles.container}>
       <div className={styles.content}>
-
         {/* MARK: Header */}
 
-        <QuestionHeader
-          step={4}
-          total={5}
-          onBack={onBack}
-        />
-
+        <QuestionHeader step={4} total={5} onBack={onBack} />
 
         {/* MARK: Question */}
 
         <section className={styles.question}>
-          <h1>
-            คุณกังวลเรื่องผิวด้านใดมากที่สุด
-          </h1>
+          <h1>คุณกังวลเรื่องผิวด้านใดมากที่สุด</h1>
 
-          <p>
-            เลือกได้มากกว่า 1 ข้อ
-          </p>
+          <p>เลือกได้มากกว่า 1 ข้อ</p>
         </section>
-
 
         {/* MARK: Concerns */}
 
-        <section
-          className={styles.options}
-          aria-label="เลือกปัญหาผิว"
-        >
+        <section className={styles.options} aria-label="เลือกปัญหาผิว">
           {concernOptions.map((option) => {
-            const selected =
-              selectedValues.includes(
-                option.value
-              );
+            const selected = selectedValues.includes(option.value);
 
             return (
               <button
                 key={option.value}
                 type="button"
                 className={`${styles.option} ${
-                  selected
-                    ? styles.optionSelected
-                    : ""
+                  selected ? styles.optionSelected : ""
                 }`}
-                onClick={() =>
-                  handleSelect(option.value)
-                }
+                onClick={() => handleSelect(option.value)}
                 aria-pressed={selected}
               >
-                <span>
-                  {option.label}
-                </span>
+                <span>{option.label}</span>
               </button>
             );
           })}
         </section>
       </div>
 
-
       {/* MARK: Footer */}
 
       <div className={styles.footer}>
-
         {/* Skip */}
 
         <button
@@ -162,7 +132,6 @@ export default function SkinConcernQuestion({
         >
           ถัดไป
         </button>
-
       </div>
     </main>
   );

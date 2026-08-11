@@ -41,11 +41,7 @@ export default function ImageUploader({ onImageChange }) {
         onClick={handleClick}
         aria-label="เลือกรูปจากแกลเลอรี่"
       >
-        <img
-            src="/images/gallery.png"
-            alt=""
-            className="galleryIcon"
-        />
+        <img src="/images/gallery.png" alt="" className="galleryIcon" />
         <small>แกลเลอรี่</small>
       </button>
     </>

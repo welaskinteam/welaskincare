@@ -25,31 +25,18 @@ const ageOptions = [
   },
 ];
 
-export default function AgeQuestion({
-  value,
-  onChange,
-  onNext,
-  onBack,
-}) {
+export default function AgeQuestion({ value, onChange, onNext, onBack }) {
   return (
     <main className={styles.container}>
       <div className={styles.content}>
-
         {/* MARK: Header */}
 
-        <QuestionHeader
-          step={2}
-          total={5}
-          onBack={onBack}
-        />
-
+        <QuestionHeader step={2} total={5} onBack={onBack} />
 
         {/* MARK: Question */}
 
         <section className={styles.question}>
-          <h1>
-            คุณอายุเท่าไหร่?
-          </h1>
+          <h1>คุณอายุเท่าไหร่?</h1>
 
           <p>
             เพื่อให้การวิเคราะห์สภาพผิวแม่นยำยิ่งขึ้น
@@ -58,48 +45,32 @@ export default function AgeQuestion({
           </p>
         </section>
 
-
         {/* MARK: Age Options */}
 
-        <section
-          className={styles.options}
-          aria-label="เลือกช่วงอายุ"
-        >
+        <section className={styles.options} aria-label="เลือกช่วงอายุ">
           {ageOptions.map((option) => {
-            const selected =
-              value === option.value;
+            const selected = value === option.value;
 
             return (
               <button
                 key={option.value}
                 type="button"
                 className={`${styles.option} ${
-                  selected
-                    ? styles.optionSelected
-                    : ""
+                  selected ? styles.optionSelected : ""
                 }`}
-                onClick={() =>
-                  onChange(option.value)
-                }
+                onClick={() => onChange(option.value)}
                 aria-pressed={selected}
               >
                 <div className={styles.imageWrapper}>
-                  <img
-                    src={option.image}
-                    alt=""
-                    className={styles.ageImage}
-                  />
+                  <img src={option.image} alt="" className={styles.ageImage} />
                 </div>
 
-                <span className={styles.label}>
-                  {option.label}
-                </span>
+                <span className={styles.label}>{option.label}</span>
               </button>
             );
           })}
         </section>
       </div>
-
 
       {/* MARK: Footer */}
 

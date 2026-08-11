@@ -41,9 +41,7 @@ export default function ImageUploader({ onImageChange }) {
         >
           <span className={styles.uploadIcon}>＋</span>
 
-          <span className={styles.uploadText}>
-            เลือกรูปภาพ
-          </span>
+          <span className={styles.uploadText}>เลือกรูปภาพ</span>
 
           <span className={styles.uploadDescription}>
             เลือกรูปจากอัลบั้ม หรือถ่ายรูปใหม่

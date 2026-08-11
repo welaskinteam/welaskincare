@@ -26,24 +26,21 @@ export default function FaceCamera({ onImageSelected }) {
       setCameraError("");
 
       if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error(
-          "กล้องไม่สามารถใช้งานได้บนอุปกรณ์นี้"
-        );
+        throw new Error("กล้องไม่สามารถใช้งานได้บนอุปกรณ์นี้");
       }
 
-      const stream =
-        await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "user",
-            width: {
-              ideal: 1080,
-            },
-            height: {
-              ideal: 1920,
-            },
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "user",
+          width: {
+            ideal: 1080,
           },
-          audio: false,
-        });
+          height: {
+            ideal: 1920,
+          },
+        },
+        audio: false,
+      });
 
       streamRef.current = stream;
 
@@ -58,7 +55,7 @@ export default function FaceCamera({ onImageSelected }) {
       console.error("Camera Error:", error);
 
       setCameraError(
-        "ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตให้เว็บไซต์เข้าถึงกล้อง"
+        "ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตให้เว็บไซต์เข้าถึงกล้อง",
       );
     }
   };
@@ -70,11 +67,9 @@ export default function FaceCamera({ onImageSelected }) {
       return;
     }
 
-    streamRef.current
-      .getTracks()
-      .forEach((track) => {
-        track.stop();
-      });
+    streamRef.current.getTracks().forEach((track) => {
+      track.stop();
+    });
 
     streamRef.current = null;
 
@@ -84,11 +79,7 @@ export default function FaceCamera({ onImageSelected }) {
   /* MARK: Capture */
 
   const handleCapture = () => {
-    if (
-      !videoRef.current ||
-      !cameraReady ||
-      isCapturing
-    ) {
+    if (!videoRef.current || !cameraReady || isCapturing) {
       return;
     }
 
@@ -96,8 +87,7 @@ export default function FaceCamera({ onImageSelected }) {
 
     const video = videoRef.current;
 
-    const canvas =
-      document.createElement("canvas");
+    const canvas = document.createElement("canvas");
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -116,13 +106,7 @@ export default function FaceCamera({ onImageSelected }) {
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
 
-    context.drawImage(
-      video,
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob(
       (blob) => {
@@ -131,13 +115,9 @@ export default function FaceCamera({ onImageSelected }) {
           return;
         }
 
-        const file = new File(
-          [blob],
-          `skin-scan-${Date.now()}.jpg`,
-          {
-            type: "image/jpeg",
-          }
-        );
+        const file = new File([blob], `skin-scan-${Date.now()}.jpg`, {
+          type: "image/jpeg",
+        });
 
         stopCamera();
 
@@ -146,7 +126,7 @@ export default function FaceCamera({ onImageSelected }) {
         setIsCapturing(false);
       },
       "image/jpeg",
-      0.9
+      0.9,
     );
   };
 
@@ -167,7 +147,6 @@ export default function FaceCamera({ onImageSelected }) {
   return (
     <main className={styles.container}>
       <div className={styles.cameraArea}>
-
         {/* MARK: Camera */}
 
         <video
@@ -178,19 +157,13 @@ export default function FaceCamera({ onImageSelected }) {
           playsInline
         />
 
-
         {/* MARK: Header */}
 
         <div className={styles.header}>
-          <h1>
-            เขยิบมาใกล้กล้องอีกนิดได้ไหม?
-          </h1>
+          <h1>เขยิบมาใกล้กล้องอีกนิดได้ไหม?</h1>
 
-          <p>
-            คุณใกล้กล้องเกินไปนิด
-          </p>
+          <p>คุณใกล้กล้องเกินไปนิด</p>
         </div>
-
 
         {/* MARK: Camera Error */}
 
@@ -198,26 +171,18 @@ export default function FaceCamera({ onImageSelected }) {
           <div className={styles.error}>
             <p>{cameraError}</p>
 
-            <button
-              type="button"
-              onClick={startCamera}
-            >
+            <button type="button" onClick={startCamera}>
               เปิดกล้องอีกครั้ง
             </button>
           </div>
         )}
 
-
         {/* MARK: Controls */}
 
         <div className={styles.controls}>
-
           {/* Gallery */}
 
-          <ImageUploader
-            onImageChange={handleGalleryImage}
-          />
-
+          <ImageUploader onImageChange={handleGalleryImage} />
 
           {/* Capture */}
 
@@ -225,10 +190,7 @@ export default function FaceCamera({ onImageSelected }) {
             type="button"
             className={styles.captureButton}
             onClick={handleCapture}
-            disabled={
-              !cameraReady ||
-              isCapturing
-            }
+            disabled={!cameraReady || isCapturing}
             aria-label="ถ่ายภาพ"
           >
             <img
@@ -238,30 +200,20 @@ export default function FaceCamera({ onImageSelected }) {
             />
           </button>
 
-
           {/* Flash */}
 
           <button
             type="button"
             className={`${styles.flashButton} ${
-              flash
-                ? styles.flashActive
-                : ""
+              flash ? styles.flashActive : ""
             }`}
             onClick={handleFlash}
             aria-label="เปิดแฟลช"
           >
-            <img
-              src="/images/flash.png"
-              alt=""
-              className={styles.flashIcon}
-            />
+            <img src="/images/flash.png" alt="" className={styles.flashIcon} />
 
-            <small>
-              แฟลช
-            </small>
+            <small>แฟลช</small>
           </button>
-
         </div>
       </div>
     </main>

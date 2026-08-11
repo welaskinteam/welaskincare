@@ -46,15 +46,9 @@ export default function GoalQuestion({
   return (
     <main className={styles.container}>
       <div className={styles.content}>
-
         {/* MARK: Header */}
 
-        <QuestionHeader
-          step={5}
-          total={5}
-          onBack={onBack}
-        />
-
+        <QuestionHeader step={5} total={5} onBack={onBack} />
 
         {/* MARK: Question */}
 
@@ -72,7 +66,6 @@ export default function GoalQuestion({
           </p>
         </section>
 
-
         {/* MARK: Goals */}
 
         <section
@@ -80,37 +73,28 @@ export default function GoalQuestion({
           aria-label="เลือกเป้าหมายในการดูแลผิว"
         >
           {goalOptions.map((option) => {
-            const selected =
-              value === option.value;
+            const selected = value === option.value;
 
             return (
               <button
                 key={option.value}
                 type="button"
                 className={`${styles.option} ${
-                  selected
-                    ? styles.optionSelected
-                    : ""
+                  selected ? styles.optionSelected : ""
                 }`}
-                onClick={() =>
-                  onChange(option.value)
-                }
+                onClick={() => onChange(option.value)}
                 aria-pressed={selected}
               >
-                <span>
-                  {option.label}
-                </span>
+                <span>{option.label}</span>
               </button>
             );
           })}
         </section>
       </div>
 
-
       {/* MARK: Footer */}
 
       <div className={styles.footer}>
-
         {/* Skip */}
 
         <button
@@ -130,11 +114,8 @@ export default function GoalQuestion({
           disabled={!value || loading}
           onClick={onNext}
         >
-          {loading
-            ? "กำลังวิเคราะห์..."
-            : "วิเคราะห์ผิว"}
+          {loading ? "กำลังวิเคราะห์..." : "วิเคราะห์ผิว"}
         </button>
-
       </div>
     </main>
   );
