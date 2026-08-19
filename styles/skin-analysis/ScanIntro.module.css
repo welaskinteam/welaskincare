@@ -250,6 +250,24 @@
   }
 }
 
+/* MARK: Instruction Icon */
+
+.instructionIcon {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instructionIcon img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+  object-fit: contain;
+}
 
 /* MARK: Desktop */
 
