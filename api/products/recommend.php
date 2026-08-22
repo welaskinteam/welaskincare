@@ -2,308 +2,575 @@
 
 header("Content-Type: application/json; charset=utf-8");
 
+
+/*
+|--------------------------------------------------------------------------
+| Database
+|--------------------------------------------------------------------------
+*/
+
+require_once __DIR__ . "/../../../private/database.php";
+
+
 try {
 
-    // ========================================
-    // MARK: Database
-    // ========================================
-
-    require_once __DIR__ . "/../../../private/database.php";
+    /*
+    |--------------------------------------------------------------------------
+    | Check PDO
+    |--------------------------------------------------------------------------
+    */
 
     if (!isset($pdo)) {
-        throw new Exception("PDO does not exist");
+
+        throw new Exception("PDO does not exist.");
+
     }
 
 
-    // ========================================
-    // MARK: Method
-    // ========================================
+    /*
+    |--------------------------------------------------------------------------
+    | Method
+    |--------------------------------------------------------------------------
+    */
 
     if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 
         http_response_code(405);
 
-        echo json_encode(array(
-            "success" => false,
-            "message" => "POST only"
-        ), JSON_UNESCAPED_UNICODE);
+        echo json_encode(
+            array(
+                "success" => false,
+                "message" => "POST only"
+            ),
+            JSON_UNESCAPED_UNICODE
+        );
 
         exit;
+
     }
 
 
-    // ========================================
-    // MARK: Read JSON
-    // ========================================
+    /*
+    |--------------------------------------------------------------------------
+    | Read JSON
+    |--------------------------------------------------------------------------
+    */
 
     $raw = file_get_contents("php://input");
 
     $input = json_decode($raw, true);
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validate JSON
+    |--------------------------------------------------------------------------
+    */
+
     if (!is_array($input)) {
-        throw new Exception("Invalid JSON");
+
+        http_response_code(400);
+
+        echo json_encode(
+            array(
+                "success" => false,
+                "message" => "Invalid JSON body"
+            ),
+            JSON_UNESCAPED_UNICODE
+        );
+
+        exit;
+
     }
 
 
-    // ========================================
-    // MARK: Skin Type
-    // ========================================
+    /*
+    |--------------------------------------------------------------------------
+    | Input
+    |--------------------------------------------------------------------------
+    */
 
-    $skinType = isset($input["skin_type"])
-        ? $input["skin_type"]
-        : null;
+    $skinType = null;
+    $concerns = array();
+    $goal = null;
 
 
-    if ($skinType !== null) {
-
-        if (!is_string($skinType) || trim($skinType) === "") {
-            throw new Exception("skin_type must be a non-empty string");
-        }
-
-        $skinType = trim($skinType);
+    if (isset($input["skin_type"])) {
+        $skinType = $input["skin_type"];
     }
 
 
-    // ========================================
-    // MARK: Concerns
-    // ========================================
-
-    $concerns = isset($input["concerns"])
-        ? $input["concerns"]
-        : null;
-
-
-    if (!is_array($concerns)) {
-        throw new Exception("concerns must be an array");
+    if (isset($input["concerns"])) {
+        $concerns = $input["concerns"];
     }
 
 
-    $validConcerns = array();
+    if (isset($input["goal"])) {
+        $goal = $input["goal"];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Skin Type
+    |--------------------------------------------------------------------------
+    */
+
+    if (!$skinType) {
+
+        http_response_code(400);
+
+        echo json_encode(
+            array(
+                "success" => false,
+                "message" => "skin_type is required"
+            ),
+            JSON_UNESCAPED_UNICODE
+        );
+
+        exit;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Concerns
+    |--------------------------------------------------------------------------
+    */
+
+    if (!is_array($concerns) || count($concerns) === 0) {
+
+        http_response_code(400);
+
+        echo json_encode(
+            array(
+                "success" => false,
+                "message" => "concerns must be a non-empty array"
+            ),
+            JSON_UNESCAPED_UNICODE
+        );
+
+        exit;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validate Goal
+    |--------------------------------------------------------------------------
+    */
+
+    if (!$goal) {
+
+        http_response_code(400);
+
+        echo json_encode(
+            array(
+                "success" => false,
+                "message" => "goal is required"
+            ),
+            JSON_UNESCAPED_UNICODE
+        );
+
+        exit;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Clean Concerns
+    |--------------------------------------------------------------------------
+    */
+
+    $cleanConcerns = array();
 
 
     foreach ($concerns as $concern) {
 
-        if (is_string($concern) && trim($concern) !== "") {
+        if (is_string($concern)) {
 
-            $validConcerns[] = trim($concern);
+            $concern = trim($concern);
+
+            if ($concern !== "") {
+
+                $cleanConcerns[] = $concern;
+
+            }
+
         }
+
     }
 
 
-    $concerns = array_values(array_unique($validConcerns));
+    $concerns = $cleanConcerns;
 
 
     if (count($concerns) === 0) {
-        throw new Exception("concerns cannot be empty");
+
+        http_response_code(400);
+
+        echo json_encode(
+            array(
+                "success" => false,
+                "message" => "concerns cannot be empty"
+            ),
+            JSON_UNESCAPED_UNICODE
+        );
+
+        exit;
+
     }
 
 
-    // ========================================
-    // MARK: Goals
-    // ========================================
+    /*
+    |--------------------------------------------------------------------------
+    | Create Concern Placeholders
+    |--------------------------------------------------------------------------
+    |
+    | Example:
+    |
+    | concerns:
+    | ["acne", "pores"]
+    |
+    | becomes:
+    |
+    | :concern_0, :concern_1
+    |
+    */
 
-    $goals = isset($input["goals"])
-        ? $input["goals"]
-        : array();
-
-
-    if (!is_array($goals)) {
-        throw new Exception("goals must be an array");
-    }
-
-
-    $validGoals = array();
-
-
-    foreach ($goals as $goal) {
-
-        if (is_string($goal) && trim($goal) !== "") {
-
-            $validGoals[] = trim($goal);
-        }
-    }
-
-
-    $goals = array_values(array_unique($validGoals));
-
-
-    // ========================================
-    // MARK: SQL Parameters
-    // ========================================
-
-    $slugPlaceholders = array();
-    $namePlaceholders = array();
-
-    $params = array();
+    $concernPlaceholders = array();
 
 
     foreach ($concerns as $index => $concern) {
 
-        $slugPlaceholder = ":slug_" . $index;
-        $namePlaceholder = ":name_" . $index;
+        $concernPlaceholders[] = ":concern_" . $index;
 
-        $slugPlaceholders[] = $slugPlaceholder;
-        $namePlaceholders[] = $namePlaceholder;
-
-        $params[$slugPlaceholder] = $concern;
-        $params[$namePlaceholder] = $concern;
     }
 
 
-    // ========================================
-    // MARK: Query
-    // ========================================
+    $concernSql = implode(
+        ", ",
+        $concernPlaceholders
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recommendation Query
+    |--------------------------------------------------------------------------
+    */
 
     $sql = "
-        SELECT DISTINCT
-            p.id,
-            p.name,
-            p.slug,
-            p.brand,
-            p.description,
-            p.recommendation_focus,
-            p.price,
-            p.image_url,
-            p.product_url,
-            pc.name AS category,
-            sc.slug AS matched_concern
 
-        FROM products p
+        SELECT
 
-        INNER JOIN product_concerns pcon
-            ON pcon.product_id = p.id
+            scored.*,
 
-        INNER JOIN skin_concerns sc
-            ON sc.id = pcon.concern_id
+            (
+                scored.skin_score
+                + scored.concern_score
+                + scored.goal_score
+            ) AS total_score
 
-        LEFT JOIN product_categories pc
-            ON pc.id = p.category_id
 
-        WHERE p.is_active = 1
+        FROM (
 
-        AND (
-            sc.slug IN (" . implode(",", $slugPlaceholders) . ")
-            OR sc.name IN (" . implode(",", $namePlaceholders) . ")
-        )
+            SELECT
 
-        ORDER BY p.name
+                p.id,
+                p.name,
+                p.slug,
+                p.brand,
+                p.description,
+                p.recommendation_focus,
+                p.price,
+                p.image_url,
+                p.product_url,
+
+
+                pc.name AS category,
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Skin Type Score
+                |--------------------------------------------------------------------------
+                */
+
+                CASE
+
+                    WHEN EXISTS (
+
+                        SELECT 1
+
+                        FROM product_skin_types pst
+
+                        WHERE pst.product_id = p.id
+
+                        AND pst.skin_type_id = (
+
+                            SELECT id
+
+                            FROM skin_types
+
+                            WHERE slug = :skin_type
+
+                            LIMIT 1
+
+                        )
+
+                    )
+
+                    THEN 3
+
+                    ELSE 0
+
+                END AS skin_score,
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Concern Score
+                |--------------------------------------------------------------------------
+                */
+
+                CASE
+
+                    WHEN EXISTS (
+
+                        SELECT 1
+
+                        FROM product_concerns pcon
+
+                        WHERE pcon.product_id = p.id
+
+                        AND pcon.concern_id IN (
+
+                            SELECT id
+
+                            FROM skin_concerns
+
+                            WHERE slug IN (
+                                $concernSql
+                            )
+
+                        )
+
+                    )
+
+                    THEN 3
+
+                    ELSE 0
+
+                END AS concern_score,
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Goal Score
+                |--------------------------------------------------------------------------
+                */
+
+                CASE
+
+                    WHEN EXISTS (
+
+                        SELECT 1
+
+                        FROM product_goals pg
+
+                        WHERE pg.product_id = p.id
+
+                        AND pg.goal_id = (
+
+                            SELECT id
+
+                            FROM skincare_goals
+
+                            WHERE slug = :goal
+
+                            LIMIT 1
+
+                        )
+
+                    )
+
+                    THEN 3
+
+                    ELSE 0
+
+                END AS goal_score
+
+
+            FROM products p
+
+
+            LEFT JOIN product_categories pc
+
+                ON pc.id = p.category_id
+
+
+            WHERE p.is_active = 1
+
+        ) AS scored
+
+
+        WHERE (
+
+            scored.skin_score
+            + scored.concern_score
+            + scored.goal_score
+
+        ) > 0
+
+
+        ORDER BY
+
+            total_score DESC,
+            id ASC
+
+
+        LIMIT 10
+
     ";
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Prepare
+    |--------------------------------------------------------------------------
+    */
+
     $stmt = $pdo->prepare($sql);
 
-    $stmt->execute($params);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Bind Skin Type
+    |--------------------------------------------------------------------------
+    */
+
+    $stmt->bindValue(
+        ":skin_type",
+        $skinType,
+        PDO::PARAM_STR
+    );
 
 
-    $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    /*
+    |--------------------------------------------------------------------------
+    | Bind Goal
+    |--------------------------------------------------------------------------
+    */
+
+    $stmt->bindValue(
+        ":goal",
+        $goal,
+        PDO::PARAM_STR
+    );
 
 
-    // ========================================
-    // MARK: Calculate Concern Score
-    // ========================================
+    /*
+    |--------------------------------------------------------------------------
+    | Bind Concerns
+    |--------------------------------------------------------------------------
+    */
 
-    $products = array();
+    foreach ($concerns as $index => $concern) {
 
+        $stmt->bindValue(
+            ":concern_" . $index,
+            $concern,
+            PDO::PARAM_STR
+        );
 
-    foreach ($rows as $row) {
-
-        $productId = $row["id"];
-
-
-        if (!isset($products[$productId])) {
-
-            $products[$productId] = array(
-                "id" => $row["id"],
-                "name" => $row["name"],
-                "slug" => $row["slug"],
-                "brand" => $row["brand"],
-                "description" => $row["description"],
-                "recommendation_focus" => $row["recommendation_focus"],
-                "price" => $row["price"],
-                "image_url" => $row["image_url"],
-                "product_url" => $row["product_url"],
-                "category" => $row["category"],
-
-                "score" => 0,
-
-                "matched_concerns" => array()
-            );
-        }
-
-
-        $matchedConcern = $row["matched_concern"];
-
-
-        if (
-            $matchedConcern !== null &&
-            !in_array(
-                $matchedConcern,
-                $products[$productId]["matched_concerns"]
-            )
-        ) {
-
-            $products[$productId]["matched_concerns"][] =
-                $matchedConcern;
-
-            $products[$productId]["score"]++;
-        }
     }
 
 
-    // ========================================
-    // MARK: Convert Array
-    // ========================================
+    /*
+    |--------------------------------------------------------------------------
+    | Execute
+    |--------------------------------------------------------------------------
+    */
 
-    $products = array_values($products);
-
-
-    // ========================================
-    // MARK: Sort
-    // ========================================
-
-    usort($products, function ($a, $b) {
-
-        if ($a["score"] != $b["score"]) {
-
-            return ($a["score"] < $b["score"])
-                ? 1
-                : -1;
-        }
+    $stmt->execute();
 
 
-        return strcmp($a["name"], $b["name"]);
-    });
+    /*
+    |--------------------------------------------------------------------------
+    | Fetch
+    |--------------------------------------------------------------------------
+    */
+
+    $products = $stmt->fetchAll(
+        PDO::FETCH_ASSOC
+    );
 
 
-    // ========================================
-    // MARK: Response
-    // ========================================
+    /*
+    |--------------------------------------------------------------------------
+    | Response
+    |--------------------------------------------------------------------------
+    */
 
-    echo json_encode(array(
-        "success" => true,
+    echo json_encode(
+        array(
 
-        "skin_type" => $skinType,
+            "success" => true,
 
-        "concerns" => $concerns,
+            "skin_type" => $skinType,
 
-        "goals" => $goals,
+            "concerns" => $concerns,
 
-        "count" => count($products),
+            "goal" => $goal,
 
-        "items" => $products
+            "count" => count($products),
 
-    ), JSON_UNESCAPED_UNICODE);
+            "items" => $products
+
+        ),
+        JSON_UNESCAPED_UNICODE
+    );
+
+
+} catch (PDOException $e) {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Database Error
+    |--------------------------------------------------------------------------
+    */
+
+    http_response_code(500);
+
+    echo json_encode(
+        array(
+            "success" => false,
+            "message" => "Database query failed"
+        ),
+        JSON_UNESCAPED_UNICODE
+    );
 
 
 } catch (Exception $e) {
 
+    /*
+    |--------------------------------------------------------------------------
+    | General Error
+    |--------------------------------------------------------------------------
+    */
+
     http_response_code(500);
 
-    echo json_encode(array(
-        "success" => false,
-        "error" => get_class($e),
-        "message" => $e->getMessage(),
-        "file" => basename($e->getFile()),
-        "line" => $e->getLine()
-    ), JSON_UNESCAPED_UNICODE);
+    echo json_encode(
+        array(
+            "success" => false,
+            "message" => "Server error"
+        ),
+        JSON_UNESCAPED_UNICODE
+    );
+
 }
