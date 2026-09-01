@@ -13,6 +13,7 @@ export default function FaceCamera({ onImageSelected }) {
   const [cameraError, setCameraError] = useState("");
   const [isCapturing, setIsCapturing] = useState(false);
   const [flash, setFlash] = useState(false);
+  const [screenFlash, setScreenFlash] = useState(false);
   const [faceStatus, setFaceStatus] = useState("checking");
 
   useEffect(() => {
@@ -36,11 +37,16 @@ export default function FaceCamera({ onImageSelected }) {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: "user",
+          aspectRatio: {
+            ideal: 3 / 4,
+          },
           width: {
-            ideal: 1080,
+            ideal: 720,
+            max: 1280,
           },
           height: {
-            ideal: 1920,
+            ideal: 1280,
+            max: 1920,
           },
         },
         audio: false,
@@ -174,12 +180,17 @@ export default function FaceCamera({ onImageSelected }) {
 
   /* MARK: Capture */
 
-  const handleCapture = () => {
+  const handleCapture = async () => {
     if (!videoRef.current || !cameraReady || isCapturing) {
       return;
     }
 
     setIsCapturing(true);
+
+    if (flash) {
+      setScreenFlash(true);
+      await new Promise((resolve) => window.setTimeout(resolve, 120));
+    }
 
     const video = videoRef.current;
 
@@ -191,6 +202,7 @@ export default function FaceCamera({ onImageSelected }) {
     const context = canvas.getContext("2d");
 
     if (!context) {
+      setScreenFlash(false);
       setIsCapturing(false);
       return;
     }
@@ -207,6 +219,7 @@ export default function FaceCamera({ onImageSelected }) {
     canvas.toBlob(
       (blob) => {
         if (!blob) {
+          setScreenFlash(false);
           setIsCapturing(false);
           return;
         }
@@ -216,6 +229,7 @@ export default function FaceCamera({ onImageSelected }) {
         });
 
         stopCamera();
+        setScreenFlash(false);
 
         onImageSelected(file);
 
@@ -252,6 +266,8 @@ export default function FaceCamera({ onImageSelected }) {
           muted
           playsInline
         />
+
+        {screenFlash && <div className={styles.screenFlash} aria-hidden="true" />}
 
         {/* MARK: Header */}
 
@@ -319,11 +335,12 @@ export default function FaceCamera({ onImageSelected }) {
               flash ? styles.flashActive : ""
             }`}
             onClick={handleFlash}
-            aria-label="เปิดแฟลช"
+            aria-pressed={flash}
+            aria-label={flash ? "ปิดแฟลชหน้าจอ" : "เปิดแฟลชหน้าจอ"}
           >
             <img src="/images/flash.png" alt="" className={styles.flashIcon} />
 
-            <small>แฟลช</small>
+            <small>{flash ? "แฟลชเปิด" : "แฟลชหน้าจอ"}</small>
           </button>
         </div>
       </div>

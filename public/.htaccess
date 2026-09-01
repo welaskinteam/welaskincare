@@ -2,6 +2,14 @@ Options -MultiViews
 
 RewriteEngine On
 
+# Route PHP API endpoints before the static-page rewrite below.
+RewriteRule ^api/products/?$ api/products/index.php [L,QSA]
+RewriteRule ^api/products/recommend/?$ api/products/recommend.php [L,QSA]
+RewriteRule ^api/health/?$ api/health.php [L,QSA]
+
+# Do not apply the .html rewrite to other API paths.
+RewriteRule ^api(?:/|$) - [L]
+
 # Serve static Next.js pages without exposing the .html extension.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
