@@ -1,5 +1,4 @@
-const API_URL =
-  process.env.NEXT_PUBLIC_SKIN_AI_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_SKIN_AI_API_URL?.replace(/\/$/, "");
 
 export async function apiFetch(
   endpoint,
@@ -11,7 +10,7 @@ export async function apiFetch(
     );
   }
 
-  const url = `${API_URL}${endpoint}`;
+  const url = `${API_URL}/${endpoint.replace(/^\/+/, "")}`;
 
   console.log("API Request:", url);
 

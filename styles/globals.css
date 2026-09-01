@@ -1,34 +1,3 @@
-/* MARK: Font */
-
-@font-face {
-  font-family: "Sukhumvit Set";
-  src: url("/fonts/SukhumvitSet-Light.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Sukhumvit Set";
-  src: url("/fonts/SukhumvitSet-Medium.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Sukhumvit Set";
-  src: url("/fonts/SukhumvitSet-SemiBold.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Sukhumvit Set";
-  src: url("/fonts/SukhumvitSet-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-}
-
-
 /* MARK: Design Tokens */
 
 :root {

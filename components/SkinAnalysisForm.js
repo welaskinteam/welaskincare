@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ImageUploader from "./ImageUploader";
+import { apiFetch } from "../services/api";
 
 export default function SkinAnalysisForm() {
   const [formData, setFormData] = useState({
@@ -77,25 +78,11 @@ export default function SkinAnalysisForm() {
         console.log(key, value);
       }
 
-      const API_URL = process.env.NEXT_PUBLIC_SKIN_AI_API_URL;
-
-      const response = await fetch(`${API_URL}/predict`, {
+      const responseData = await apiFetch("/predict", {
         method: "POST",
         body: data,
       });
-
-      const responseData = await response.json();
-
-      console.log("Status:", response.status);
       console.log("API Response:", responseData);
-
-      if (!response.ok) {
-        throw new Error(
-          responseData.detail
-            ? JSON.stringify(responseData.detail)
-            : `API Error: ${response.status}`,
-        );
-      }
 
       setResult(responseData);
     } catch (error) {
