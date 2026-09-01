@@ -1,0 +1,9 @@
+Options -MultiViews
+
+RewriteEngine On
+
+# Serve static Next.js pages without exposing the .html extension.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
