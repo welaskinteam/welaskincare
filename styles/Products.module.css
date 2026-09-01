@@ -2,9 +2,9 @@
   width: 100%;
   min-height: 100vh;
 
-  background: #f8f3f0;
+  background: var(--color-background);
 
-  color: #3b3b3b;
+  color: var(--color-text-dark);
 }
 
 /* ==========================================
@@ -21,7 +21,7 @@
 
   padding: 0 16px;
 
-  background: #ffffff;
+  background: var(--color-background);
 }
 
 
@@ -34,12 +34,12 @@
     "Times New Roman",
     serif;
 
-  font-size: 30px;
-  font-weight: 400;
+  font-size: var(--font-size-30);
+  font-weight: var(--font-weight-regular);
 
   letter-spacing: 1px;
 
-  color: #5a1730;
+  color: var(--color-primary);
 }
 
 /* ==========================================
@@ -83,22 +83,22 @@
     "Times New Roman",
     serif;
 
-  font-size: 28px;
-  font-weight: 400;
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-regular);
 
-  color: #552033;
+  color: var(--color-primary);
 }
 
 
 .heroOverlay h3 {
   margin: 0;
 
-  font-size: 16px;
-  font-weight: 500;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
 
   line-height: 1.35;
 
-  color: #333;
+  color: var(--color-text-dark);
 }
 
 
@@ -107,9 +107,9 @@
     8px
     0;
 
-  font-size: 8px;
+  font-size: var(--font-size-2xs);
 
-  color: #666;
+  color: var(--color-text-soft);
 }
 
 
@@ -124,10 +124,10 @@
   padding: 7px 12px;
 
   font-family: inherit;
-  font-size: 8px;
+  font-size: var(--font-size-2xs);
 
-  color: #ffffff;
-  background: #64152e;
+  color: var(--color-white);
+  background: var(--color-primary);
 
   border-radius: 3px;
 
@@ -175,14 +175,14 @@
 
   font-family: inherit;
 
-  font-size: 13px;
+  font-size: var(--font-size-13);
 
-  color: #5a1730;
+  color: var(--color-primary);
 
   background: transparent;
 
   border:
-    1px solid #7a263e;
+    1px solid var(--color-primary-soft);
 
   border-radius: 24px;
 
@@ -195,9 +195,9 @@
 
 
 .activeFilter {
-  color: #ffffff;
+  color: var(--color-white);
 
-  background: #64152e;
+  background: var(--color-primary);
 }
 
 
@@ -226,17 +226,17 @@
 .productsHeader h2 {
   margin: 0;
 
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
 
-  color: #333;
+  color: var(--color-text-dark);
 }
 
 
 .productsHeader span {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
 
-  color: #777;
+  color: var(--color-text-secondary);
 }
 
 
@@ -261,14 +261,14 @@
 
   font-family: inherit;
 
-  font-size: 14px;
+  font-size: var(--font-size-md);
 
-  color: #6a1731;
+  color: var(--color-primary);
 
   background: transparent;
 
   border:
-    1px solid #7a263e;
+    1px solid var(--color-primary-soft);
 
   border-radius: 24px;
 
@@ -299,17 +299,17 @@
 
 
   .heroOverlay h2 {
-    font-size: 50px;
+    font-size: var(--font-size-50);
   }
 
 
   .heroOverlay h3 {
-    font-size: 28px;
+    font-size: var(--font-size-h1);
   }
 
 
   .heroOverlay p {
-    font-size: 14px;
+    font-size: var(--font-size-md);
   }
 
 
@@ -318,7 +318,7 @@
       12px
       20px;
 
-    font-size: 12px;
+    font-size: var(--font-size-xs);
   }
 
 

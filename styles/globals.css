@@ -19,6 +19,16 @@
 
   --color-error: #c52d43;
   --color-success: #3d8063;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-overlay: rgba(0, 0, 0, 0.45);
+  --color-surface-muted: #FFF9F6;
+  --color-border-muted: #eadeda;
+  --color-text-dark: #333333;
+  --color-text-soft: #666666;
+  --color-primary-soft: #7a263e;
+  --color-camera-background: #cdb7aa;
+  --color-placeholder: #dddddd;
 
 
   /* MARK: Typography */
@@ -32,6 +42,26 @@
   --font-size-md: 14px;
   --font-size-lg: 16px;
   --font-size-xl: 20px;
+  --font-size-2xs: 8px;
+  --font-size-xs-tight: 9px;
+  --font-size-sm-tight: 10px;
+  --font-size-md-large: 18px;
+  --font-size-xl-large: 22px;
+  --font-size-display: 40px;
+  --font-size-display-lg: 48px;
+  --font-size-13: 13px;
+  --font-size-22: 22px;
+  --font-size-25: 25px;
+  --font-size-26: 26px;
+  --font-size-30: 30px;
+  --font-size-32: 32px;
+  --font-size-34: 34px;
+  --font-size-36: 36px;
+  --font-size-38: 38px;
+  --font-size-50: 50px;
+  --font-size-58: 58px;
+  --font-size-root: 16px;
+  --font-size-code: 0.9em;
 
   --font-size-h1: 28px;
   --font-size-h2: 24px;
@@ -40,8 +70,10 @@
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.65;
+  --line-height-compact: 1.2;
 
   --font-weight-light: 300;
+  --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
@@ -123,7 +155,7 @@ body {
 }
 
 html {
-  font-size: 16px;
+  font-size: var(--font-size-root);
 }
 
 body {

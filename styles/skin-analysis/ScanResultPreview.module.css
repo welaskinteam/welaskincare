@@ -151,7 +151,7 @@
 
   background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-white);
 
   font-family: var(--font-family);
   font-size: var(--font-size-lg);

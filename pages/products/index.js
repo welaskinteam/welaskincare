@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import ProductCard from "../../components/ProductCard";
 import products from "../../data/products";
@@ -10,30 +10,35 @@ import Link from "next/link";
 
 
 export default function ProductsPage() {
-  const [activeFilter, setActiveFilter] = useState("recommended");
+  const [activeFilter, setActiveFilter] = useState("all");
   const [visibleProducts, setVisibleProducts] = useState(8);
 
+  const filters = useMemo(() => {
+    const categories = [...new Set(products.map((product) => product.category))];
 
-  const filters = [
-    {
-      id: "recommended",
-      label: "สินค้าที่แนะนำ",
-    },
-    {
-      id: "category",
-      label: "ระบุ",
-    },
-    {
-      id: "brand",
-      label: "รีวิว",
-    },
-  ];
+    return [
+      { id: "all", label: "All Skincare" },
+      ...categories.map((category) => ({
+        id: category,
+        label: category,
+      })),
+    ];
+  }, []);
 
+  const filteredProducts = useMemo(() => {
+    if (activeFilter === "all") {
+      return products;
+    }
 
-  const displayedProducts = products.slice(
-    0,
-    visibleProducts
-  );
+    return products.filter((product) => product.category === activeFilter);
+  }, [activeFilter]);
+
+  const displayedProducts = filteredProducts.slice(0, visibleProducts);
+
+  const handleFilterChange = (filterId) => {
+    setActiveFilter(filterId);
+    setVisibleProducts(8);
+  };
 
 
   const handleLoadMore = () => {
@@ -100,7 +105,7 @@ export default function ProductsPage() {
                 key={filter.id}
                 type="button"
                 onClick={() =>
-                  setActiveFilter(filter.id)
+                  handleFilterChange(filter.id)
                 }
                 className={`
                   ${styles.filterButton}
@@ -127,7 +132,7 @@ export default function ProductsPage() {
             </h2>
 
             <span>
-              {products.length} รายการ
+              {filteredProducts.length} รายการ
             </span>
           </div>
 
@@ -141,8 +146,12 @@ export default function ProductsPage() {
             ))}
           </div>
 
+          {filteredProducts.length === 0 && (
+            <p>ไม่พบสินค้าในหมวดหมู่นี้</p>
+          )}
 
-          {visibleProducts < products.length && (
+
+          {visibleProducts < filteredProducts.length && (
             <button
               type="button"
               className={styles.loadMoreButton}

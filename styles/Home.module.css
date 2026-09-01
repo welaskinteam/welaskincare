@@ -1,13 +1,13 @@
 .page {
-  --background: #fafafa;
-  --foreground: #fff;
+  --background: var(--color-surface-muted);
+  --foreground: var(--color-white);
 
-  --text-primary: #000;
-  --text-secondary: #666;
+  --text-primary: var(--color-black);
+  --text-secondary: var(--color-text-soft);
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
+  --button-primary-hover: var(--color-text-dark);
+  --button-secondary-hover: var(--color-surface-soft);
+  --button-secondary-border: var(--color-border-muted);
 
   display: flex;
   min-height: 100vh;
@@ -39,8 +39,8 @@
 
 .intro h1 {
   max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-semibold);
   line-height: 48px;
   letter-spacing: -2.4px;
   text-wrap: balance;
@@ -49,14 +49,14 @@
 
 .intro p {
   max-width: 440px;
-  font-size: 18px;
+  font-size: var(--font-size-md-large);
   line-height: 32px;
   text-wrap: balance;
   color: var(--text-secondary);
 }
 
 .intro a {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   color: var(--text-primary);
 }
 
@@ -66,7 +66,7 @@
   width: 100%;
   max-width: 440px;
   gap: 16px;
-  font-size: 14px;
+  font-size: var(--font-size-md);
 }
 
 .ctas a {
@@ -80,7 +80,7 @@
   transition: 0.2s;
   cursor: pointer;
   width: fit-content;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 a.primary {
@@ -116,7 +116,7 @@ a.secondary {
   }
 
   .intro h1 {
-    font-size: 32px;
+    font-size: var(--font-size-32);
     line-height: 40px;
     letter-spacing: -1.92px;
   }
@@ -128,21 +128,21 @@ a.secondary {
   }
 
   .page {
-    --background: #000;
-    --foreground: #000;
+    --background: var(--color-black);
+    --foreground: var(--color-black);
 
-    --text-primary: #ededed;
-    --text-secondary: #999;
+    --text-primary: var(--color-surface-soft);
+    --text-secondary: var(--color-text-muted);
 
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+    --button-primary-hover: var(--color-border-muted);
+    --button-secondary-hover: var(--color-black);
+    --button-secondary-border: var(--color-black);
   }
 }
 
 .code {
   font-family: var(--font-geist-mono);
-  font-size: 0.9em;
+  font-size: var(--font-size-code);
   background: color-mix(in srgb, currentColor 8%, transparent);
   padding: 0.1em 0.4em;
   border-radius: 6px;

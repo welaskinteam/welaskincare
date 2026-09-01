@@ -20,7 +20,7 @@ const products = [
   {
     id: 3,
     name: "MizuMi Cica Soothing",
-    category: "Cleanser",
+    category: "Moisturizer",
     brand: "MizuMi",
     description: "ช่วยปลอบประโลมผิว",
     price: 400,
@@ -29,7 +29,7 @@ const products = [
   {
     id: 4,
     name: "MizuMi Cica Soothing Serum",
-    category: "Cleanser",
+    category: "Serum",
     brand: "MizuMi",
     description: "ช่วยปลอบประโลมผิว",
     price: 400,
@@ -38,7 +38,7 @@ const products = [
   {
     id: 5,
     name: "MizuMi UV Water",
-    category: "Cleanser",
+    category: "Sunscreen",
     brand: "MizuMi",
     description: "ผลิตภัณฑ์ดูแลผิว",
     price: 400,
@@ -47,7 +47,7 @@ const products = [
   {
     id: 6,
     name: "Biore UV Aqua Rich",
-    category: "Cleanser",
+    category: "Sunscreen",
     brand: "Biore",
     description: "ผลิตภัณฑ์ดูแลผิว",
     price: 400,
@@ -56,7 +56,7 @@ const products = [
   {
     id: 7,
     name: "Torriden Dive-In",
-    category: "Cleanser",
+    category: "Moisturizer",
     brand: "Torriden",
     description: "เติมความชุ่มชื้นให้ผิว",
     price: 429,
@@ -65,7 +65,7 @@ const products = [
   {
     id: 8,
     name: "Laneige Water Bank Blue",
-    category: "Cleanser",
+    category: "Moisturizer",
     brand: "Laneige",
     description: "เพิ่มความชุ่มชื้นให้ผิว",
     price: 390,

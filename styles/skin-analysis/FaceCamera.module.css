@@ -6,7 +6,7 @@
 
   overflow: hidden;
 
-  background: #cdb7aa;
+  background: var(--color-camera-background);
 }
 
 .cameraArea {
@@ -33,7 +33,7 @@
 
   transform: scaleX(-1);
 
-  background: #cdb7aa;
+  background: var(--color-camera-background);
 }
 
 
@@ -66,7 +66,7 @@
   width: 54px;
   height: 54px;
 
-  border-color: #ffffff;
+  border-color: var(--color-white);
   border-style: solid;
 
   opacity: 0.95;
@@ -125,7 +125,7 @@
 
   text-align: center;
 
-  color: #ffffff;
+  color: var(--color-white);
 
   pointer-events: none;
 }
@@ -186,7 +186,7 @@
 
   background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-white);
 
   font-weight: var(--font-weight-semibold);
 }
@@ -225,7 +225,7 @@
 
   background: transparent;
 
-  color: #ffffff;
+  color: var(--color-white);
 
   display: flex;
   flex-direction: column;
@@ -236,7 +236,7 @@
 }
 
 .controls > button span {
-  font-size: 40px;
+  font-size: var(--font-size-display);
   line-height: 1;
 }
 
@@ -259,7 +259,7 @@
 
   background: transparent;
 
-  color: #ffffff;
+  color: var(--color-white);
 
   display: flex;
   flex-direction: column;
@@ -269,7 +269,7 @@
 }
 
 .controls > :first-child button span {
-  font-size: 40px;
+  font-size: var(--font-size-display);
   line-height: 1;
 }
 

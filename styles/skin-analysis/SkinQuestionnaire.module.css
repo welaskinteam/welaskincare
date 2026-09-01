@@ -198,7 +198,7 @@
 
   color: var(--color-text-secondary);
 
-  font-size: 20px;
+  font-size: var(--font-size-xl);
 
   pointer-events: none;
 }
@@ -282,7 +282,7 @@
 
   background: var(--color-primary);
 
-  color: #ffffff;
+  color: var(--color-white);
 
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);

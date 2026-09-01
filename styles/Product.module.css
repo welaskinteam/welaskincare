@@ -3,12 +3,12 @@
     background:
         linear-gradient(
             180deg,
-            #f8f3ef 0%,
-            #ffffff 35%,
-            #f6eeea 100%
+            var(--color-background) 0%,
+            var(--color-white) 35%,
+            var(--color-surface-soft) 100%
         );
 
-    color: #2f2627;
+    color: var(--color-text-primary);
 
     padding-bottom: 40px;
 }
@@ -56,12 +56,12 @@
 .heroBrand {
     margin: 0 0 8px;
 
-    font-size: 28px;
+    font-size: var(--font-size-h1);
     font-family: Georgia, serif;
 
     letter-spacing: 1px;
 
-    color: #68152b;
+    color: var(--color-primary);
 }
 
 
@@ -70,17 +70,17 @@
 
     font-family: Georgia, serif;
 
-    font-size: 24px;
-    font-weight: 400;
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-regular);
 
-    line-height: 1.2;
+    line-height: var(--line-height-compact);
 }
 
 
 .heroText {
     margin: 2px 0 8px;
 
-    font-size: 18px;
+    font-size: var(--font-size-md-large);
     font-family: Georgia, serif;
 }
 
@@ -90,9 +90,9 @@
 
     margin-bottom: 14px;
 
-    font-size: 9px;
+    font-size: var(--font-size-xs-tight);
 
-    color: #665d5d;
+    color: var(--color-text-secondary);
 }
 
 
@@ -105,11 +105,11 @@
         8px
         14px;
 
-    background: #68152b;
+    background: var(--color-primary);
 
-    color: #ffffff;
+    color: var(--color-white);
 
-    font-size: 9px;
+    font-size: var(--font-size-xs-tight);
 
     cursor: pointer;
 }
@@ -152,15 +152,15 @@
         10px
         18px;
 
-    border: 1px solid #7b3442;
+    border: 1px solid var(--color-primary-soft);
 
     border-radius: 999px;
 
     background: transparent;
 
-    color: #4d3438;
+    color: var(--color-text-primary);
 
-    font-size: 13px;
+    font-size: var(--font-size-13);
 
     cursor: pointer;
 
@@ -171,9 +171,9 @@
 
 
 .filterButton.active {
-    background: #68152b;
+    background: var(--color-primary);
 
-    color: #ffffff;
+    color: var(--color-white);
 }
 
 
@@ -184,7 +184,7 @@
 
     padding: 10px;
 
-    font-size: 18px;
+    font-size: var(--font-size-md-large);
 }
 
 
@@ -211,15 +211,15 @@
 .productHeader h2 {
     margin: 0;
 
-    font-size: 20px;
-    font-weight: 700;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
 }
 
 
 .productHeader span {
-    font-size: 12px;
+    font-size: var(--font-size-xs);
 
-    color: #7a7373;
+    color: var(--color-text-secondary);
 }
 
 
@@ -244,16 +244,16 @@
 
     padding: 12px;
 
-    border: 1px solid #7b3442;
+    border: 1px solid var(--color-primary-soft);
 
     border-radius: 999px;
 
     background: transparent;
 
-    color: #68152b;
+    color: var(--color-primary);
 
-    font-size: 14px;
-    font-weight: 600;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
 
     cursor: pointer;
 }
@@ -280,17 +280,17 @@
 
 
     .heroBrand {
-        font-size: 48px;
+        font-size: var(--font-size-display-lg);
     }
 
 
     .hero h1 {
-        font-size: 38px;
+        font-size: var(--font-size-38);
     }
 
 
     .heroText {
-        font-size: 28px;
+        font-size: var(--font-size-h1);
     }
 
 
