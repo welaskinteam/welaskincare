@@ -100,7 +100,7 @@ try {
     }
 
 
-    if (isset($input["concerns"])) {
+    if (array_key_exists("concerns", $input)) {
         $concerns = $input["concerns"];
     }
 
@@ -139,7 +139,7 @@ try {
     |--------------------------------------------------------------------------
     */
 
-    if (!is_array($concerns) || count($concerns) === 0) {
+    if ($concerns !== null && (!is_array($concerns) || count($concerns) === 0)) {
 
         http_response_code(400);
 
@@ -158,29 +158,6 @@ try {
 
     /*
     |--------------------------------------------------------------------------
-    | Validate Goal
-    |--------------------------------------------------------------------------
-    */
-
-    if (!$goal) {
-
-        http_response_code(400);
-
-        echo json_encode(
-            array(
-                "success" => false,
-                "message" => "goal is required"
-            ),
-            JSON_UNESCAPED_UNICODE
-        );
-
-        exit;
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
     | Clean Concerns
     |--------------------------------------------------------------------------
     */
@@ -188,15 +165,19 @@ try {
     $cleanConcerns = array();
 
 
-    foreach ($concerns as $concern) {
+    if (is_array($concerns)) {
 
-        if (is_string($concern)) {
+        foreach ($concerns as $concern) {
 
-            $concern = trim($concern);
+            if (is_string($concern)) {
 
-            if ($concern !== "") {
+                $concern = trim($concern);
 
-                $cleanConcerns[] = $concern;
+                if ($concern !== "") {
+
+                    $cleanConcerns[] = $concern;
+
+                }
 
             }
 
@@ -205,10 +186,12 @@ try {
     }
 
 
-    $concerns = $cleanConcerns;
+    if (is_array($concerns)) {
+        $concerns = $cleanConcerns;
+    }
 
 
-    if (count($concerns) === 0) {
+    if ($concerns !== null && count($concerns) === 0) {
 
         http_response_code(400);
 
@@ -244,17 +227,20 @@ try {
     $concernPlaceholders = array();
 
 
-    foreach ($concerns as $index => $concern) {
+    if (is_array($concerns)) {
 
-        $concernPlaceholders[] = ":concern_" . $index;
+        foreach ($concerns as $index => $concern) {
+
+            $concernPlaceholders[] = ":concern_" . $index;
+
+        }
 
     }
 
 
-    $concernSql = implode(
-        ", ",
-        $concernPlaceholders
-    );
+    $concernSql = $concerns === null
+        ? "NULL"
+        : implode(", ", $concernPlaceholders);
 
 
     /*
@@ -469,7 +455,7 @@ try {
     $stmt->bindValue(
         ":goal",
         $goal,
-        PDO::PARAM_STR
+        $goal === null ? PDO::PARAM_NULL : PDO::PARAM_STR
     );
 
 
