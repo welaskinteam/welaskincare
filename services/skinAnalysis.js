@@ -1,34 +1,29 @@
-import { apiFetch } from "./api";
+const API_URL = "http://127.0.0.1:8000";
+
 
 export async function analyzeSkin({
-  image,
-  gender,
-  ageRange,
-  skinType,
-  concerns,
-  goal,
+    image,
 }) {
-  const data = new FormData();
+    const data = new FormData();
 
-  data.append("image", image);
+    // ส่งรูปไป Backend AI ของเรา
+    data.append("file", image);
 
-  data.append("gender", gender ?? "");
-  data.append("ageRange", ageRange ?? "");
-  data.append("skinType", skinType ?? "");
-  data.append("concerns", concerns ?? "");
-  data.append("goal", goal ?? "");
+    const response = await fetch(
+        `${API_URL}/api/skin/analyze`,
+        {
+            method: "POST",
+            body: data,
+        }
+    );
 
-  console.log("Sending FormData:", {
-    gender: gender ?? "",
-    ageRange: ageRange ?? "",
-    skinType: skinType ?? "",
-    concerns: concerns ?? "",
-    goal: goal ?? "",
-    image: image?.name,
-  });
+    if (!response.ok) {
+        const error = await response.text();
 
-  return apiFetch("/predict", {
-    method: "POST",
-    body: data,
-  });
+        throw new Error(
+            `Skin analysis failed: ${error}`
+        );
+    }
+
+    return response.json();
 }

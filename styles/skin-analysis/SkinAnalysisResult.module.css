@@ -757,3 +757,117 @@
     margin-top: var(--space-6);
   }
 }
+
+/* ========================================
+   MARK: Animation
+======================================== */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+@keyframes growBar {
+  from {
+    width: 0;
+  }
+}
+
+.animateCard {
+  opacity: 0;
+
+  animation:
+    fadeUp
+    0.6s
+    ease-out
+    forwards;
+}
+
+
+.animateDelay1 {
+  animation-delay: 0.1s;
+}
+
+
+.animateDelay2 {
+  animation-delay: 0.2s;
+}
+
+
+.animateDelay3 {
+  animation-delay: 0.3s;
+}
+
+
+.animateDelay4 {
+  animation-delay: 0.4s;
+}
+
+
+.animateDelay5 {
+  animation-delay: 0.5s;
+}
+.scoreCard,
+.apiInfoCard,
+.detailCard,
+.regionCard,
+.insightCard,
+.productCard {
+  transition:
+    transform
+    0.25s
+    ease,
+    box-shadow
+    0.25s
+    ease;
+}
+
+
+.scoreCard:hover,
+.apiInfoCard:hover,
+.detailCard:hover,
+.regionCard:hover,
+.insightCard:hover,
+.productCard:hover {
+  transform: translateY(-4px);
+}
+
+.concernBarValue {
+  animation:
+    growBar
+    0.8s
+    ease-out;
+}
+.product {
+  transition:
+    transform
+    0.25s
+    ease,
+    box-shadow
+    0.25s
+    ease;
+}
+
+
+.product:hover {
+  transform: translateY(-6px);
+}

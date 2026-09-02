@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { analyzeSkin } from "../services/skinAnalysis";
 
 import PrivacyConsent from "../components/PrivacyConsent";
 import ScanIntro from "../components/skin-analysis/ScanIntro";
@@ -45,9 +46,32 @@ export default function Home() {
     setStep("questionnaire");
   };
 
-  const handleSkipQuestionnaire = () => {
-    console.log("Analyze immediately");
-  };
+const handleSkipQuestionnaire = async () => {
+  if (!image) {
+    console.error("ไม่พบรูปภาพ");
+    return;
+  }
+
+  try {
+    console.log("Analyzing immediately with Skin AI...");
+
+    const result = await analyzeSkin({
+      image,
+      gender: "",
+      ageRange: "",
+      skinType: "",
+      concerns: "",
+      goal: "",
+    });
+
+    console.log("Skin AI Result:", result);
+
+    handleAnalysisResult(result);
+
+  } catch (error) {
+    console.error("Skin Analysis Error:", error);
+  }
+};
 
   switch (step) {
     case "privacy":
