@@ -10,6 +10,10 @@ RewriteRule ^api/health/?$ api/health.php [L,QSA]
 # Do not apply the .html rewrite to other API paths.
 RewriteRule ^api(?:/|$) - [L]
 
+# /products also exists as a directory for the product detail pages.
+# Rewrite it explicitly before Apache tries to serve the directory.
+RewriteRule ^products/?$ products.html [L]
+
 # Serve static Next.js pages without exposing the .html extension.
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

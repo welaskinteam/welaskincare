@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 import PrivacyConsent from "../components/PrivacyConsent";
 import ScanIntro from "../components/skin-analysis/ScanIntro";
@@ -9,6 +10,7 @@ import SkinAnalysisResult from "../components/skin-analysis/SkinAnalysisResult";
 import Head from "@/components/head";
 
 export default function Home() {
+  const router = useRouter();
   const [step, setStep] = useState("privacy");
 
   const [result, setResult] = useState(null);
@@ -107,7 +109,7 @@ export default function Home() {
             image={image}
             result={result}
             onViewAllDetails={() => {}}
-            onViewAllProducts={() => {}}
+            onViewAllProducts={() => router.push("/recommendations")}
           />
         </>
       );

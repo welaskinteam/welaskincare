@@ -144,7 +144,12 @@
 
 
 .bagIcon {
-  font-size: var(--font-size-md);
+  display: block;
+
+  flex: 0 0 13px;
+
+  width: 13px;
+  height: 14px;
 }
 
 

@@ -5,8 +5,9 @@ const products = [
     category: "Cleanser",
     brand: "La Roche-Posay",
     description: "ทำความสะอาดผิวอย่างอ่อนโยน",
-    price: 400,
+    price: 299,
     image: "/images/products/effaclar-gel.png",
+    url: "https://shopee.co.th/%E0%B8%A5%E0%B8%B2-%E0%B9%82%E0%B8%A3%E0%B8%8A-%E0%B9%82%E0%B8%9E%E0%B9%80%E0%B8%8B%E0%B8%A2%E0%B9%8C-La-Roche-Posay-EFFACLAR-FOAMING-GEL-%E0%B9%80%E0%B8%88%E0%B8%A5%E0%B8%A5%E0%B9%89%E0%B8%B2%E0%B8%87%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%9C%E0%B8%B4%E0%B8%A7%E0%B8%A1%E0%B8%B1%E0%B8%99-50ml.-i.56542501.919327673?extraParams=%7B%22display_model_id%22:72150258325,%22model_selection_logic%22:3%7D",
   },
   {
     id: 2,
@@ -14,8 +15,9 @@ const products = [
     category: "Cleanser",
     brand: "CeraVe",
     description: "ทำความสะอาดผิวอย่างอ่อนโยน",
-    price: 400,
+    price: 670,
     image: "/images/products/cerave-hydrating.png",
+    url: "https://shopee.co.th/%E0%B9%80%E0%B8%8B%E0%B8%A3%E0%B8%B2%E0%B8%A7%E0%B8%B5-CERAVE-Hydrating-Cleanser-%E0%B8%97%E0%B8%B3%E0%B8%84%E0%B8%A7%E0%B8%B2%E0%B8%A1%E0%B8%AA%E0%B8%B0%E0%B8%AD%E0%B8%B2%E0%B8%94%E0%B8%9C%E0%B8%B4%E0%B8%A7%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%9C%E0%B8%B4%E0%B8%A7%E0%B8%81%E0%B8%B2%E0%B8%A2%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%9C%E0%B8%B4%E0%B8%A7%E0%B9%81%E0%B8%AB%E0%B9%89%E0%B8%87-473ml-i.121205602.1867293662?extraParams=%7B%22display_model_id%22:32153816495,%22model_selection_logic%22:3%7D",
   },
   {
     id: 3,
@@ -23,8 +25,9 @@ const products = [
     category: "Moisturizer",
     brand: "MizuMi",
     description: "ช่วยปลอบประโลมผิว",
-    price: 400,
+    price: 690,
     image: "/images/products/mizumi-cica-gel.png",
+    url: "https://shopee.co.th/MizuMi-Cica-Soothing-Moisture-Gel-(45ml)-%E0%B8%A1%E0%B8%AD%E0%B8%A2%E0%B8%AA%E0%B9%8C%E0%B9%80%E0%B8%88%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B9%84%E0%B8%A3%E0%B9%80%E0%B8%8B%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B8%AA%E0%B8%B3%E0%B8%AB%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B8%9C%E0%B8%B4%E0%B8%A7%E0%B8%A1%E0%B8%B1%E0%B8%99-%E0%B9%80%E0%B8%9B%E0%B9%87%E0%B8%99%E0%B8%AA%E0%B8%B4%E0%B8%A7%E0%B8%87%E0%B9%88%E0%B8%B2%E0%B8%A2-%E0%B8%8B%E0%B8%B6%E0%B8%A1%E0%B9%84%E0%B8%A7-i.70802054.6746443720?extraParams=%7B%22display_model_id%22:50599726871,%22model_selection_logic%22:3%7D",
   },
   {
     id: 4,
@@ -41,8 +44,9 @@ const products = [
     category: "Sunscreen",
     brand: "MizuMi",
     description: "ผลิตภัณฑ์ดูแลผิว",
-    price: 400,
+    price: 890,
     image: "/images/products/mizumi-uv-water.png",
+    url: "https://shopee.co.th/-1-%E0%B8%AB%E0%B8%A5%E0%B8%AD%E0%B8%94-MizuMi-UV-Water-Serum-SPF50-PA-40g-No.1-Best-Selling-Sunscreen-%E0%B9%80%E0%B8%8B%E0%B8%A3%E0%B8%B1%E0%B9%88%E0%B8%A1%E0%B8%81%E0%B8%B1%E0%B8%99%E0%B9%81%E0%B8%94%E0%B8%94-%E0%B8%9A%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%9A%E0%B8%B2-%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%AD%E0%B8%B8%E0%B8%94%E0%B8%95%E0%B8%B1%E0%B8%99-%E0%B8%9B%E0%B8%81%E0%B8%9B%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%AA%E0%B8%B9%E0%B8%87%E0%B8%AA%E0%B8%B8%E0%B8%94-i.70802054.1208419346?extraParams=%7B%22display_model_id%22:1367156810,%22model_selection_logic%22:3%7D",
   },
   {
     id: 6,
@@ -50,8 +54,9 @@ const products = [
     category: "Sunscreen",
     brand: "Biore",
     description: "ผลิตภัณฑ์ดูแลผิว",
-    price: 400,
+    price: 420,
     image: "/images/products/biore-uv.png",
+    url: "https://shopee.co.th/%E0%B8%9A%E0%B8%B4%E0%B9%82%E0%B8%AD%E0%B9%80%E0%B8%A3-%E0%B8%A2%E0%B8%B9%E0%B8%A7%E0%B8%B5-%E0%B8%AD%E0%B8%B0%E0%B8%84%E0%B8%A7%E0%B8%B2-%E0%B8%A3%E0%B8%B4%E0%B8%8A-%E0%B8%A7%E0%B8%AD%E0%B9%80%E0%B8%95%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B8%A3%E0%B8%B5%E0%B9%88-%E0%B9%80%E0%B8%AD%E0%B8%AA%E0%B9%80%E0%B8%8B%E0%B9%89%E0%B8%99%E0%B8%AA%E0%B9%8C-%E0%B8%81%E0%B8%B1%E0%B8%99%E0%B9%81%E0%B8%94%E0%B8%94-50-%E0%B8%81.-Biore-UV-Aqua-Rich-Watery-Essence-SPF50-PA-50g-(%E0%B8%84%E0%B8%A3%E0%B8%B5%E0%B8%A1%E0%B8%81%E0%B8%B1%E0%B8%99%E0%B9%81%E0%B8%94%E0%B8%94)-i.69426059.4215238353?extraParams=%7B%22display_model_id%22:42144724828,%22model_selection_logic%22:3%7D",
   },
   {
     id: 7,
@@ -59,8 +64,9 @@ const products = [
     category: "Moisturizer",
     brand: "Torriden",
     description: "เติมความชุ่มชื้นให้ผิว",
-    price: 429,
+    price: 750,
     image: "/images/products/torriden-divein.png",
+    url: "https://shopee.co.th/Torriden-Dive-In-Watery-Moisture-Sun-Cream-SPF50-PA-(60ml)-%E0%B8%97%E0%B8%AD%E0%B8%A3%E0%B9%8C%E0%B8%A3%E0%B8%B4%E0%B9%80%E0%B8%94%E0%B8%99-%E0%B8%84%E0%B8%A3%E0%B8%B5%E0%B8%A1%E0%B8%81%E0%B8%B1%E0%B8%99%E0%B9%81%E0%B8%94%E0%B8%94-%E0%B8%9C%E0%B8%B4%E0%B8%A7%E0%B8%8A%E0%B8%B8%E0%B9%88%E0%B8%A1%E0%B8%8A%E0%B8%B7%E0%B9%89%E0%B8%99-%E0%B8%AA%E0%B8%9A%E0%B8%B2%E0%B8%A2%E0%B8%9C%E0%B8%B4%E0%B8%A7-i.201159757.27868147218?extraParams=%7B%22display_model_id%22:119325062187,%22model_selection_logic%22:3%7D",
   },
   {
     id: 8,
@@ -68,8 +74,9 @@ const products = [
     category: "Moisturizer",
     brand: "Laneige",
     description: "เพิ่มความชุ่มชื้นให้ผิว",
-    price: 390,
+    price: 1049,
     image: "/images/products/laneige-water-bank.png",
+    url: "https://shopee.co.th/LANEIGE-Water-Bank-Blue-Hyaluronic-Moisture-Cream-50ml-i.71014150.24804261385?extraParams=%7B%22display_model_id%22:245111287088,%22model_selection_logic%22:3%7D",
   },
 ];
 

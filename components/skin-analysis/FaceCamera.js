@@ -15,6 +15,7 @@ export default function FaceCamera({ onImageSelected }) {
   const [flash, setFlash] = useState(false);
   const [screenFlash, setScreenFlash] = useState(false);
   const [faceStatus, setFaceStatus] = useState("checking");
+  const [isMobileCamera, setIsMobileCamera] = useState(false);
 
   useEffect(() => {
     startCamera();
@@ -34,11 +35,14 @@ export default function FaceCamera({ onImageSelected }) {
         throw new Error("กล้องไม่สามารถใช้งานได้บนอุปกรณ์นี้");
       }
 
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+      setIsMobileCamera(isMobile);
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: "user",
           aspectRatio: {
-            ideal: 3 / 4,
+            ideal: isMobile ? 9 / 16 : 3 / 4,
           },
           width: {
             ideal: 720,
@@ -196,7 +200,17 @@ export default function FaceCamera({ onImageSelected }) {
 
     const canvas = document.createElement("canvas");
 
-    canvas.width = video.videoWidth;
+    const isLandscapeVideo = video.videoWidth > video.videoHeight;
+    const shouldCropToPortrait = isMobileCamera && isLandscapeVideo;
+    const targetAspectRatio = 9 / 16;
+    const cropWidth = shouldCropToPortrait
+      ? video.videoHeight * targetAspectRatio
+      : video.videoWidth;
+    const cropX = shouldCropToPortrait
+      ? (video.videoWidth - cropWidth) / 2
+      : 0;
+
+    canvas.width = shouldCropToPortrait ? video.videoHeight * targetAspectRatio : video.videoWidth;
     canvas.height = video.videoHeight;
 
     const context = canvas.getContext("2d");
@@ -214,7 +228,17 @@ export default function FaceCamera({ onImageSelected }) {
     context.translate(canvas.width, 0);
     context.scale(-1, 1);
 
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    context.drawImage(
+      video,
+      cropX,
+      0,
+      cropWidth,
+      video.videoHeight,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
 
     canvas.toBlob(
       (blob) => {
