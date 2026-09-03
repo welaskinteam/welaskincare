@@ -25,6 +25,7 @@
 
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 
@@ -32,6 +33,10 @@
 
 .imageWrapper {
   width: 100%;
+  max-width: 466px;
+
+  margin-right: auto;
+  margin-left: auto;
 
   aspect-ratio: 4 / 5;
 
@@ -55,7 +60,7 @@
 .result {
   width: 100%;
 
-  margin-top: var(--space-8);
+  margin-top: var(--space-12);
 
   display: flex;
   flex-direction: column;
@@ -131,7 +136,7 @@
 .actions {
   width: 100%;
 
-  margin-top: var(--space-10);
+  margin-top: var(--space-12);
 
   display: flex;
   flex-direction: column;
@@ -208,7 +213,7 @@
   }
 
   .imageWrapper {
-    max-width: 480px;
+    max-width: 466px;
 
     margin-left: auto;
     margin-right: auto;

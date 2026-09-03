@@ -29,6 +29,8 @@ export default function FaceCamera({ onImageSelected }) {
 
   const startCamera = async () => {
     try {
+      setFlash(false);
+      setScreenFlash(false);
       setCameraError("");
 
       if (!navigator.mediaDevices?.getUserMedia) {
@@ -70,7 +72,7 @@ export default function FaceCamera({ onImageSelected }) {
       console.error("Camera Error:", error);
 
       setCameraError(
-        "ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตให้เว็บไซต์เข้าถึงกล้อง",
+        "ไม่สามารถเปิดกล้องได้\nกรุณาอนุญาตให้เว็บไซต์เข้าถึงกล้อง",
       );
     }
   };
@@ -360,11 +362,15 @@ export default function FaceCamera({ onImageSelected }) {
             }`}
             onClick={handleFlash}
             aria-pressed={flash}
-            aria-label={flash ? "ปิดแฟลชหน้าจอ" : "เปิดแฟลชหน้าจอ"}
+            aria-label="แฟลช"
           >
-            <img src="/images/flash.png" alt="" className={styles.flashIcon} />
+            <img
+              src={flash ? "/images/flash-on.png" : "/images/flash-off.png"}
+              alt=""
+              className={styles.flashIcon}
+            />
 
-            <small>{flash ? "แฟลชเปิด" : "แฟลชหน้าจอ"}</small>
+            <small>แฟลช</small>
           </button>
         </div>
       </div>

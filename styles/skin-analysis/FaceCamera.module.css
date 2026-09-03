@@ -184,12 +184,17 @@
 .error {
   position: absolute;
 
-  left: var(--page-padding-x);
-  right: var(--page-padding-x);
-
+  left: 50%;
   top: 50%;
 
+  width: min(
+    calc(100% - (var(--page-padding-x) * 2)),
+    360px
+  );
+
   z-index: 5;
+
+  transform: translate(-50%, -50%);
 
   padding: var(--space-5);
 
@@ -202,6 +207,8 @@
 
 .error p {
   margin: 0;
+
+  white-space: pre-line;
 
   color: var(--color-error);
 
@@ -242,7 +249,9 @@
     var(--space-8)
     calc(var(--space-8) + env(safe-area-inset-bottom));
 
-  background: rgba(224, 196, 184, 0.92);
+  background: rgba(224, 196, 184, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 
   display: flex;
   align-items: center;
@@ -264,7 +273,7 @@
   align-items: center;
   justify-content: center;
 
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .controls > button span {
@@ -297,7 +306,7 @@
   flex-direction: column;
   align-items: center;
 
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .controls > :first-child button span {
@@ -345,6 +354,16 @@
   object-fit: contain;
 }
 
+.flashIcon,
+.controls > :first-child button :global(.galleryIcon) {
+  width: 40px;
+  height: 40px;
+
+  display: block;
+
+  object-fit: contain;
+}
+
 .captureButton:disabled {
   opacity: 0.45;
 }
@@ -355,15 +374,6 @@
 .flashButton {
   width: 80px;
 }
-
-.flashButton span {
-  transition: transform 0.2s ease;
-}
-
-.flashActive span {
-  transform: scale(1.15);
-}
-
 
 /* MARK: Tablet */
 
