@@ -36,6 +36,27 @@ export default function GoalQuestion({
   onBack,
   loading,
 }) {
+  const selectedValues = value
+    ? value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+    : [];
+
+  /* MARK: Select */
+
+  const handleSelect = (goal) => {
+    let nextValues;
+
+    if (selectedValues.includes(goal)) {
+      nextValues = selectedValues.filter((item) => item !== goal);
+    } else {
+      nextValues = [...selectedValues, goal];
+    }
+
+    onChange(nextValues.join(","));
+  };
+
   /* MARK: Skip */
 
   const handleSkip = () => {
@@ -45,6 +66,13 @@ export default function GoalQuestion({
 
   return (
     <main className={styles.container}>
+      <img
+        className={styles.bottomWave}
+        src="/images/skin-analysis/bottom-wave.png"
+        alt=""
+        aria-hidden="true"
+      />
+
       <div className={styles.content}>
         {/* MARK: Header */}
 
@@ -73,7 +101,7 @@ export default function GoalQuestion({
           aria-label="เลือกเป้าหมายในการดูแลผิว"
         >
           {goalOptions.map((option) => {
-            const selected = value === option.value;
+            const selected = selectedValues.includes(option.value);
 
             return (
               <button
@@ -82,7 +110,7 @@ export default function GoalQuestion({
                 className={`${styles.option} ${
                   selected ? styles.optionSelected : ""
                 }`}
-                onClick={() => onChange(option.value)}
+                onClick={() => handleSelect(option.value)}
                 aria-pressed={selected}
               >
                 <span>{option.label}</span>
@@ -111,7 +139,7 @@ export default function GoalQuestion({
         <button
           type="button"
           className={styles.nextButton}
-          disabled={!value || loading}
+          disabled={selectedValues.length === 0 || loading}
           onClick={onNext}
         >
           {loading ? "กำลังวิเคราะห์..." : "วิเคราะห์ผิว"}

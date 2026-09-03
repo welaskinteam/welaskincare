@@ -1,6 +1,8 @@
 /* MARK: Container */
 
 .container {
+  position: relative;
+
   width: 100%;
   min-height: 100dvh;
 
@@ -11,6 +13,9 @@
 }
 
 .content {
+  position: relative;
+  z-index: 1;
+
   width: 100%;
   max-width: var(--content-width);
 
@@ -144,14 +149,19 @@
 /* MARK: Options */
 
 .options {
+  width: calc(100% - 24px);
+  max-width: var(--option-max-width);
+
   margin-top: var(--space-8);
+  margin-right: auto;
+  margin-left: auto;
 
   display: grid;
 
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  gap: var(--space-3);
+  gap: var(--grid-option-gap);
 }
 
 
@@ -159,11 +169,12 @@
 
 .option {
   width: 100%;
-  min-height: 102px;
+  height: var(--grid-option-height);
+  min-height: 0;
 
   padding: var(--space-4);
 
-  border: none;
+  border: var(--border-default);
 
   border-radius: var(--radius-md);
 
@@ -225,15 +236,23 @@
       env(safe-area-inset-bottom)
     );
 
-  background:
-    linear-gradient(
-      to bottom,
-      transparent,
-      var(--color-background) 30%
-    );
+}
+
+.bottomWave {
+  position: fixed;
+  left: 50%;
+  bottom: var(--bottom-wave-offset);
+  width: 120%;
+  min-width: 600px;
+  transform: translateX(-50%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .nextButton {
+  position: relative;
+  z-index: 1;
+
   width: 100%;
   max-width: 520px;
 
@@ -278,6 +297,9 @@
 /* MARK: Skip Button */
 
 .skipButton {
+  position: relative;
+  z-index: 1;
+
   width: 100%;
   max-width: 520px;
 
@@ -330,7 +352,7 @@
   }
 
   .options {
-    max-width: 600px;
+    max-width: var(--option-max-width);
 
     margin-left: auto;
     margin-right: auto;

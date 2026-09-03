@@ -1,6 +1,8 @@
 /* MARK: Container */
 
 .container {
+  position: relative;
+
   width: 100%;
   min-height: 100dvh;
 
@@ -11,6 +13,9 @@
 }
 
 .content {
+  position: relative;
+  z-index: 1;
+
   width: 100%;
   max-width: var(--content-width);
 
@@ -143,21 +148,25 @@
 /* MARK: Options */
 
 .options {
+  width: 100%;
+  max-width: var(--option-max-width);
+
   margin-top: var(--space-10);
+  margin-right: auto;
+  margin-left: auto;
 
   display: flex;
   flex-direction: column;
 
-  gap: var(--space-4);
+  gap: var(--option-gap);
 }
 
 .option {
   width: 100%;
-  min-height: 108px;
+  height: var(--option-height);
+  min-height: 0;
 
-  padding:
-    var(--space-5)
-    var(--space-8);
+  padding: 0 var(--space-8);
 
   border:
     var(--border-width)
@@ -259,15 +268,28 @@
       env(safe-area-inset-bottom)
     );
 
-  background:
-    linear-gradient(
-      to bottom,
-      transparent,
-      var(--color-background) 28%
-    );
+}
+
+.bottomWave {
+  position: fixed;
+
+  left: 50%;
+  bottom: var(--bottom-wave-offset);
+
+  width: 120%;
+  min-width: 600px;
+
+  transform: translateX(-50%);
+
+  z-index: 0;
+
+  pointer-events: none;
 }
 
 .nextButton {
+  position: relative;
+  z-index: 1;
+
   width: 100%;
   max-width: 520px;
   height: 60px;
@@ -313,7 +335,7 @@
   }
 
   .options {
-    max-width: 600px;
+    max-width: var(--option-max-width);
 
     margin-left: auto;
     margin-right: auto;

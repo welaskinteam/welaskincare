@@ -27,7 +27,7 @@ export default function PrivacyConsent({ onAccept }) {
         </h1>
 
         <p className={styles.description}>
-          เพื่อความแม่นยำในการวิเคราะห์ Wela จะใช้รูปใบหน้าของคุณ
+          เพื่อความแม่นยำในการวิเคราะห์ Welaskin จะใช้รูปใบหน้าของคุณ
           <br className={styles.desktopBreak} />
           เฉพาะขั้นตอนนี้เท่านั้น โดยไม่มีการนำไปใช้อย่างอื่น
           และจัดการข้อมูลอย่างรัดกุมตามนโยบายของเรา

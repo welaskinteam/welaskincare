@@ -305,7 +305,7 @@
     linear-gradient(
       to bottom,
       transparent,
-      var(--color-background) 30%
+      var(--color-background-end) 30%
     );
 }
 

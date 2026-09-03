@@ -3,19 +3,25 @@
 :root {
   /* MARK: Color */
 
-  --color-background: #FFF8F4;
-  --color-surface: #ffffff;
+  --color-background-start: #F8EEE9;
+  --color-background-end: #EAD6CE;
+  --color-background: linear-gradient(
+    180deg,
+    var(--color-background-start) 0%,
+    var(--color-background-end) 100%
+  );
+  --color-surface: #FBF4F0;
   --color-surface-soft: #FFEFE9;
 
   --color-primary: #610D27;
   --color-primary-dark: #570821;
   --color-primary-light: #f8dfe5;
 
-  --color-text-primary: #34151b;
+  --color-text-primary: #47191F;
   --color-text-secondary: #90786D;
   --color-text-muted: #ad9891;
 
-  --color-border: #e4d4cf;
+  --color-border: #E7E0DE;
 
   --color-error: #c52d43;
   --color-success: #3d8063;
@@ -131,6 +137,13 @@
   --icon-size-lg: 64px;
 
   --feature-icon-size: 48px;
+
+  --option-max-width: 520px;
+  --option-height: 84px;
+  --option-gap: 12px;
+  --bottom-wave-offset: 0;
+  --grid-option-height: 102px;
+  --grid-option-gap: 12px;
 
 
   /* MARK: Shadow */

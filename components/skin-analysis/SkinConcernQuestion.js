@@ -73,6 +73,13 @@ export default function SkinConcernQuestion({
 
   return (
     <main className={styles.container}>
+      <img
+        className={styles.bottomWave}
+        src="/images/skin-analysis/bottom-wave.png"
+        alt=""
+        aria-hidden="true"
+      />
+
       <div className={styles.content}>
         {/* MARK: Header */}
 

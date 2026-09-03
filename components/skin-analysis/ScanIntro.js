@@ -9,9 +9,9 @@ export default function ScanIntro({ onStart }) {
 
         <header className={styles.header}>
           <h1>
-            สแกนใบหน้า
+            สแกนใบหน้าวิเคราะห์ผิว
             <br />
-            วิเคราะห์ผิวด้วย AI
+            ด้วย Welaskin.AI
           </h1>
 
           <p>
@@ -27,13 +27,6 @@ export default function ScanIntro({ onStart }) {
             src="/images/face-analysis.png"
             alt="ตัวอย่างการสแกนใบหน้า"
           />
-
-          <div className={styles.scanFrame}>
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
         </div>
 
 
@@ -43,10 +36,7 @@ export default function ScanIntro({ onStart }) {
 
           <div className={styles.instruction}>
             <div className={styles.instructionIcon}>
-              <img
-                src="/icons/skin-analysis/lighting.svg"
-                alt=""
-              />
+              <span role="img" aria-label="แสงสว่าง">💡</span>
             </div>
 
             <p>
@@ -59,10 +49,7 @@ export default function ScanIntro({ onStart }) {
 
           <div className={styles.instruction}>
             <div className={styles.instructionIcon}>
-              <img
-                src="/icons/skin-analysis/no-glasses.svg"
-                alt=""
-              />
+              <span role="img" aria-label="ไม่สวมแว่น">🕶️</span>
             </div>
 
             <p>
@@ -75,10 +62,7 @@ export default function ScanIntro({ onStart }) {
 
           <div className={styles.instruction}>
             <div className={styles.instructionIcon}>
-              <img
-                src="/icons/skin-analysis/face-front.svg"
-                alt=""
-              />
+              <span role="img" aria-label="มองตรง">🙂</span>
             </div>
 
             <p>
