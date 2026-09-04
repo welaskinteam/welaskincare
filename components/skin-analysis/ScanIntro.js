@@ -20,13 +20,26 @@ export default function ScanIntro({ onStart }) {
         </header>
 
 
-        {/* MARK: Face Preview */}
-
         <div className={styles.facePreview}>
+
+          {/* MARK: Ellipse Background */}
+
           <img
-            src="/images/face-analysis.png"
+            className={styles.ellipse}
+            src="/images/ellipse.png"
+            alt=""
+            aria-hidden="true"
+          />
+
+
+          {/* MARK: Face Analysis */}
+
+          <img
+            className={styles.faceImage}
+            src="/images/face-analysis.gif"
             alt="ตัวอย่างการสแกนใบหน้า"
           />
+
         </div>
 
 
