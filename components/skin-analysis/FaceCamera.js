@@ -15,7 +15,6 @@ export default function FaceCamera({ onImageSelected }) {
   const [flash, setFlash] = useState(false);
   const [screenFlash, setScreenFlash] = useState(false);
   const [faceStatus, setFaceStatus] = useState("checking");
-  const [isMobileCamera, setIsMobileCamera] = useState(false);
 
   useEffect(() => {
     startCamera();
@@ -37,26 +36,36 @@ export default function FaceCamera({ onImageSelected }) {
         throw new Error("กล้องไม่สามารถใช้งานได้บนอุปกรณ์นี้");
       }
 
-      const isMobile = window.matchMedia("(max-width: 767px)").matches;
-      setIsMobileCamera(isMobile);
+      const portraitVideo = {
+        facingMode: "user",
+        // ขอให้ iPhone ส่งภาพ portrait โดยตรง ไม่ใช่รับ landscape แล้วหมุนเอง
+        aspectRatio: { exact: 9 / 16 },
+        resizeMode: "crop-and-scale",
+        width: { ideal: 720, max: 1280 },
+        height: { ideal: 1280, max: 1920 },
+      };
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "user",
-          aspectRatio: {
-            ideal: isMobile ? 9 / 16 : 3 / 4,
+      let stream;
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: portraitVideo,
+          audio: false,
+        });
+      } catch (error) {
+        // กล้องบางรุ่นไม่รองรับ exact aspect ratio ให้ลองแบบ ideal ต่อ
+        if (error.name !== "OverconstrainedError") {
+          throw error;
+        }
+
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            ...portraitVideo,
+            aspectRatio: { ideal: 9 / 16 },
           },
-          width: {
-            ideal: 720,
-            max: 1280,
-          },
-          height: {
-            ideal: 1280,
-            max: 1920,
-          },
-        },
-        audio: false,
-      });
+          audio: false,
+        });
+      }
 
       streamRef.current = stream;
 
@@ -202,18 +211,22 @@ export default function FaceCamera({ onImageSelected }) {
 
     const canvas = document.createElement("canvas");
 
-    const isLandscapeVideo = video.videoWidth > video.videoHeight;
-    const shouldCropToPortrait = isMobileCamera && isLandscapeVideo;
     const targetAspectRatio = 9 / 16;
-    const cropWidth = shouldCropToPortrait
-      ? video.videoHeight * targetAspectRatio
-      : video.videoWidth;
-    const cropX = shouldCropToPortrait
-      ? (video.videoWidth - cropWidth) / 2
-      : 0;
 
-    canvas.width = shouldCropToPortrait ? video.videoHeight * targetAspectRatio : video.videoWidth;
-    canvas.height = video.videoHeight;
+    const cropWidth = Math.min(
+      video.videoWidth,
+      video.videoHeight * targetAspectRatio,
+    );
+    const cropHeight = Math.min(
+      video.videoHeight,
+      video.videoWidth / targetAspectRatio,
+    );
+    const cropX = (video.videoWidth - cropWidth) / 2;
+    const cropY = (video.videoHeight - cropHeight) / 2;
+
+    // ให้ไฟล์ที่ถ่ายมีสัดส่วนเดียวกับกรอบเสมอ ไม่ว่ากล้องจะส่งภาพมาแบบใด
+    canvas.width = cropWidth;
+    canvas.height = cropHeight;
 
     const context = canvas.getContext("2d");
 
@@ -233,9 +246,9 @@ export default function FaceCamera({ onImageSelected }) {
     context.drawImage(
       video,
       cropX,
-      0,
+      cropY,
       cropWidth,
-      video.videoHeight,
+      cropHeight,
       0,
       0,
       canvas.width,
