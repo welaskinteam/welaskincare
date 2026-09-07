@@ -3,6 +3,8 @@ import styles from "../../styles/skin-analysis/SkinAnalysisLoading.module.css";
 
 export default function SkinAnalysisLoading() {
   const [progress, setProgress] = useState(1);
+  const progressRadius = 45;
+  const progressCircumference = 2 * Math.PI * progressRadius;
 
   useEffect(() => {
     const intervalTime = 300;
@@ -49,13 +51,28 @@ export default function SkinAnalysisLoading() {
         {/* MARK: Progress */}
 
         <div className={styles.progressCircle}>
-          <div className={styles.progressTrack} aria-hidden="true" />
-
-          <div
-            className={styles.progressValue}
-            style={{ "--progress": `${progress * 3.6}deg` }}
+          <svg
+            className={styles.progressRing}
+            viewBox="0 0 100 100"
             aria-hidden="true"
-          />
+          >
+            <circle
+              className={styles.progressRingTrack}
+              cx="50"
+              cy="50"
+              r={progressRadius}
+            />
+            <circle
+              className={styles.progressRingValue}
+              cx="50"
+              cy="50"
+              r={progressRadius}
+              strokeDasharray={progressCircumference}
+              strokeDashoffset={
+                progressCircumference * (1 - progress / 100)
+              }
+            />
+          </svg>
 
           <div className={styles.progressOrb}>
             <span aria-live="polite">{progress}%</span>

@@ -15,6 +15,11 @@ export default function FaceCamera({ onImageSelected }) {
   const [flash, setFlash] = useState(false);
   const [screenFlash, setScreenFlash] = useState(false);
   const [faceStatus, setFaceStatus] = useState("checking");
+  const [cameraChecks, setCameraChecks] = useState({
+    lighting: "checking",
+    position: "checking",
+    lookingStraight: "checking",
+  });
 
   useEffect(() => {
     startCamera();
@@ -138,6 +143,12 @@ export default function FaceCamera({ onImageSelected }) {
       });
 
       faceDetectorRef.current = detector;
+      const lightCanvas = document.createElement("canvas");
+      lightCanvas.width = 32;
+      lightCanvas.height = 32;
+      const lightContext = lightCanvas.getContext("2d", {
+        willReadFrequently: true,
+      });
 
       const detectFace = () => {
         const video = videoRef.current;
@@ -154,10 +165,38 @@ export default function FaceCamera({ onImageSelected }) {
 
         try {
           const result = detector.detectForVideo(video, performance.now());
-          const face = result.detections[0]?.boundingBox;
+          const detection = result.detections[0];
+          const face = detection?.boundingBox;
+
+          if (lightContext) {
+            lightContext.drawImage(video, 0, 0, 32, 32);
+            const pixels = lightContext.getImageData(0, 0, 32, 32).data;
+            let brightness = 0;
+
+            for (let index = 0; index < pixels.length; index += 4) {
+              brightness +=
+                pixels[index] * 0.299 +
+                pixels[index + 1] * 0.587 +
+                pixels[index + 2] * 0.114;
+            }
+
+            brightness /= pixels.length / 4;
+            setCameraChecks((previous) => ({
+              ...previous,
+              lighting:
+                brightness >= 55 && brightness <= 220
+                  ? "ready"
+                  : "not-ready",
+            }));
+          }
 
           if (!face) {
             setFaceStatus("not-found");
+            setCameraChecks((previous) => ({
+              ...previous,
+              position: "not-ready",
+              lookingStraight: "not-ready",
+            }));
             return;
           }
 
@@ -168,6 +207,41 @@ export default function FaceCamera({ onImageSelected }) {
           const horizontalOffset = Math.abs(faceCenterX / videoWidth - 0.5);
           const verticalOffset = Math.abs(faceCenterY / videoHeight - 0.43);
           const faceWidthRatio = face.width / videoWidth;
+          const positionReady =
+            faceWidthRatio >= 0.24 &&
+            faceWidthRatio <= 0.68 &&
+            horizontalOffset <= 0.16 &&
+            verticalOffset <= 0.18;
+
+          const keypoints = detection?.keypoints ?? [];
+          const leftEye = keypoints.find((point) =>
+            point.label?.toLowerCase().includes("left_eye"),
+          );
+          const rightEye = keypoints.find((point) =>
+            point.label?.toLowerCase().includes("right_eye"),
+          );
+          const nose = keypoints.find((point) =>
+            point.label?.toLowerCase().includes("nose"),
+          );
+          let lookingStraight = positionReady;
+
+          if (leftEye && rightEye && nose) {
+            const eyeCenterX = (leftEye.x + rightEye.x) / 2;
+            const eyeGap = Math.abs(leftEye.x - rightEye.x);
+            const eyeTilt = Math.abs(leftEye.y - rightEye.y);
+            const noseOffset = Math.abs(nose.x - eyeCenterX);
+
+            lookingStraight =
+              eyeGap > 0 &&
+              noseOffset / eyeGap < 0.28 &&
+              eyeTilt / eyeGap < 0.3;
+          }
+
+          setCameraChecks((previous) => ({
+            ...previous,
+            position: positionReady ? "ready" : "not-ready",
+            lookingStraight: lookingStraight ? "ready" : "not-ready",
+          }));
 
           if (faceWidthRatio < 0.24) {
             setFaceStatus("too-far");
@@ -311,6 +385,36 @@ export default function FaceCamera({ onImageSelected }) {
         {/* MARK: Header */}
 
         <div className={styles.header}>
+          <div className={styles.cameraChecks} aria-label="สถานะการจัดกล้อง">
+            <span
+              className={`${styles.cameraCheck} ${
+                cameraChecks.lighting === "ready"
+                  ? styles.cameraCheckReady
+                  : styles.cameraCheckNotReady
+              }`}
+            >
+              แสง
+            </span>
+            <span
+              className={`${styles.cameraCheck} ${
+                cameraChecks.position === "ready"
+                  ? styles.cameraCheckReady
+                  : styles.cameraCheckNotReady
+              }`}
+            >
+              ตำแหน่งของหน้า
+            </span>
+            <span
+              className={`${styles.cameraCheck} ${
+                cameraChecks.lookingStraight === "ready"
+                  ? styles.cameraCheckReady
+                  : styles.cameraCheckNotReady
+              }`}
+            >
+              มองตรง
+            </span>
+          </div>
+
           <h1>
             {faceStatus === "not-found" && "ไม่พบใบหน้า กรุณามองกล้อง"}
             {faceStatus === "too-far" && "เขยิบเข้ามาใกล้กล้องอีกนิดได้ไหม?"}

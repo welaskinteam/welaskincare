@@ -150,7 +150,7 @@
 .header {
   position: absolute;
 
-  top: 14%;
+  top: 10%;
 
   left: 0;
   right: 0;
@@ -164,6 +164,46 @@
   color: var(--color-white);
 
   pointer-events: none;
+}
+
+.cameraChecks {
+  width: 100%;
+
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 9.22px;
+
+  margin-bottom: var(--space-8);
+}
+
+.cameraCheck {
+  width: 107.89px;
+  height: 29.51px;
+  flex: 0 0 107.89px;
+
+  padding: 5.53px 9.22px;
+
+  border: 0.92px solid currentColor;
+  border-radius: 1.84px;
+
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.2;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.cameraCheckReady {
+  border-color: #00FF7B;
+  background: #00FF7B1A;
+  color: #00FF7B;
+}
+
+.cameraCheckNotReady {
+  border-color: #FF0000;
+  background: #FF00001A;
+  color: #FF0000;
 }
 
 .header h1 {
@@ -392,6 +432,10 @@
 
   .header {
     top: 10%;
+  }
+
+  .cameraChecks {
+    gap: 9.22px;
   }
 
   .controls {
