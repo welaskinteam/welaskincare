@@ -5,7 +5,8 @@ import styles from "../../styles/skin-analysis/FaceCamera.module.css";
 export default function FaceCamera({ onImageSelected }) {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
-  const faceDetectorRef = useRef(null);
+  const faceLandmarkerRef = useRef(null);
+  const meshCanvasRef = useRef(null);
   const faceDetectionTimerRef = useRef(null);
   const isDetectingRef = useRef(false);
 
@@ -101,8 +102,12 @@ export default function FaceCamera({ onImageSelected }) {
 
     isDetectingRef.current = false;
 
-    faceDetectorRef.current?.close();
-    faceDetectorRef.current = null;
+    faceLandmarkerRef.current?.close();
+    faceLandmarkerRef.current = null;
+
+    const canvas = meshCanvasRef.current;
+    const context = canvas?.getContext("2d");
+    context?.clearRect(0, 0, canvas.width, canvas.height);
 
     if (!streamRef.current) {
       return;
@@ -125,7 +130,7 @@ export default function FaceCamera({ onImageSelected }) {
     }
 
     try {
-      const { FaceDetector, FilesetResolver } = await import(
+      const { FaceLandmarker, FilesetResolver } = await import(
         "@mediapipe/tasks-vision"
       );
 
@@ -133,16 +138,19 @@ export default function FaceCamera({ onImageSelected }) {
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm",
       );
 
-      const detector = await FaceDetector.createFromOptions(vision, {
+      const landmarker = await FaceLandmarker.createFromOptions(vision, {
         baseOptions: {
           modelAssetPath:
-            "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+            "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
         },
         runningMode: "VIDEO",
-        minDetectionConfidence: 0.5,
+        numFaces: 1,
+        minFaceDetectionConfidence: 0.5,
+        minFacePresenceConfidence: 0.5,
+        minTrackingConfidence: 0.5,
       });
 
-      faceDetectorRef.current = detector;
+      faceLandmarkerRef.current = landmarker;
       const lightCanvas = document.createElement("canvas");
       lightCanvas.width = 32;
       lightCanvas.height = 32;
@@ -164,9 +172,10 @@ export default function FaceCamera({ onImageSelected }) {
         isDetectingRef.current = true;
 
         try {
-          const result = detector.detectForVideo(video, performance.now());
-          const detection = result.detections[0];
-          const face = detection?.boundingBox;
+          const result = landmarker.detectForVideo(video, performance.now());
+          const landmarks = result.faceLandmarks[0];
+
+          drawFaceMesh(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION);
 
           if (lightContext) {
             lightContext.drawImage(video, 0, 0, 32, 32);
@@ -190,7 +199,7 @@ export default function FaceCamera({ onImageSelected }) {
             }));
           }
 
-          if (!face) {
+          if (!landmarks?.length) {
             setFaceStatus("not-found");
             setCameraChecks((previous) => ({
               ...previous,
@@ -202,27 +211,25 @@ export default function FaceCamera({ onImageSelected }) {
 
           const videoWidth = video.videoWidth;
           const videoHeight = video.videoHeight;
-          const faceCenterX = face.originX + face.width / 2;
-          const faceCenterY = face.originY + face.height / 2;
+          const faceBounds = getFaceBounds(
+            landmarks,
+            videoWidth,
+            videoHeight,
+          );
+          const faceCenterX = faceBounds.originX + faceBounds.width / 2;
+          const faceCenterY = faceBounds.originY + faceBounds.height / 2;
           const horizontalOffset = Math.abs(faceCenterX / videoWidth - 0.5);
           const verticalOffset = Math.abs(faceCenterY / videoHeight - 0.43);
-          const faceWidthRatio = face.width / videoWidth;
+          const faceWidthRatio = faceBounds.width / videoWidth;
           const positionReady =
             faceWidthRatio >= 0.24 &&
             faceWidthRatio <= 0.68 &&
             horizontalOffset <= 0.16 &&
             verticalOffset <= 0.18;
 
-          const keypoints = detection?.keypoints ?? [];
-          const leftEye = keypoints.find((point) =>
-            point.label?.toLowerCase().includes("left_eye"),
-          );
-          const rightEye = keypoints.find((point) =>
-            point.label?.toLowerCase().includes("right_eye"),
-          );
-          const nose = keypoints.find((point) =>
-            point.label?.toLowerCase().includes("nose"),
-          );
+          const leftEye = landmarks[263];
+          const rightEye = landmarks[33];
+          const nose = landmarks[1];
           let lookingStraight = positionReady;
 
           if (leftEye && rightEye && nose) {
@@ -264,6 +271,73 @@ export default function FaceCamera({ onImageSelected }) {
     } catch (error) {
       console.warn("MediaPipe Face Detection Error:", error);
       setFaceStatus("unsupported");
+    }
+  };
+
+  const getFaceBounds = (landmarks, videoWidth, videoHeight) => {
+    const xValues = landmarks.map((landmark) => landmark.x);
+    const yValues = landmarks.map((landmark) => landmark.y);
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    const minY = Math.min(...yValues);
+    const maxY = Math.max(...yValues);
+
+    return {
+      originX: minX * videoWidth,
+      originY: minY * videoHeight,
+      width: (maxX - minX) * videoWidth,
+      height: (maxY - minY) * videoHeight,
+    };
+  };
+
+  const drawFaceMesh = (landmarks, connections) => {
+    const canvas = meshCanvasRef.current;
+    const video = videoRef.current;
+    const context = canvas?.getContext("2d");
+
+    if (!canvas || !video || !context || !landmarks?.length) {
+      context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
+      return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const width = rect.width;
+    const height = rect.height;
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    const scale = Math.max(width / videoWidth, height / videoHeight);
+    const renderedWidth = videoWidth * scale;
+    const renderedHeight = videoHeight * scale;
+    const offsetX = (renderedWidth - width) / 2;
+    const offsetY = (renderedHeight - height) / 2;
+
+    canvas.width = width * devicePixelRatio;
+    canvas.height = height * devicePixelRatio;
+    context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    context.clearRect(0, 0, width, height);
+    context.strokeStyle = "rgba(76, 70, 255, 0.72)";
+    context.lineWidth = 1;
+    context.lineJoin = "round";
+    context.lineCap = "round";
+
+    for (const connection of connections) {
+      const start = landmarks[connection.start];
+      const end = landmarks[connection.end];
+
+      if (!start || !end) {
+        continue;
+      }
+
+      const startX = width - (start.x * renderedWidth - offsetX);
+      const startY = start.y * renderedHeight - offsetY;
+      const endX = width - (end.x * renderedWidth - offsetX);
+      const endY = end.y * renderedHeight - offsetY;
+
+      context.beginPath();
+      context.moveTo(startX, startY);
+      context.lineTo(endX, endY);
+      context.stroke();
     }
   };
 
@@ -378,6 +452,12 @@ export default function FaceCamera({ onImageSelected }) {
           autoPlay
           muted
           playsInline
+        />
+
+        <canvas
+          ref={meshCanvasRef}
+          className={styles.faceMesh}
+          aria-hidden="true"
         />
 
         {screenFlash && <div className={styles.screenFlash} aria-hidden="true" />}
