@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 
+import { analyzeSkin } from "../services/skinAnalysis";
+import SkinAnalysisLoading from "../components/skin-analysis/SkinAnalysisLoading";
 import PrivacyConsent from "../components/PrivacyConsent";
 import ScanIntro from "../components/skin-analysis/ScanIntro";
 import FaceCamera from "../components/skin-analysis/FaceCamera";
@@ -13,6 +15,8 @@ export default function Home() {
   const router = useRouter();
   const [step, setStep] = useState("privacy");
 
+  const analyzing = useRef(false);
+  const [analysisError, setAnalysisError] = useState("");
   const [result, setResult] = useState(null);
 
   const [image, setImage] = useState(null);
@@ -47,8 +51,19 @@ export default function Home() {
     setStep("questionnaire");
   };
 
-  const handleSkipQuestionnaire = () => {
-    console.log("Analyze immediately");
+  const handleSkipQuestionnaire = async () => {
+    if (analyzing.current) return;
+    analyzing.current = true;
+    setAnalysisError("");
+    setStep("analyzing");
+    try {
+      handleAnalysisResult(await analyzeSkin({ image }));
+    } catch (error) {
+      setAnalysisError("ไม่สามารถรับผลวิเคราะห์ได้ กรุณาลองอีกครั้ง");
+      setStep("scan-result");
+    } finally {
+      analyzing.current = false;
+    }
   };
 
   switch (step) {
@@ -76,10 +91,14 @@ export default function Home() {
         </>
       );
 
+    case "analyzing":
+      return <><Head /><SkinAnalysisLoading /></>;
+
     case "scan-result":
       return (
         <>
           <Head />
+          {analysisError && <p role="alert" style={{ padding: 16, color: "#8A102F" }}>{analysisError}</p>}
           <ScanResultPreview
             image={image}
             onContinue={handleContinueQuestionnaire}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { analyzeSkin } from "../../services/skinAnalysis";
+import { getProductRecommendations } from "../../services/productRecommendations";
 
 import GenderQuestion from "./GenderQuestion";
 import AgeQuestion from "./AgeQuestion";
@@ -17,6 +18,7 @@ export default function SkinQuestionnaire({
 }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [completedResult, setCompletedResult] = useState(null);
   const [error, setError] = useState("");
 
   /* MARK: Update Field */
@@ -116,6 +118,7 @@ export default function SkinQuestionnaire({
 
     try {
       setLoading(true);
+      setCompletedResult(null);
       setError("");
 
       const analysisData = {
@@ -141,8 +144,40 @@ export default function SkinQuestionnaire({
       });
 
       const result = await analyzeSkin(analysisData);
+      const conditions = [
+        ...new Set(
+          (Array.isArray(result.detections) ? result.detections : [])
+            .map((detection) => detection.class_name)
+            .filter(Boolean),
+        ),
+      ];
 
-      onResult(result);
+      // This is the normalized payload for the product-recommendation API.
+      // Skin type must come from the model response, not the questionnaire.
+      const recommendationPayload = {
+        concern: conditions.length ? conditions : null,
+        goal: analysisData.goal || null,
+        skintype: result.skin_type?.class_name || null,
+      };
+
+      console.log("Recommendation payload:", recommendationPayload);
+      const recommendationResponse = await getProductRecommendations({
+        skinType: result.skin_type?.class_name || null,
+        concerns: conditions.length ? conditions : null,
+        goal: analysisData.goal || null,
+      }).catch(() => ({ items: [] }));
+      const productRecommendations = Array.isArray(recommendationResponse.items)
+        ? recommendationResponse.items.map((product) => ({
+            ...product,
+            focus: product.recommendation_focus,
+          }))
+        : [];
+
+      setCompletedResult({
+        ...result,
+        recommendationPayload,
+        product_recommendations: productRecommendations,
+      });
     } catch (error) {
       console.error("Skin Analysis Error:", error);
 
@@ -157,7 +192,12 @@ export default function SkinQuestionnaire({
   /* MARK: Loading */
 
   if (loading) {
-    return <SkinAnalysisLoading />;
+    return (
+      <SkinAnalysisLoading
+        complete={Boolean(completedResult)}
+        onComplete={() => onResult(completedResult)}
+      />
+    );
   }
 
   /* MARK: Error */

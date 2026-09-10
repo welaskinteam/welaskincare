@@ -42,76 +42,70 @@ export default function SkinAnalysisResult({
 
   /* MARK: API Data */
 
-  const skinScore = Number(result.prototype_skin_score) || 0;
-
-  const totalDetectionCount = Number(result.total_detection_count) || 0;
-
-  const detectionConfidence = Number(result.mean_detection_confidence) || 0;
-
-  const regionCounts = result.approximate_face_region_counts ?? {
-    forehead: 0,
-    left_cheek: 0,
-    right_cheek: 0,
-    nose: 0,
-    chin: 0,
+  const skinType = result.skin_type?.class_name || "-";
+  const skinTypeLabels = {
+    dry: "ผิวแห้ง",
+    oily: "ผิวมัน",
+    normal: "ผิวธรรมดา",
+    combination: "ผิวผสม",
+    sensitive: "ผิวบอบบางแพ้ง่าย",
   };
+  const skinTypeLabel = skinTypeLabels[skinType.toLowerCase()] || skinType;
+  const detections = Array.isArray(result.detections) ? result.detections : [];
+  const totalDetectionCount = detections.length;
+  // This score is an easy-to-read estimate based only on the number of
+  // detected concern points, not the model confidence.
+  const skinQualityScore = Math.max(0, 100 - totalDetectionCount * 8);
+  const skinQualityLabel =
+    skinQualityScore >= 90
+      ? "ดีมาก"
+      : skinQualityScore >= 70
+        ? "ดี"
+        : skinQualityScore >= 50
+          ? "ปานกลาง"
+          : "ควรดูแล";
+  const regionCounts = detections.reduce(
+    (counts, detection) => {
+      const { bbox } = detection;
+      if (!bbox) return counts;
 
-  const insights = Array.isArray(result.insights) ? result.insights : [];
+      const centerX = ((Number(bbox.x1) || 0) + (Number(bbox.x2) || 0)) / 2;
+      const centerY = ((Number(bbox.y1) || 0) + (Number(bbox.y2) || 0)) / 2;
+      const region = centerY < 0.3 ? "forehead" : centerY > 0.75 ? "chin" : centerX < 0.35 ? "left_cheek" : centerX > 0.65 ? "right_cheek" : "nose";
+      counts[region] += 1;
+      return counts;
+    },
+    { forehead: 0, left_cheek: 0, right_cheek: 0, nose: 0, chin: 0 },
+  );
 
   const products = Array.isArray(result.product_recommendations)
     ? result.product_recommendations
     : [];
 
-  /* MARK: Score Label */
+  /* MARK: Detection Data */
 
-  const getScoreLabel = (score) => {
-    if (score >= 80) {
-      return "ดีมาก";
-    }
-
-    if (score >= 60) {
-      return "ปานกลาง";
-    }
-
-    if (score >= 40) {
-      return "ควรดูแล";
-    }
-
-    return "ต้องฟื้นฟู";
-  };
-
-  /* MARK: Concern Data */
-
-  /*
-   * API ตอนนี้มีข้อมูลจริงเกี่ยวกับ acne detection
-   * แต่ยังไม่มี score สำหรับ pores / wrinkles / oiliness
-   *
-   * ดังนั้น field ที่ API ยังไม่มีจะเป็น 0
-   * ไม่ใช่ mock score
-   */
-
-  const concerns = [
-    {
-      key: "acne",
-      label: "สิว",
-      score: Math.min(totalDetectionCount, 10),
-    },
-    {
-      key: "pores",
-      label: "รูขุมขน",
-      score: 0,
-    },
-    {
-      key: "wrinkles",
-      label: "ริ้วรอย",
-      score: 0,
-    },
-    {
-      key: "oiliness",
-      label: "ความมัน",
-      score: 0,
-    },
+  // The API returns detected points, not a separate clinical score.
+  // Keep the existing one-point-per-detection scale, capped at ten.
+  const concernDefinitions = [
+    { key: "acne", label: "สิว", aliases: ["acne", "blackhead", "blackheads", "whitehead", "whiteheads", "pimple", "pimples"] },
+    { key: "pores", label: "รูขุมขน", aliases: ["pores", "pore", "large_pores", "enlarged_pores"] },
+    { key: "wrinkle", label: "ริ้วรอย", aliases: ["wrinkle", "wrinkles"] },
+    { key: "oiliness", label: "ความมัน", aliases: ["oiliness", "oil", "oily", "oily_skin"] },
   ];
+  const groups = new Map(concernDefinitions.map((item) => [item.key, { ...item, count: 0 }]));
+  for (const detection of detections) {
+    const rawKey = String(detection.class_name || "unknown").trim().toLowerCase().replace(/[\s-]+/g, "_");
+    const definition = concernDefinitions.find((item) => item.aliases.includes(rawKey));
+    const key = definition?.key || (["darkspot", "dark_spot", "dark_spots"].includes(rawKey) ? "dark_spot" : rawKey);
+    if (!groups.has(key)) {
+      groups.set(key, { key, label: key === "dark_spot" ? "จุดด่างดำ" : key.replace(/_/g, " "), count: 0 });
+    }
+    groups.get(key).count += 1;
+  }
+  const concerns = Array.from(groups.values(), (item) => ({
+    ...item,
+    score: Math.min(item.count, 10),
+  }));
 
   return (
     <main className={styles.container}>
@@ -147,17 +141,21 @@ export default function SkinAnalysisResult({
         {/* MARK: Score */}
 
         <div className={styles.scoreContent}>
-          <p className={styles.scoreLabel}>Skin Score</p>
+          <div className={styles.scoreHeading}>
+            <p className={styles.scoreLabel}>Skin Score</p>
+            <span className={styles.skinTypeBadge} aria-label={`ประเภทผิว: ${skinTypeLabel}`}>
+              {skinType === "-" ? "ยังไม่มีข้อมูลประเภทผิว" : skinTypeLabel}
+            </span>
+          </div>
 
           <div className={styles.score}>
-            <strong>{skinScore}</strong>
-
+            <strong>{skinQualityScore}</strong>
             <span>/100</span>
           </div>
 
           <p className={styles.scoreDescription}>
-            ผิวของคุณอยู่ในเกณฑ์{" "}
-            <strong>{getScoreLabel(skinScore)}</strong>{" "}
+            ผิวของคุณอยู่ในเกณฑ์ <strong>{skinQualityLabel}</strong>{" "}
+            <span aria-hidden="true">✨</span>
           </p>
 
           {/* MARK: Score Bar */}
@@ -166,24 +164,25 @@ export default function SkinAnalysisResult({
             <div
               className={styles.scoreBarValue}
               style={{
-                width: `${Math.min(Math.max(skinScore, 0), 100)}%`,
+                width: `${skinQualityScore}%`,
               }}
             />
 
             <div
               className={styles.scoreMarker}
               style={{
-                left: `${Math.min(Math.max(skinScore, 0), 100)}%`,
+                left: `${skinQualityScore}%`,
               }}
             />
           </div>
 
           <div className={styles.scoreScale}>
-            <span>ต้องฟื้นฟู</span>
+            <span>ควรดูแล</span>
             <span>ปานกลาง</span>
             <span>ดี</span>
-            <span>ดีเยี่ยม</span>
+            <span>ดีมาก</span>
           </div>
+          <p className={styles.scoreNote}>ประเมินจากจำนวนจุดที่ตรวจพบ</p>
         </div>
       </section>
 
@@ -197,15 +196,15 @@ export default function SkinAnalysisResult({
         </div>
 
         <div className={styles.apiInfoItem}>
-          <span>ความมั่นใจเฉลี่ย</span>
+          <span>คุณภาพผิวโดยรวม</span>
 
-          <strong>{(detectionConfidence * 100).toFixed(1)}%</strong>
+          <strong>{skinQualityScore}/100</strong>
         </div>
 
         <div className={styles.apiInfoItem}>
-          <span>บริเวณที่ตรวจพบมากที่สุด</span>
+          <span>เวลาในการวิเคราะห์</span>
 
-          <strong>{result.dominant_region || "-"}</strong>
+          <strong>{Number(result.inference_ms || 0).toFixed(0)} ms</strong>
         </div>
       </section>
 
@@ -225,32 +224,39 @@ export default function SkinAnalysisResult({
           </button>
         </div>
 
+        <p className={styles.scoreNote}>คะแนนตามจำนวนจุดที่ตรวจพบ สูงสุด 10 · ไม่มีข้อมูลแสดง 0/10</p>
+
         {/* MARK: Concern List */}
 
         <div className={styles.concernList}>
           {concerns.map((item) => (
             <div key={item.key} className={styles.concernItem}>
-              <div className={styles.concernIcon}>
-                {item.key === "acne" && "⌁"}
-                {item.key === "pores" && "⌖"}
-                {item.key === "wrinkles" && "≋"}
-                {item.key === "oiliness" && "♢"}
+              <div className={styles.concernIcon} aria-hidden="true">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+                  { /wrinkle/.test(item.key) ? <path d="M4 12Q12 5 20 12T36 12M4 20Q12 13 20 20T36 20M4 28Q12 21 20 28T36 28" /> : <><path d="M3 14h12l3 12q2 5 4 0l3-12h12M5 21h5m20 0h5M9 28h1m20 0h1M14 33h1m10 0h1M20 5v4M9 6l3 4M31 6l-3 4" /></> }
+                </svg>
               </div>
 
               <span className={styles.concernLabel}>{item.label}</span>
 
-              <div className={styles.concernBar}>
+              <div className={styles.concernMeter}>
+                <span className={styles.concernStatus}>ตรวจพบ {item.count} จุด</span>
+                <div className={styles.concernBar}>
                 <div
                   className={styles.concernBarValue}
                   style={{
                     width: `${item.score * 10}%`,
                   }}
                 />
+                </div>
               </div>
 
-              <strong className={styles.concernScore}>{item.score}/10</strong>
+              <strong className={styles.concernScore}>
+                {item.score}/10
+              </strong>
             </div>
           ))}
+
         </div>
       </section>
 
@@ -289,22 +295,6 @@ export default function SkinAnalysisResult({
         </div>
       </section>
 
-      {/* MARK: Insights */}
-
-      {insights.length > 0 && (
-        <section className={styles.insightCard}>
-          <div className={styles.sectionHeader}>
-            <h2>คำแนะนำจากการวิเคราะห์</h2>
-          </div>
-
-          <div className={styles.insightList}>
-            {insights.map((insight, index) => (
-              <p key={index}>{insight}</p>
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* MARK: Products */}
 
       <section className={styles.productCard}>
@@ -336,15 +326,20 @@ export default function SkinAnalysisResult({
                 key={`${product.category}-${index}`}
                 className={styles.product}
               >
-                <h3>{product.category || "-"}</h3>
+                <div className={styles.productImageWrapper}>
+                  {product.image ? <img className={styles.productImage} src={product.image} alt={product.name || product.category || "สกินแคร์แนะนำ"} /> : <span className={styles.productImagePlaceholder}>ไม่มีรูปสินค้า</span>}
+                </div>
+                <h3>{product.category || "Skincare"}</h3>
 
-                <p>{product.focus || "-"}</p>
+                <p>{product.name || "-"}</p>
 
-                {product.rationale && <small>{product.rationale}</small>}
+                {(product.focus || product.rationale) && (
+                  <small>{product.focus || product.rationale}</small>
+                )}
               </article>
             ))
           ) : (
-            <div className={styles.noProducts}>API ยังไม่มีผลิตภัณฑ์แนะนำ</div>
+            <div className={styles.noProducts}>ยังไม่มีผลิตภัณฑ์แนะนำสำหรับผลวิเคราะห์นี้</div>
           )}
         </div>
       </section>

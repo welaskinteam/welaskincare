@@ -1,4 +1,6 @@
-const API_URL = process.env.NEXT_PUBLIC_SKIN_AI_API_URL?.replace(/\/$/, "");
+const API_URL = (
+  process.env.NEXT_PUBLIC_SKIN_CONDITION_API_URL || "https://api.xobazjr.com"
+).replace(/\/$/, "");
 
 export async function apiFetch(
   endpoint,
@@ -6,11 +8,13 @@ export async function apiFetch(
 ) {
   if (!API_URL) {
     throw new Error(
-      "NEXT_PUBLIC_SKIN_AI_API_URL is not configured."
+      "Skin Condition API URL is not configured."
     );
   }
 
-  const url = `${API_URL}/${endpoint.replace(/^\/+/, "")}`;
+  const url = endpoint.startsWith("/api/")
+    ? endpoint
+    : `${API_URL}/${endpoint.replace(/^\/+/, "")}`;
 
   console.log("API Request:", url);
 
