@@ -328,25 +328,20 @@ export default function SkinAnalysisResult({
                   : "/images/products/unknow.png";
 
               return (
-              <article
-                key={`${product.category}-${index}`}
-                className={styles.product}
-              >
-                <div className={styles.productImageWrapper}>
-                  <img
-                    className={styles.productImage}
-                    src={productImage}
-                    alt={product.name || product.category || "สกินแคร์แนะนำ"}
-                  />
-                </div>
-                <h3>{product.category || "Skincare"}</h3>
-
-                <p>{product.name || "-"}</p>
-
-                {(product.focus || product.rationale) && (
-                  <small>{product.focus || product.rationale}</small>
-                )}
-              </article>
+                <article
+                  key={`${product.category}-${index}`}
+                  className={styles.product}
+                >
+                  <div className={styles.productImageWrapper}>
+                    <img
+                      className={styles.productImage}
+                      src={productImage}
+                      alt={product.category || "สกินแคร์แนะนำ"}
+                    />
+                  </div>
+                  <h3>{product.category || "Skincare"}</h3>
+                  <p>{product.recommendation_focus || "-"}</p>
+                </article>
               );
             })
           ) : (

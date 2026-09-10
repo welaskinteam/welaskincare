@@ -51,6 +51,47 @@ export default function Home() {
     setStep("questionnaire");
   };
 
+  const handleViewAllDetails = async () => {
+    let imageDataUrl = "";
+
+    if (typeof image === "string") {
+      imageDataUrl = image;
+    } else if (image instanceof Blob) {
+      imageDataUrl = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+        reader.onerror = () => resolve("");
+        reader.readAsDataURL(image);
+      });
+    }
+
+    sessionStorage.setItem(
+      "wela-skin-analysis-details",
+      JSON.stringify({ result, image: imageDataUrl }),
+    );
+    sessionStorage.setItem(
+      "wela-product-recommendations",
+      JSON.stringify(
+        Array.isArray(result?.product_recommendations)
+          ? result.product_recommendations
+          : [],
+      ),
+    );
+    router.push("/skin-analysis-details");
+  };
+
+  const handleViewAllProducts = () => {
+    const recommendations = Array.isArray(result?.product_recommendations)
+      ? result.product_recommendations
+      : [];
+
+    sessionStorage.setItem(
+      "wela-product-recommendations",
+      JSON.stringify(recommendations),
+    );
+    router.push("/recommendations");
+  };
+
   const handleSkipQuestionnaire = async () => {
     if (analyzing.current) return;
     analyzing.current = true;
@@ -127,8 +168,8 @@ export default function Home() {
           <SkinAnalysisResult
             image={image}
             result={result}
-            onViewAllDetails={() => {}}
-            onViewAllProducts={() => router.push("/recommendations")}
+            onViewAllDetails={handleViewAllDetails}
+            onViewAllProducts={handleViewAllProducts}
           />
         </>
       );

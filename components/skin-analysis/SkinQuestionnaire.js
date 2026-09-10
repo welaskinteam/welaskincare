@@ -169,6 +169,8 @@ export default function SkinQuestionnaire({
       const productRecommendations = Array.isArray(recommendationResponse.items)
         ? recommendationResponse.items.map((product) => ({
             ...product,
+            image: product.image || product.image_url,
+            url: product.url || product.product_url,
             focus: product.recommendation_focus,
           }))
         : [];

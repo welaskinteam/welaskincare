@@ -1,21 +1,52 @@
 import Head from "next/head";
+import { useEffect, useState } from "react";
 
 import ProductCard from "../components/ProductCard";
-import products from "../data/products";
 import styles from "../styles/Recommendations.module.css";
 
-const recommendedProductIds = [1, 2, 3, 5, 6];
-
-const productGroups = [
-  { category: "Cleanser", title: "ทำความสะอาด" },
-  { category: "Moisturizer", title: "ให้ความชุ่มชื้น" },
-  { category: "Sunscreen", title: "กันแดด" },
-];
-
 export default function RecommendationsPage() {
-  const recommendedProducts = products.filter((product) =>
-    recommendedProductIds.includes(product.id),
-  );
+  const [recommendedProducts, setRecommendedProducts] = useState(null);
+
+  useEffect(() => {
+    try {
+      const storedRecommendations = sessionStorage.getItem(
+        "wela-product-recommendations",
+      );
+      const parsedRecommendations = storedRecommendations
+        ? JSON.parse(storedRecommendations)
+        : [];
+
+      setRecommendedProducts(
+        Array.isArray(parsedRecommendations)
+          ? parsedRecommendations.map((product) => ({
+              ...product,
+              image:
+                product.image ||
+                product.image_url ||
+                "/images/products/unknow.png",
+              url: product.url || product.product_url || "",
+              price: Number(product.price) || 0,
+            }))
+          : [],
+      );
+    } catch (error) {
+      console.error("Unable to load product recommendations:", error);
+      setRecommendedProducts([]);
+    }
+  }, []);
+
+  const productGroups = (recommendedProducts || []).reduce((groups, product) => {
+    const category = product.category || "Skincare";
+    const existingGroup = groups.find((group) => group.category === category);
+
+    if (existingGroup) {
+      existingGroup.products.push(product);
+    } else {
+      groups.push({ category, title: category, products: [product] });
+    }
+
+    return groups;
+  }, []);
 
   return (
     <>
@@ -45,28 +76,28 @@ export default function RecommendationsPage() {
             </p>
           </section>
 
-          <div className={styles.groups}>
-            {productGroups.map((group) => {
-              const groupProducts = recommendedProducts.filter(
-                (product) => product.category === group.category,
-              );
-
-              return (
+          {recommendedProducts === null ? (
+            <p>กำลังโหลดผลิตภัณฑ์แนะนำ...</p>
+          ) : productGroups.length === 0 ? (
+            <p>ไม่พบผลิตภัณฑ์แนะนำจากผลวิเคราะห์นี้</p>
+          ) : (
+            <div className={styles.groups}>
+              {productGroups.map((group) => (
                 <section key={group.category} className={styles.group}>
                   <div className={styles.groupHeader}>
                     <h2>{group.title}</h2>
-                    <span>{groupProducts.length} รายการ</span>
+                    <span>{group.products.length} รายการ</span>
                   </div>
 
                   <div className={styles.productGrid}>
-                    {groupProducts.map((product) => (
+                    {group.products.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
                   </div>
                 </section>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <footer className={styles.footerVisual}>
