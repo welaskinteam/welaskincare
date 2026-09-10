@@ -78,7 +78,7 @@ export default function SkinAnalysisForm() {
         console.log(key, value);
       }
 
-      const responseData = await apiFetch("/predict", {
+      const responseData = await apiFetch("/api/skin-condition/predict", {
         method: "POST",
         body: data,
       });

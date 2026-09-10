@@ -52,7 +52,7 @@
 .groups {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
   margin-top: var(--space-6);
 }
 
@@ -88,7 +88,6 @@
   position: relative;
   height: 130px;
   overflow: hidden;
-  background: var(--color-background);
 }
 
 .footerVisual img {

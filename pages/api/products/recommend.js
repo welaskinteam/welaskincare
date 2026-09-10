@@ -1,6 +1,4 @@
-const PRODUCT_RECOMMENDATION_API_URL =
-  process.env.PRODUCT_RECOMMENDATION_API_URL ||
-  "https://welaskin.com/api/products/recommend.php";
+const PRODUCT_RECOMMENDATION_API_URL = process.env.PRODUCT_RECOMMENDATION_API_URL || "";
 
 export default async function handler(request, response) {
   if (request.method !== "POST") {
@@ -10,6 +8,11 @@ export default async function handler(request, response) {
   }
 
   try {
+    if (!PRODUCT_RECOMMENDATION_API_URL) {
+      response.status(500).json({ message: "Product Recommendation API URL is not configured." });
+      return;
+    }
+
     const upstreamResponse = await fetch(PRODUCT_RECOMMENDATION_API_URL, {
       method: "POST",
       headers: { "content-type": "application/json" },

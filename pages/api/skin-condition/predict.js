@@ -1,6 +1,4 @@
-const SKIN_CONDITION_API_URL = (
-  process.env.SKIN_CONDITION_API_URL || "https://api.xobazjr.com"
-).replace(/\/$/, "");
+const SKIN_CONDITION_API_URL = (process.env.SKIN_CONDITION_API_URL || "").replace(/\/$/, "");
 
 export const config = {
   api: {
@@ -26,6 +24,11 @@ export default async function handler(request, response) {
   }
 
   try {
+    if (!SKIN_CONDITION_API_URL) {
+      response.status(500).json({ detail: "Skin Condition API URL is not configured." });
+      return;
+    }
+
     const body = await readRequestBody(request);
     const upstreamResponse = await fetch(`${SKIN_CONDITION_API_URL}/predict`, {
       method: "POST",

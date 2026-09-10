@@ -96,15 +96,16 @@ export default function SkinAnalysisResult({
   for (const detection of detections) {
     const rawKey = String(detection.class_name || "unknown").trim().toLowerCase().replace(/[\s-]+/g, "_");
     const definition = concernDefinitions.find((item) => item.aliases.includes(rawKey));
-    const key = definition?.key || (["darkspot", "dark_spot", "dark_spots"].includes(rawKey) ? "dark_spot" : rawKey);
-    if (!groups.has(key)) {
-      groups.set(key, { key, label: key === "dark_spot" ? "จุดด่างดำ" : key.replace(/_/g, " "), count: 0 });
+    // Keep additional ML/API classes in `detections`, but only show the
+    // four supported concern categories in the summary card.
+    if (definition) {
+      groups.get(definition.key).count += 1;
     }
-    groups.get(key).count += 1;
   }
   const concerns = Array.from(groups.values(), (item) => ({
     ...item,
-    score: Math.min(item.count, 10),
+    // Fewer detected concerns means a better skin score.
+    score: Math.max(0, 10 - item.count),
   }));
 
   return (
@@ -182,7 +183,6 @@ export default function SkinAnalysisResult({
             <span>ดี</span>
             <span>ดีมาก</span>
           </div>
-          <p className={styles.scoreNote}>ประเมินจากจำนวนจุดที่ตรวจพบ</p>
         </div>
       </section>
 
@@ -224,8 +224,6 @@ export default function SkinAnalysisResult({
           </button>
         </div>
 
-        <p className={styles.scoreNote}>คะแนนตามจำนวนจุดที่ตรวจพบ สูงสุด 10 · ไม่มีข้อมูลแสดง 0/10</p>
-
         {/* MARK: Concern List */}
 
         <div className={styles.concernList}>
@@ -240,7 +238,9 @@ export default function SkinAnalysisResult({
               <span className={styles.concernLabel}>{item.label}</span>
 
               <div className={styles.concernMeter}>
-                <span className={styles.concernStatus}>ตรวจพบ {item.count} จุด</span>
+                <span className={styles.concernStatus}>
+                  {item.score >= 8 ? "Excellent" : item.score >= 7 ? "good" : "Medium"}
+                </span>
                 <div className={styles.concernBar}>
                 <div
                   className={styles.concernBarValue}
@@ -321,13 +321,23 @@ export default function SkinAnalysisResult({
 
         <div className={styles.products}>
           {products.length > 0 ? (
-            products.slice(0, 4).map((product, index) => (
+            products.slice(0, 4).map((product, index) => {
+              const productImage =
+                product.image && String(product.image).toLowerCase() !== "null"
+                  ? product.image
+                  : "/images/products/unknow.png";
+
+              return (
               <article
                 key={`${product.category}-${index}`}
                 className={styles.product}
               >
                 <div className={styles.productImageWrapper}>
-                  {product.image ? <img className={styles.productImage} src={product.image} alt={product.name || product.category || "สกินแคร์แนะนำ"} /> : <span className={styles.productImagePlaceholder}>ไม่มีรูปสินค้า</span>}
+                  <img
+                    className={styles.productImage}
+                    src={productImage}
+                    alt={product.name || product.category || "สกินแคร์แนะนำ"}
+                  />
                 </div>
                 <h3>{product.category || "Skincare"}</h3>
 
@@ -337,7 +347,8 @@ export default function SkinAnalysisResult({
                   <small>{product.focus || product.rationale}</small>
                 )}
               </article>
-            ))
+              );
+            })
           ) : (
             <div className={styles.noProducts}>ยังไม่มีผลิตภัณฑ์แนะนำสำหรับผลวิเคราะห์นี้</div>
           )}
