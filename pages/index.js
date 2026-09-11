@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { analyzeSkin } from "../services/skinAnalysis";
+import { getProductRecommendations } from "../services/productRecommendations";
 import SkinAnalysisLoading from "../components/skin-analysis/SkinAnalysisLoading";
 import PrivacyConsent from "../components/PrivacyConsent";
 import ScanIntro from "../components/skin-analysis/ScanIntro";
@@ -98,7 +99,48 @@ export default function Home() {
     setAnalysisError("");
     setStep("analyzing");
     try {
-      handleAnalysisResult(await analyzeSkin({ image }));
+      const analysisResult = await analyzeSkin({ image });
+      const concerns = [
+        ...new Set(
+          (Array.isArray(analysisResult.detections)
+            ? analysisResult.detections
+            : []
+          )
+            .map((detection) => detection.class_name)
+            .filter(Boolean)
+            .map((concern) =>
+              String(concern).trim().toLowerCase().replace(/[\s-]+/g, "_"),
+            ),
+        ),
+      ];
+      const skinType = analysisResult.skin_type?.class_name
+        ? String(analysisResult.skin_type.class_name)
+            .trim()
+            .toLowerCase()
+            .replace(/[\s-]+/g, "_")
+        : null;
+
+      const recommendationResponse = await getProductRecommendations({
+        skinType,
+        concerns: concerns.length ? concerns : null,
+        goal: null,
+      }).catch((error) => {
+        console.error("Product Recommendation Error:", error);
+        return { items: [] };
+      });
+      const productRecommendations = Array.isArray(recommendationResponse.items)
+        ? recommendationResponse.items.map((product) => ({
+            ...product,
+            image: product.image || product.image_url,
+            url: product.url || product.product_url,
+            focus: product.recommendation_focus,
+          }))
+        : [];
+
+      handleAnalysisResult({
+        ...analysisResult,
+        product_recommendations: productRecommendations,
+      });
     } catch (error) {
       setAnalysisError("ไม่สามารถรับผลวิเคราะห์ได้ กรุณาลองอีกครั้ง");
       setStep("scan-result");
