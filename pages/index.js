@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { analyzeSkin } from "../services/skinAnalysis";
@@ -10,11 +10,15 @@ import FaceCamera from "../components/skin-analysis/FaceCamera";
 import ScanResultPreview from "../components/skin-analysis/ScanResultPreview";
 import SkinQuestionnaire from "../components/skin-analysis/SkinQuestionnaire";
 import SkinAnalysisResult from "../components/skin-analysis/SkinAnalysisResult";
+import LoginScreen from "../components/LoginScreen";
+import { getAuthSession } from "../services/auth";
 import Head from "@/components/head";
 
 export default function Home() {
   const router = useRouter();
-  const [step, setStep] = useState("privacy");
+  const [step, setStep] = useState("login");
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [user, setUser] = useState(null);
 
   const analyzing = useRef(false);
   const [analysisError, setAnalysisError] = useState("");
@@ -29,6 +33,18 @@ export default function Home() {
     concerns: "",
     goal: "",
   });
+
+  useEffect(() => {
+    const storedUser = getAuthSession();
+    setUser(storedUser);
+    setStep(storedUser ? "privacy" : "login");
+    setIsHydrated(true);
+  }, []);
+
+  const handleAuthenticated = (authenticatedUser) => {
+    setUser(authenticatedUser);
+    setStep("privacy");
+  };
 
   const handleAnalysisResult = (data) => {
     setResult(data);
@@ -149,7 +165,19 @@ export default function Home() {
     }
   };
 
+  if (!isHydrated) {
+    return <><Head /><main aria-busy="true" /></>;
+  }
+
   switch (step) {
+    case "login":
+      return (
+        <>
+          <Head />
+          <LoginScreen onAuthenticated={handleAuthenticated} />
+        </>
+      );
+
     case "privacy":
       return (
         <>
