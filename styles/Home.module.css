@@ -106,22 +106,6 @@ a.secondary {
   }
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
-
-  .intro {
-    gap: 16px;
-  }
-
-  .intro h1 {
-    font-size: var(--font-size-32);
-    line-height: 40px;
-    letter-spacing: -1.92px;
-  }
-}
-
 @media (prefers-color-scheme: dark) {
   .logo {
     filter: invert();
@@ -147,3 +131,8 @@ a.secondary {
   padding: 0.1em 0.4em;
   border-radius: 6px;
 }
+
+/* Mobile layout is also the desktop/tablet layout. */
+.main { padding: 48px 24px; }
+.intro { gap: 16px; }
+.intro h1 { font-size: var(--font-size-32); line-height: 40px; letter-spacing: -1.92px; }

@@ -40,7 +40,7 @@
 }
 
 .logo {
-  width: clamp(120px, 30vw, 220px);
+  width: min(42%, 180px);
   height: auto;
 }
 
@@ -48,7 +48,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: min(54vw, 330px);
+  width: min(56%, 240px);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
 }
@@ -95,7 +95,7 @@
 
 .progressOrb span {
   font-family: "Outfit", sans-serif;
-  font-size: clamp(48px, 13vw, 78px);
+  font-size: clamp(34px, 9vw, 46px);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -113,28 +113,19 @@
   margin: 0;
   color: var(--color-white);
   font-family: var(--font-family);
-  font-size: clamp(24px, 6.3vw, 38px);
+  font-size: clamp(16px, 4.5vw, 22px);
   font-weight: var(--font-weight-bold);
   line-height: 1.35;
   text-shadow: 0 1px 5px rgba(65, 32, 25, 0.14);
+  white-space: nowrap;
 }
 
 .message p {
   margin: 10px 0 0;
   color: var(--color-white);
   font-family: var(--font-family);
-  font-size: clamp(17px, 4.4vw, 25px);
+  font-size: clamp(15px, 3.8vw, 18px);
   font-weight: var(--font-weight-regular);
   line-height: 1.4;
   text-shadow: 0 1px 5px rgba(65, 32, 25, 0.14);
-}
-
-@media (min-width: 768px) {
-  .progressCircle {
-    width: min(38vw, 350px);
-  }
-
-  .message {
-    bottom: calc(96px + env(safe-area-inset-bottom));
-  }
 }

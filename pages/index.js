@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { analyzeSkin } from "../services/skinAnalysis";
@@ -11,6 +11,22 @@ import ScanResultPreview from "../components/skin-analysis/ScanResultPreview";
 import SkinQuestionnaire from "../components/skin-analysis/SkinQuestionnaire";
 import SkinAnalysisResult from "../components/skin-analysis/SkinAnalysisResult";
 import Head from "@/components/head";
+
+const ANALYSIS_STATE_KEY = "wela-skin-analysis-state";
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve) => {
+    if (!(blob instanceof Blob)) {
+      resolve("");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+    reader.onerror = () => resolve("");
+    reader.readAsDataURL(blob);
+  });
+}
 
 export default function Home() {
   const router = useRouter();
@@ -30,9 +46,44 @@ export default function Home() {
     goal: "",
   });
 
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    try {
+      const storedState = sessionStorage.getItem(ANALYSIS_STATE_KEY);
+      if (!storedState) return;
+
+      const parsedState = JSON.parse(storedState);
+      if (!parsedState?.result) return;
+
+      setResult(parsedState.result);
+      setImage(parsedState.image || null);
+      setQuestionnaire((current) => ({
+        ...current,
+        ...(parsedState.questionnaire || {}),
+      }));
+      setStep("result");
+    } catch (error) {
+      console.error("Unable to restore skin analysis state:", error);
+      sessionStorage.removeItem(ANALYSIS_STATE_KEY);
+    }
+  }, [router.isReady]);
+
   const handleAnalysisResult = (data) => {
     setResult(data);
     setStep("result");
+
+    void (async () => {
+      const imageDataUrl = await blobToDataUrl(image);
+      sessionStorage.setItem(
+        ANALYSIS_STATE_KEY,
+        JSON.stringify({
+          result: data,
+          image: imageDataUrl,
+          questionnaire,
+        }),
+      );
+    })();
   };
 
   const handleAcceptPrivacy = () => {

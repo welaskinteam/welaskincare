@@ -160,37 +160,12 @@
   background: var(--color-primary-dark);
 }
 
-@media (max-width: 767px) {
-  .header {
-    justify-content: flex-end;
-  }
-
-  .backLink {
-    position: static;
-    margin-right: auto;
-  }
-
-  .container {
-    padding-top: var(--space-6);
-  }
-
-  .detailCard {
-    display: block;
-  }
-
-  .imagePanel {
-    min-height: 360px;
-  }
-
-  .productImage {
-    padding: var(--space-8);
-  }
-
-  .info {
-    padding: var(--space-6);
-  }
-
-  .info h1 {
-    font-size: var(--font-size-26);
-  }
-}
+/* Mobile layout is also the desktop/tablet layout. */
+.header { justify-content: flex-end; }
+.backLink { position: static; margin-right: auto; }
+.container { padding-top: var(--space-6); }
+.detailCard { display: block; }
+.imagePanel { min-height: 360px; }
+.productImage { padding: var(--space-8); }
+.info { padding: var(--space-6); }
+.info h1 { font-size: var(--font-size-26); }

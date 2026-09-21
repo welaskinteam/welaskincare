@@ -129,3 +129,36 @@
   .concernItem { grid-template-columns: 26px 62px minmax(0, 1fr) 32px; gap: 6px; }
   .productCard .sectionHeader { flex-wrap: wrap; }
 }
+
+/* Mobile layout is also the desktop/tablet layout. */
+.container { padding: 48px 11px calc(22px + env(safe-area-inset-bottom)); }
+.header { padding-inline: 20px; margin-bottom: 22px; }
+.eyebrow { font-size: 16px; margin-bottom: 10px; }
+.header h1 { font-size: clamp(25px, 6.7vw, 40px); }
+.scoreCard { padding: 18px; gap: 16px; border-radius: 20px; }
+.scoreHeading { gap: 4px 6px; margin-bottom: 10px; }
+.scoreLabel { font-size: 15px; }
+.skinTypeBadge { padding: 2px 7px; font-size: 10px; }
+.score strong { font-size: clamp(48px, 14.5vw, 84px); letter-spacing: -2px; }
+.score span { font-size: clamp(20px, 5.5vw, 32px); }
+.scoreDescription { font-size: clamp(12px, 3vw, 18px); margin-top: 10px; }
+.scoreBar { margin-top: 12px; height: 6px; }
+.scoreScale { margin-top: 12px; font-size: clamp(8px, 1.8vw, 11px); }
+.scoreNote { font-size: 8px; }
+.detailCard, .productCard { padding: 18px 20px 22px; margin-top: 12px; border-radius: 20px; }
+.sectionHeader h2 { font-size: 15px; }
+.viewAllButton { min-height: 32px; padding: 5px 14px; font-size: 13px; gap: 8px; }
+.viewAllButton span { font-size: 24px; }
+.concernList { gap: 14px; margin-top: 20px; }
+.concernItem { grid-template-columns: 30px 72px minmax(0, 1fr) 36px; gap: 8px; }
+.concernIcon, .concernIcon svg { width: 28px; height: 30px; }
+.concernLabel { font-size: 14px; }
+.concernStatus { font-size: 10px; }
+.concernScore { font-size: 12px; }
+.concernBar { height: 4px; }
+.productEyebrow { font-size: 13px; }
+.productCard .productTitle { font-size: 14px; }
+.products { gap: 10px; margin-top: 24px; }
+.productImageWrapper { height: 100px; }
+.product h3 { font-size: 12px; }
+.product p, .product small { font-size: 9px; }

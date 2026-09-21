@@ -12,10 +12,7 @@
   min-height: 100dvh;
 
   margin: 0 auto;
-  padding:
-    var(--page-padding-y)
-    var(--page-padding-x)
-    var(--space-10);
+  padding: 40px var(--space-6);
 
   display: flex;
   flex-direction: column;
@@ -24,7 +21,7 @@
 /* MARK: Header */
 
 .eyebrow {
-  margin: 0 0 var(--space-6);
+  margin: 0 0 var(--space-7);
 
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-medium);
@@ -46,7 +43,7 @@
 }
 
 .description {
-  margin: var(--space-4) 0 0;
+  margin: var(--space-5) 0 0;
 
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-light);
@@ -63,7 +60,7 @@
   display: flex;
   flex-direction: column;
 
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 
 .feature {
@@ -121,7 +118,7 @@
 /* MARK: Consent */
 
 .consentBox {
-  margin-top: var(--space-8);
+  margin-top: var(--space-10);
 
   padding: var(--space-4);
 
@@ -210,7 +207,7 @@
   width: 100%;
   height: var(--button-height);
 
-  margin-top: var(--space-8);
+  margin-top: var(--space-10);
 
   border: none;
 
@@ -236,44 +233,4 @@
   opacity: 0.45;
 
   cursor: not-allowed;
-}
-
-/* MARK: Tablet */
-
-@media (min-width: 768px) {
-  .featureList {
-    gap: var(--space-7);
-  }
-
-  .feature {
-    gap: var(--space-5);
-  }
-
-  .featureContent p {
-    font-size: var(--font-size-md);
-  }
-
-  .consentBox {
-    padding: var(--space-5);
-  }
-
-  .checkboxRow {
-    font-size: var(--font-size-md);
-  }
-}
-
-/* MARK: Desktop */
-
-@media (min-width: 1024px) {
-  .content {
-    padding-top: var(--space-6);
-  }
-
-  .featureList {
-    margin-top: var(--space-12);
-  }
-
-  .acceptButton {
-    height: 64px;
-  }
 }

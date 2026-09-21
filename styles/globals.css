@@ -145,6 +145,8 @@
   --grid-option-height: 102px;
   --grid-option-gap: 12px;
 
+  --mobile-viewport-width: 520px;
+
 
   /* MARK: Shadow */
 
@@ -185,6 +187,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Mobile-only app viewport on every device. */
+#__next {
+  width: min(100%, var(--mobile-viewport-width));
+  min-height: 100dvh;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
 button,
 input,
 select,
@@ -199,28 +209,4 @@ button {
 img {
   max-width: 100%;
   display: block;
-}
-
-/* MARK: Tablet */
-
-@media (min-width: 768px) {
-  :root {
-    --page-padding-x: 32px;
-
-    --font-size-h1: 34px;
-
-    --feature-icon-size: 76px;
-  }
-}
-
-/* MARK: Desktop */
-
-@media (min-width: 1024px) {
-  :root {
-    --page-padding-x: 30px;
-
-    --font-size-h1: 36px;
-
-    --feature-icon-size: 82px;
-  }
 }

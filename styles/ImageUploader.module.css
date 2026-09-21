@@ -125,20 +125,3 @@
   box-shadow: var(--shadow-sm);
 }
 
-
-/* MARK: Tablet */
-
-@media (min-width: 768px) {
-  .uploadButton {
-    min-height: 320px;
-  }
-}
-
-
-/* MARK: Desktop */
-
-@media (min-width: 1024px) {
-  .uploadButton {
-    min-height: 360px;
-  }
-}

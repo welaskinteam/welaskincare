@@ -152,28 +152,3 @@
   height: 14px;
 }
 
-
-/* MARK: Tablet */
-
-@media (min-width: 768px) {
-  .imageWrapper {
-    height: 230px;
-  }
-
-  .name {
-    font-size: var(--font-size-lg);
-  }
-
-  .description {
-    font-size: var(--font-size-xs);
-  }
-}
-
-
-/* MARK: Desktop */
-
-@media (min-width: 1200px) {
-  .imageWrapper {
-    height: 280px;
-  }
-}

@@ -302,25 +302,3 @@
   cursor: not-allowed;
 }
 
-
-/* MARK: Tablet */
-
-@media (min-width: 768px) {
-  .content {
-    padding-top: var(--space-12);
-  }
-
-  .options,
-  .skinTypes {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-
-/* MARK: Desktop */
-
-@media (min-width: 1024px) {
-  .content {
-    padding-top: var(--space-16);
-  }
-}
