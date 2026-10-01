@@ -11,6 +11,7 @@ import ScanResultPreview from "../components/skin-analysis/ScanResultPreview";
 import SkinQuestionnaire from "../components/skin-analysis/SkinQuestionnaire";
 import SkinAnalysisResult from "../components/skin-analysis/SkinAnalysisResult";
 import Welcome from "../components/Welcome";
+import Login from "../components/Login";
 import Head from "@/components/head";
 
 const ANALYSIS_STATE_KEY = "wela-skin-analysis-state";
@@ -92,6 +93,10 @@ export default function Home() {
   };
 
   const handleStartWelcome = () => {
+    setStep("login");
+  };
+
+  const handleGoogleSuccess = () => {
     setStep("privacy");
   };
 
@@ -219,6 +224,14 @@ export default function Home() {
         <>
           <Head />
           <PrivacyConsent onAccept={handleAcceptPrivacy} />
+        </>
+      );
+
+    case "login":
+      return (
+        <>
+          <Head />
+          <Login onGoogleSuccess={handleGoogleSuccess} />
         </>
       );
 
