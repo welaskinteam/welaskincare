@@ -1,8 +1,7 @@
 import Head from "next/head";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import ProductCard from "../../components/ProductCard";
-import products from "../../data/products";
 
 import styles from "../../styles/Products.module.css";
 
@@ -10,11 +9,51 @@ import Link from "next/link";
 
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [visibleProducts, setVisibleProducts] = useState(8);
 
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const response = await fetch("/api/products");
+        if (!response.ok) {
+          throw new Error(`Unable to load products: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const items = Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data)
+            ? data
+            : [];
+
+        setProducts(
+          items.map((product) => ({
+            ...product,
+            image:
+              product.image ||
+              product.image_url ||
+              "/images/products/unknow.png",
+            url: product.url || product.product_url || "",
+            price: Number(product.price) || 0,
+          })),
+        );
+      } catch (error) {
+        console.error("Unable to load products:", error);
+        setProducts([]);
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  const loadedProducts = products || [];
+
   const filters = useMemo(() => {
-    const categories = [...new Set(products.map((product) => product.category))];
+    const categories = [
+      ...new Set(loadedProducts.map((product) => product.category)),
+    ];
 
     return [
       { id: "all", label: "All Skincare" },
@@ -23,15 +62,15 @@ export default function ProductsPage() {
         label: category,
       })),
     ];
-  }, []);
+  }, [loadedProducts]);
 
   const filteredProducts = useMemo(() => {
     if (activeFilter === "all") {
-      return products;
+      return loadedProducts;
     }
 
-    return products.filter((product) => product.category === activeFilter);
-  }, [activeFilter]);
+    return loadedProducts.filter((product) => product.category === activeFilter);
+  }, [activeFilter, loadedProducts]);
 
   const displayedProducts = filteredProducts.slice(0, visibleProducts);
 
@@ -132,22 +171,24 @@ export default function ProductsPage() {
             </h2>
 
             <span>
-              {filteredProducts.length} รายการ
+              {products === null ? "กำลังโหลด..." : `${filteredProducts.length} รายการ`}
             </span>
           </div>
 
 
-          <div className={styles.productGrid}>
-            {displayedProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-              />
-            ))}
-          </div>
-
-          {filteredProducts.length === 0 && (
+          {products === null ? (
+            <p>กำลังโหลดสินค้า...</p>
+          ) : filteredProducts.length === 0 ? (
             <p>ไม่พบสินค้าในหมวดหมู่นี้</p>
+          ) : (
+            <div className={styles.productGrid}>
+              {displayedProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                />
+              ))}
+            </div>
           )}
 
 

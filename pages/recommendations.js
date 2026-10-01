@@ -4,35 +4,56 @@ import { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import styles from "../styles/Recommendations.module.css";
 
+function normalizeProducts(products) {
+  return products.map((product) => ({
+    ...product,
+    image:
+      product.image ||
+      product.image_url ||
+      "/images/products/unknow.png",
+    url: product.url || product.product_url || "",
+    price: Number(product.price) || 0,
+  }));
+}
+
 export default function RecommendationsPage() {
   const [recommendedProducts, setRecommendedProducts] = useState(null);
 
   useEffect(() => {
-    try {
-      const storedRecommendations = sessionStorage.getItem(
-        "wela-product-recommendations",
-      );
-      const parsedRecommendations = storedRecommendations
-        ? JSON.parse(storedRecommendations)
-        : [];
+    const loadProducts = async () => {
+      try {
+        const storedRecommendations = sessionStorage.getItem(
+          "wela-product-recommendations",
+        );
+        const parsedRecommendations = storedRecommendations
+          ? JSON.parse(storedRecommendations)
+          : [];
 
-      setRecommendedProducts(
-        Array.isArray(parsedRecommendations)
-          ? parsedRecommendations.map((product) => ({
-              ...product,
-              image:
-                product.image ||
-                product.image_url ||
-                "/images/products/unknow.png",
-              url: product.url || product.product_url || "",
-              price: Number(product.price) || 0,
-            }))
-          : [],
-      );
-    } catch (error) {
-      console.error("Unable to load product recommendations:", error);
-      setRecommendedProducts([]);
-    }
+        if (Array.isArray(parsedRecommendations) && parsedRecommendations.length > 0) {
+          setRecommendedProducts(normalizeProducts(parsedRecommendations));
+          return;
+        }
+
+        const response = await fetch("/api/products");
+        if (!response.ok) {
+          throw new Error(`Unable to load all products: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const products = Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data)
+            ? data
+            : [];
+
+        setRecommendedProducts(normalizeProducts(products));
+      } catch (error) {
+        console.error("Unable to load product recommendations:", error);
+        setRecommendedProducts([]);
+      }
+    };
+
+    loadProducts();
   }, []);
 
   const productGroups = (recommendedProducts || []).reduce((groups, product) => {
