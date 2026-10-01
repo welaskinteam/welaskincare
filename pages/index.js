@@ -10,6 +10,7 @@ import FaceCamera from "../components/skin-analysis/FaceCamera";
 import ScanResultPreview from "../components/skin-analysis/ScanResultPreview";
 import SkinQuestionnaire from "../components/skin-analysis/SkinQuestionnaire";
 import SkinAnalysisResult from "../components/skin-analysis/SkinAnalysisResult";
+import Welcome from "../components/Welcome";
 import Head from "@/components/head";
 
 const ANALYSIS_STATE_KEY = "wela-skin-analysis-state";
@@ -30,7 +31,7 @@ function blobToDataUrl(blob) {
 
 export default function Home() {
   const router = useRouter();
-  const [step, setStep] = useState("privacy");
+  const [step, setStep] = useState("welcome");
 
   const analyzing = useRef(false);
   const [analysisError, setAnalysisError] = useState("");
@@ -88,6 +89,10 @@ export default function Home() {
 
   const handleAcceptPrivacy = () => {
     setStep("scan-intro");
+  };
+
+  const handleStartWelcome = () => {
+    setStep("privacy");
   };
 
   const handleStartScan = () => {
@@ -201,6 +206,14 @@ export default function Home() {
   };
 
   switch (step) {
+    case "welcome":
+      return (
+        <>
+          <Head />
+          <Welcome onStart={handleStartWelcome} />
+        </>
+      );
+
     case "privacy":
       return (
         <>

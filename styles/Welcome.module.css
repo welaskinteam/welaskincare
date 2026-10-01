@@ -1,0 +1,138 @@
+.page {
+  width: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--color-welcome-background);
+  color: var(--color-text-primary);
+}
+
+.hero {
+  position: relative;
+  height: 67dvh;
+  min-height: 570px;
+  overflow: visible;
+  background: var(--color-camera-background);
+}
+
+/* Add the supplied portrait later at /public/images/wela-face-background.jpg. */
+.backgroundImage {
+  position: absolute;
+  inset: 0;
+  background-image: url("/images/wela-face-background.jpg");
+  background-position: center -56px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.98;
+}
+
+.logo,
+.skinGrid {
+  position: absolute;
+  z-index: 2;
+}
+
+.logo {
+  top: 104px; left: 50%; width: 118px; height: auto;
+  transform: translateX(-50%); object-fit: contain;
+}
+
+.skinGrid {
+  top: 210px; left: 31%; width: 145px; height: 170px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 25px;
+  transform: rotate(12deg); opacity: 0.7;
+}
+.skinGrid span {
+  width: 4px; height: 4px; border-radius: var(--radius-full);
+  background: var(--color-white); box-shadow: 0 0 8px var(--color-white);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  min-height: 33dvh;
+  margin-top: 0;
+  padding: var(--space-6);
+  background: transparent;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.fadeOverlay {
+  content: "";
+  position: relative;
+  z-index: 1;
+  height: 240px;
+  margin-top: -240px;
+  margin-right: -40px;
+  margin-left: -40px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(249, 237, 233, 0) 0%,
+    rgba(249, 237, 233, 0.28) 25%,
+    rgba(249, 237, 233, 0.82) 70%,
+    var(--color-welcome-background) 100%
+  );
+}
+.title,
+.startButton,
+.note {
+  position: relative;
+  z-index: 1;
+}
+.title {
+  max-width: 100%;
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-26);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.34;
+  letter-spacing: -0.35px;
+}
+.emphasis {
+  font-weight: var(--font-weight-semibold);
+}
+.startButton {
+  width: calc(100% - var(--space-4)); min-height: var(--button-height); margin-top: var(--space-7);
+  padding: var(--space-3) var(--space-6); border: 0; border-radius: var(--radius-full);
+  background: var(--color-primary); color: var(--color-white); font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium); transition: transform 0.1s ease, background 0.2s ease;
+}
+.startButton:hover { background: var(--color-primary-dark); }
+.startButton:active { transform: scale(0.98); }
+.note {
+  margin: var(--space-6) 0 0; color: var(--color-text-secondary); font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-light); line-height: var(--line-height-normal);
+}
+
+@media (max-height: 700px) {
+  .hero { min-height: 465px; }
+  .logo { top: 76px; }
+  .skinGrid { top: 170px; }
+  .content { padding-top: var(--space-6); }
+  .startButton { margin-top: var(--space-6); }
+}
+
+/* Keep the mobile content close to the image fade instead of centering it
+   inside the taller phone viewport. Desktop keeps the centered layout above. */
+@media (max-width: 768px) {
+  .hero {
+    height: 69dvh;
+    min-height: 0;
+  }
+
+  .fadeOverlay {
+    height: 180px;
+    margin-top: -180px;
+  }
+
+  .content {
+    min-height: 29dvh;
+    justify-content: flex-start;
+  }
+
+  .startButton { margin-top: var(--space-5); }
+  .note { margin-top: var(--space-4); }
+}
