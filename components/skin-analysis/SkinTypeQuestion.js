@@ -44,7 +44,7 @@ export default function SkinTypeQuestion({ value, onChange, onNext, onBack }) {
   };
 
   return (
-    <main className={styles.container}>
+    <main className={`${styles.container} question-screen`}>
       <img
         className={styles.bottomWave}
         src="/images/skin-analysis/bottom-wave.png"
@@ -52,14 +52,14 @@ export default function SkinTypeQuestion({ value, onChange, onNext, onBack }) {
         aria-hidden="true"
       />
 
-      <div className={styles.content}>
+      <div className={`${styles.content} question-content`}>
         {/* MARK: Header */}
 
         <QuestionHeader step={3} total={5} onBack={onBack} />
 
         {/* MARK: Question */}
 
-        <section className={styles.question}>
+        <section className={`${styles.question} question-copy`}>
           <h1>ลักษณะผิวของคุณเป็นแบบใด</h1>
 
           <p>
@@ -71,7 +71,7 @@ export default function SkinTypeQuestion({ value, onChange, onNext, onBack }) {
 
         {/* MARK: Skin Type Options */}
 
-        <section className={styles.options} aria-label="เลือกสภาพผิว">
+        <section className={`${styles.options} question-options`} aria-label="เลือกสภาพผิว">
           {skinTypeOptions.map((option) => {
             const selected = value === option.value;
 
@@ -98,7 +98,7 @@ export default function SkinTypeQuestion({ value, onChange, onNext, onBack }) {
 
       {/* MARK: Footer */}
 
-      <div className={styles.footer}>
+      <div className={`${styles.footer} question-footer`}>
         {/* Skip */}
 
         <button

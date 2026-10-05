@@ -72,7 +72,7 @@ export default function SkinConcernQuestion({
   };
 
   return (
-    <main className={styles.container}>
+    <main className={`${styles.container} question-screen`}>
       <img
         className={styles.bottomWave}
         src="/images/skin-analysis/bottom-wave.png"
@@ -80,14 +80,14 @@ export default function SkinConcernQuestion({
         aria-hidden="true"
       />
 
-      <div className={styles.content}>
+      <div className={`${styles.content} question-content`}>
         {/* MARK: Header */}
 
         <QuestionHeader step={4} total={5} onBack={onBack} />
 
         {/* MARK: Question */}
 
-        <section className={styles.question}>
+        <section className={`${styles.question} question-copy`}>
           <h1>คุณกังวลเรื่องผิวด้านใดมากที่สุด</h1>
 
           <p>เลือกได้มากกว่า 1 ข้อ</p>
@@ -95,7 +95,7 @@ export default function SkinConcernQuestion({
 
         {/* MARK: Concerns */}
 
-        <section className={styles.options} aria-label="เลือกปัญหาผิว">
+        <section className={`${styles.options} question-options`} aria-label="เลือกปัญหาผิว">
           {concernOptions.map((option) => {
             const selected = selectedValues.includes(option.value);
 
@@ -118,7 +118,7 @@ export default function SkinConcernQuestion({
 
       {/* MARK: Footer */}
 
-      <div className={styles.footer}>
+      <div className={`${styles.footer} question-footer`}>
         {/* Skip */}
 
         <button

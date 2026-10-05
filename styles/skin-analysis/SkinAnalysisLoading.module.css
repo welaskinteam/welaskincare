@@ -42,6 +42,12 @@
 .logo {
   width: min(42%, 180px);
   height: auto;
+  animation: loadingLogoIn var(--motion-duration-slow) var(--motion-ease-emphasis) both;
+}
+
+@keyframes loadingLogoIn {
+  from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .progressCircle {
@@ -51,6 +57,12 @@
   width: min(56%, 240px);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
+  animation: loadingCircleIn var(--motion-duration-slow) var(--motion-ease-emphasis) 80ms both;
+}
+
+@keyframes loadingCircleIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.88); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
 .progressRing {
@@ -91,6 +103,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: loadingOrbPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes loadingOrbPulse {
+  0%, 100% { transform: scale(0.985); }
+  50% { transform: scale(1.015); }
 }
 
 .progressOrb span {
@@ -107,6 +125,12 @@
   right: 24px;
   bottom: calc(76px + env(safe-area-inset-bottom));
   left: 24px;
+  animation: loadingMessageIn var(--motion-duration-slow) var(--motion-ease-emphasis) 180ms both;
+}
+
+@keyframes loadingMessageIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .message h2 {

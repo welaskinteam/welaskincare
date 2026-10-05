@@ -12,6 +12,7 @@ import SkinQuestionnaire from "../components/skin-analysis/SkinQuestionnaire";
 import SkinAnalysisResult from "../components/skin-analysis/SkinAnalysisResult";
 import Welcome from "../components/Welcome";
 import Login from "../components/Login";
+import MotionShell from "../components/MotionShell";
 import Head from "@/components/head";
 
 const ANALYSIS_STATE_KEY = "wela-skin-analysis-state";
@@ -210,7 +211,8 @@ export default function Home() {
     }
   };
 
-  switch (step) {
+  const renderStep = () => {
+    switch (step) {
     case "welcome":
       return (
         <>
@@ -293,7 +295,10 @@ export default function Home() {
         </>
       );
 
-    default:
-      return null;
-  }
+      default:
+        return null;
+    }
+  };
+
+  return <MotionShell sceneKey={step}>{renderStep()}</MotionShell>;
 }

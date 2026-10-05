@@ -14,6 +14,17 @@
 
   box-shadow:
     0 4px 15px rgba(80, 20, 35, 0.08);
+
+  transition:
+    transform var(--motion-duration-base) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-base) var(--motion-ease-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 26px rgba(80, 20, 35, 0.13);
+  }
 }
 
 
@@ -51,6 +62,14 @@
   object-fit: contain;
 
   padding: 20px;
+
+  transition: transform var(--motion-duration-slow) var(--motion-ease-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .image {
+    transform: scale(1.045);
+  }
 }
 
 
@@ -151,4 +170,3 @@
   width: 13px;
   height: 14px;
 }
-

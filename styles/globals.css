@@ -156,6 +156,14 @@
 
   --shadow-md:
     0 4px 16px rgba(52, 21, 27, 0.08);
+
+  /* MARK: Motion */
+  --motion-duration-fast: 160ms;
+  --motion-duration-base: 260ms;
+  --motion-duration-page: 420ms;
+  --motion-duration-slow: 620ms;
+  --motion-ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* MARK: Reset */
@@ -196,6 +204,22 @@ body {
   overflow-x: hidden;
 }
 
+.route-motion {
+  min-height: 100dvh;
+  animation: routeEnter var(--motion-duration-page) var(--motion-ease-emphasis) both;
+}
+
+@keyframes routeEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
 button,
 input,
 select,
@@ -205,6 +229,133 @@ textarea {
 
 button {
   cursor: pointer;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  transition-timing-function: var(--motion-ease-standard);
+}
+
+button:not(:disabled),
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled):focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(181, 82, 108, 0.35);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button:not(:disabled),
+  a {
+    transition: transform var(--motion-duration-fast) var(--motion-ease-standard),
+      background-color var(--motion-duration-base) var(--motion-ease-standard),
+      color var(--motion-duration-base) var(--motion-ease-standard),
+      box-shadow var(--motion-duration-base) var(--motion-ease-standard),
+      opacity var(--motion-duration-base) var(--motion-ease-standard);
+  }
+
+  button:not(:disabled):hover,
+  a:hover {
+    transform: translateY(-2px);
+  }
+
+  button:not(:disabled):active,
+  a:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+/* A small, consistent entrance rhythm for repeated content across the app. */
+.productGrid > *,
+.products > *,
+.groups > *,
+.featureList > *,
+.concernList > *,
+.options > *,
+.instructions > * {
+  animation: motionItemIn var(--motion-duration-slow) var(--motion-ease-emphasis) both;
+}
+
+.productGrid > :nth-child(2), .products > :nth-child(2), .groups > :nth-child(2), .featureList > :nth-child(2), .concernList > :nth-child(2), .options > :nth-child(2), .instructions > :nth-child(2) { animation-delay: 60ms; }
+.productGrid > :nth-child(3), .products > :nth-child(3), .groups > :nth-child(3), .featureList > :nth-child(3), .concernList > :nth-child(3), .options > :nth-child(3), .instructions > :nth-child(3) { animation-delay: 120ms; }
+.productGrid > :nth-child(4), .products > :nth-child(4), .groups > :nth-child(4), .featureList > :nth-child(4), .concernList > :nth-child(4), .options > :nth-child(4), .instructions > :nth-child(4) { animation-delay: 180ms; }
+.productGrid > :nth-child(5), .products > :nth-child(5), .groups > :nth-child(5), .featureList > :nth-child(5), .concernList > :nth-child(5), .options > :nth-child(5), .instructions > :nth-child(5) { animation-delay: 240ms; }
+
+/* Question screens use the same soft card reveal as the analysis result. */
+.question-content {
+  animation: questionContentIn var(--motion-duration-slow) var(--motion-ease-emphasis) 60ms both;
+}
+
+.question-copy {
+  animation: questionCopyIn var(--motion-duration-slow) var(--motion-ease-emphasis) 120ms both;
+}
+
+.question-options > * {
+  animation: questionOptionIn var(--motion-duration-slow) var(--motion-ease-emphasis) both;
+}
+
+.question-options > :nth-child(1) { animation-delay: 180ms; }
+.question-options > :nth-child(2) { animation-delay: 240ms; }
+.question-options > :nth-child(3) { animation-delay: 300ms; }
+.question-options > :nth-child(4) { animation-delay: 360ms; }
+.question-options > :nth-child(5) { animation-delay: 420ms; }
+.question-options > :nth-child(6) { animation-delay: 480ms; }
+.question-options > :nth-child(7) { animation-delay: 540ms; }
+.question-options > :nth-child(8) { animation-delay: 600ms; }
+
+.question-footer {
+  animation: questionFooterIn var(--motion-duration-slow) var(--motion-ease-emphasis) 260ms both;
+}
+
+@keyframes questionContentIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes questionCopyIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes questionOptionIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes questionFooterIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes motionItemIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 img {

@@ -27,7 +27,7 @@ const ageOptions = [
 
 export default function AgeQuestion({ value, onChange, onNext, onBack }) {
   return (
-    <main className={styles.container}>
+    <main className={`${styles.container} question-screen`}>
       <img
         className={styles.bottomWave}
         src="/images/skin-analysis/bottom-wave.png"
@@ -35,14 +35,14 @@ export default function AgeQuestion({ value, onChange, onNext, onBack }) {
         aria-hidden="true"
       />
 
-      <div className={styles.content}>
+      <div className={`${styles.content} question-content`}>
         {/* MARK: Header */}
 
         <QuestionHeader step={2} total={5} onBack={onBack} />
 
         {/* MARK: Question */}
 
-        <section className={styles.question}>
+        <section className={`${styles.question} question-copy`}>
           <h1>คุณอายุเท่าไหร่?</h1>
 
           <p>
@@ -54,7 +54,7 @@ export default function AgeQuestion({ value, onChange, onNext, onBack }) {
 
         {/* MARK: Age Options */}
 
-        <section className={styles.options} aria-label="เลือกช่วงอายุ">
+        <section className={`${styles.options} question-options`} aria-label="เลือกช่วงอายุ">
           {ageOptions.map((option) => {
             const selected = value === option.value;
 
@@ -81,7 +81,7 @@ export default function AgeQuestion({ value, onChange, onNext, onBack }) {
 
       {/* MARK: Footer */}
 
-      <div className={styles.footer}>
+      <div className={`${styles.footer} question-footer`}>
         <button
           type="button"
           className={styles.nextButton}

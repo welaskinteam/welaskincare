@@ -65,7 +65,7 @@ export default function GoalQuestion({
   };
 
   return (
-    <main className={styles.container}>
+    <main className={`${styles.container} question-screen`}>
       <img
         className={styles.bottomWave}
         src="/images/skin-analysis/bottom-wave.png"
@@ -73,14 +73,14 @@ export default function GoalQuestion({
         aria-hidden="true"
       />
 
-      <div className={styles.content}>
+      <div className={`${styles.content} question-content`}>
         {/* MARK: Header */}
 
         <QuestionHeader step={5} total={5} onBack={onBack} />
 
         {/* MARK: Question */}
 
-        <section className={styles.question}>
+        <section className={`${styles.question} question-copy`}>
           <h1>
             เป้าหมายในการดูแลผิว
             <br />
@@ -97,7 +97,7 @@ export default function GoalQuestion({
         {/* MARK: Goals */}
 
         <section
-          className={styles.options}
+          className={`${styles.options} question-options`}
           aria-label="เลือกเป้าหมายในการดูแลผิว"
         >
           {goalOptions.map((option) => {
@@ -122,7 +122,7 @@ export default function GoalQuestion({
 
       {/* MARK: Footer */}
 
-      <div className={styles.footer}>
+      <div className={`${styles.footer} question-footer`}>
         {/* Skip */}
 
         <button

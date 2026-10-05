@@ -57,6 +57,12 @@
   border: var(--border-default);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  animation: detailCardIn var(--motion-duration-slow) var(--motion-ease-emphasis) both;
+}
+
+@keyframes detailCardIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .imagePanel {
@@ -68,6 +74,13 @@
 .productImage {
   object-fit: contain;
   padding: var(--space-12);
+  transition: transform var(--motion-duration-slow) var(--motion-ease-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .imagePanel:hover .productImage {
+    transform: scale(1.035);
+  }
 }
 
 .category {

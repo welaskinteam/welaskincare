@@ -61,6 +61,13 @@
 
   background-size: cover;
   background-position: center;
+  transition: background-position var(--motion-duration-slow) var(--motion-ease-standard);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero:hover {
+    background-position: 52% center;
+  }
 }
 
 
@@ -190,7 +197,13 @@
 
   transition:
     background 0.2s ease,
-    color 0.2s ease;
+    color 0.2s ease,
+    transform var(--motion-duration-fast) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-standard);
+}
+
+.filterButton:active {
+  transform: scale(0.96);
 }
 
 
@@ -273,5 +286,12 @@
   border-radius: 24px;
 
   cursor: pointer;
+  transition: background-color var(--motion-duration-base) var(--motion-ease-standard),
+    transform var(--motion-duration-fast) var(--motion-ease-standard),
+    box-shadow var(--motion-duration-base) var(--motion-ease-standard);
 }
 
+.loadMoreButton:hover {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
