@@ -87,10 +87,14 @@ export default function SkinAnalysisResult({
   // The API returns detected points, not a separate clinical score.
   // Keep the existing one-point-per-detection scale, capped at ten.
   const concernDefinitions = [
-    { key: "acne", label: "สิว", aliases: ["acne", "blackhead", "blackheads", "whitehead", "whiteheads", "pimple", "pimples"] },
-    { key: "pores", label: "รูขุมขน", aliases: ["pores", "pore", "large_pores", "enlarged_pores"] },
-    { key: "wrinkle", label: "ริ้วรอย", aliases: ["wrinkle", "wrinkles"] },
-    { key: "oiliness", label: "ความมัน", aliases: ["oiliness", "oil", "oily", "oily_skin"] },
+    { key: "acne", label: "สิว", aliases: ["acne", "whitehead", "whiteheads", "pimple", "pimples"] },
+    {
+      key: "pores",
+      label: "รูขุมขน",
+      aliases: ["blackhead", "blackheads", "pores", "pore", "large_pores", "enlarged_pores"],
+    },
+    { key: "wrinkle", label: "Coming soon", isComingSoon: true, aliases: [] },
+    { key: "oiliness", label: "Coming soon", isComingSoon: true, aliases: [] },
   ];
   const groups = new Map(concernDefinitions.map((item) => [item.key, { ...item, count: 0 }]));
   for (const detection of detections) {
@@ -105,7 +109,7 @@ export default function SkinAnalysisResult({
   const concerns = Array.from(groups.values(), (item) => ({
     ...item,
     // Fewer detected concerns means a better skin score.
-    score: Math.max(0, 10 - item.count),
+    score: item.isComingSoon ? null : Math.max(0, 10 - item.count),
   }));
 
   return (
@@ -235,25 +239,31 @@ export default function SkinAnalysisResult({
                 </svg>
               </div>
 
-              <span className={styles.concernLabel}>{item.label}</span>
+              <span className={`${styles.concernLabel} ${item.isComingSoon ? styles.comingSoonLabel : ""}`}>
+                {item.label}
+              </span>
 
-              <div className={styles.concernMeter}>
-                <span className={styles.concernStatus}>
-                  {item.score >= 8 ? "Excellent" : item.score >= 7 ? "good" : "Medium"}
-                </span>
-                <div className={styles.concernBar}>
-                <div
-                  className={styles.concernBarValue}
-                  style={{
-                    width: `${item.score * 10}%`,
-                  }}
-                />
-                </div>
-              </div>
+              {!item.isComingSoon && (
+                <>
+                  <div className={styles.concernMeter}>
+                    <span className={styles.concernStatus}>
+                      {item.score >= 8 ? "Excellent" : item.score >= 7 ? "good" : "Medium"}
+                    </span>
+                    <div className={styles.concernBar}>
+                      <div
+                        className={styles.concernBarValue}
+                        style={{
+                          width: `${item.score * 10}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
 
-              <strong className={styles.concernScore}>
-                {item.score}/10
-              </strong>
+                  <strong className={styles.concernScore}>
+                    {item.score}/10
+                  </strong>
+                </>
+              )}
             </div>
           ))}
 

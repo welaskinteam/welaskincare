@@ -46,7 +46,6 @@ export default function FaceCamera({ onImageSelected }) {
         facingMode: "user",
         // ขอให้ iPhone ส่งภาพ portrait โดยตรง ไม่ใช่รับ landscape แล้วหมุนเอง
         aspectRatio: { exact: 9 / 16 },
-        resizeMode: "crop-and-scale",
         width: { ideal: 720, max: 1280 },
         height: { ideal: 1280, max: 1920 },
       };
@@ -306,6 +305,7 @@ export default function FaceCamera({ onImageSelected }) {
     const height = rect.height;
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
+    // ให้ mesh ใช้สเกลเดียวกับ preview ที่ครอบภาพแบบ portrait
     const scale = Math.max(width / videoWidth, height / videoHeight);
     const renderedWidth = videoWidth * scale;
     const renderedHeight = videoHeight * scale;

@@ -160,8 +160,8 @@
   /* MARK: Motion */
   --motion-duration-fast: 160ms;
   --motion-duration-base: 260ms;
-  --motion-duration-page: 420ms;
-  --motion-duration-slow: 620ms;
+  --motion-duration-page: 560ms;
+  --motion-duration-slow: 680ms;
   --motion-ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);
 }

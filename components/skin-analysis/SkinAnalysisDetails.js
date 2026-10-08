@@ -23,25 +23,27 @@ const concernDefinitions = [
   {
     key: "acne",
     label: "สิว",
-    aliases: ["acne", "blackhead", "blackheads", "whitehead", "whiteheads", "pimple", "pimples"],
+    aliases: ["acne", "whitehead", "whiteheads", "pimple", "pimples"],
     icon: "acne",
   },
   {
     key: "pores",
     label: "รูขุมขน",
-    aliases: ["pores", "pore", "large_pores", "enlarged_pores"],
+    aliases: ["blackhead", "blackheads", "pores", "pore", "large_pores", "enlarged_pores"],
     icon: "pores",
   },
   {
     key: "wrinkle",
-    label: "ริ้วรอย",
-    aliases: ["wrinkle", "wrinkles"],
+    label: "Coming soon",
+    isComingSoon: true,
+    aliases: [],
     icon: "wrinkle",
   },
   {
     key: "oiliness",
-    label: "ความมัน",
-    aliases: ["oiliness", "oil", "oily", "oily_skin"],
+    label: "Coming soon",
+    isComingSoon: true,
+    aliases: [],
     icon: "oiliness",
   },
 ];
@@ -74,7 +76,7 @@ function getAnalysisData(result) {
 
   const concerns = Array.from(groups.values(), (item) => ({
     ...item,
-    score: Math.max(0, 10 - item.count),
+    score: item.isComingSoon ? null : Math.max(0, 10 - item.count),
   }));
   const activeConcerns = concerns.filter((item) => item.count > 0);
   const detectedLabels = activeConcerns.map((item) => item.label);
@@ -206,12 +208,18 @@ export default function SkinAnalysisDetails({ result, image }) {
           {data.concerns.map((item) => (
             <div key={item.key} className={styles.concernItem}>
               <div className={styles.concernIcon}><ConcernIcon type={item.icon} /></div>
-              <span className={styles.concernLabel}>{item.label}</span>
-              <div className={styles.concernMeter}>
-                <span>{item.score >= 8 ? "Excellent" : item.score >= 7 ? "good" : "Medium"}</span>
-                <div className={styles.concernBar}><i style={{ width: `${item.score * 10}%` }} /></div>
-              </div>
-              <b className={styles.concernScore}>{item.score}/10</b>
+              <span className={`${styles.concernLabel} ${item.isComingSoon ? styles.comingSoonLabel : ""}`}>
+                {item.label}
+              </span>
+              {!item.isComingSoon && (
+                <>
+                  <div className={styles.concernMeter}>
+                    <span>{item.score >= 8 ? "Excellent" : item.score >= 7 ? "good" : "Medium"}</span>
+                    <div className={styles.concernBar}><i style={{ width: `${item.score * 10}%` }} /></div>
+                  </div>
+                  <b className={styles.concernScore}>{item.score}/10</b>
+                </>
+              )}
             </div>
           ))}
         </div>

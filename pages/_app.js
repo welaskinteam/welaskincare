@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import "@/styles/globals.css";
 
 import { initializeLiff } from "../services/liff";
+import MotionShell from "../components/MotionShell";
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -14,8 +15,8 @@ export default function App({ Component, pageProps }) {
   }, []);
 
   return (
-    <div className="route-motion" key={router.asPath}>
+    <MotionShell sceneKey={router.asPath}>
       <Component {...pageProps} />
-    </div>
+    </MotionShell>
   );
 }
