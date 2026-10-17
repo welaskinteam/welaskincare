@@ -23,36 +23,76 @@ const concernDefinitions = [
   {
     key: "acne",
     label: "สิว",
-    aliases: ["acne", "whitehead", "whiteheads", "pimple", "pimples"],
+    aliases: ["acne", "blackhead", "blackheads", "whitehead", "whiteheads", "pimple", "pimples", "papule", "papules", "pustule", "pustules"],
     icon: "acne",
   },
   {
     key: "pores",
     label: "รูขุมขน",
-    aliases: ["blackhead", "blackheads", "pores", "pore", "large_pores", "enlarged_pores"],
+    aliases: [],
     icon: "pores",
+    isMetric: true,
   },
   {
-    key: "wrinkle",
-    label: "Coming soon",
-    isComingSoon: true,
+    key: "consistency",
+    label: "ความสม่ำเสมอ",
     aliases: [],
-    icon: "wrinkle",
+    icon: "consistency",
+    isMetric: true,
   },
   {
-    key: "oiliness",
-    label: "Coming soon",
-    isComingSoon: true,
+    key: "smoothness",
+    label: "ความเรียบเนียน",
     aliases: [],
-    icon: "oiliness",
+    icon: "consistency",
+    isMetric: true,
+  },
+  {
+    key: "redness",
+    label: "รอยแดง",
+    aliases: [],
+    icon: "consistency",
+    isMetric: true,
+    inverseMetric: true,
+  },
+  {
+    key: "glow",
+    label: "ความโกลว์",
+    aliases: [],
+    icon: "consistency",
+    isMetric: true,
+  },
+  {
+    key: "cleanliness",
+    label: "ความสะอาด",
+    aliases: [],
+    icon: "consistency",
+    isMetric: true,
   },
 ];
 
 function getAnalysisData(result) {
   const skinType = result.skin_type?.class_name || "-";
   const detections = Array.isArray(result.detections) ? result.detections : [];
+  const poreRatio = result.pore_ratio ?? result.skin_features?.pore_ratio;
+  const features = result.skin_features ?? {};
+  const metricScore = (value, inverse = false) => {
+    const raw = Number(value);
+    if (!Number.isFinite(raw)) return null;
+    const normalized = raw <= 1 ? raw * 10 : raw <= 10 ? raw : raw <= 100 ? raw / 10 : raw / 25.5;
+    return Math.max(0, Math.min(10, inverse ? 10 - normalized : normalized));
+  };
+  const toneVariance = Number(
+    result.tone_variance ?? result.skin_features?.tone_variance ?? result.data?.tone_variance ?? result.result?.tone_variance,
+  );
+  const skinEvennessScore = Number(
+    result.skin_evenness?.score ?? result.data?.skin_evenness?.score ?? result.result?.skin_evenness?.score,
+  );
   const totalDetectionCount = detections.length;
-  const skinQualityScore = Math.max(0, 100 - totalDetectionCount * 8);
+  const cleanlinessScore = metricScore(features.cleanliness?.score ?? result.cleanliness?.score);
+  const skinQualityScore = cleanlinessScore === null
+    ? Math.max(0, 100 - totalDetectionCount * 8)
+    : Math.round(cleanlinessScore * 10);
   const skinQualityLabel =
     skinQualityScore >= 90
       ? "ดีมาก"
@@ -70,13 +110,28 @@ function getAnalysisData(result) {
       .trim()
       .toLowerCase()
       .replace(/[\s-]+/g, "_");
+
     const definition = concernDefinitions.find((item) => item.aliases.includes(rawKey));
     if (definition) groups.get(definition.key).count += 1;
   });
 
   const concerns = Array.from(groups.values(), (item) => ({
     ...item,
-    score: item.isComingSoon ? null : Math.max(0, 10 - item.count),
+    score: item.isMetric
+      ? item.key === "pores"
+        ? metricScore(poreRatio, true)
+        : item.key === "consistency"
+          ? metricScore(skinEvennessScore)
+          : item.key === "smoothness"
+            ? metricScore(features.smoothness?.score ?? result.smoothness?.score)
+            : item.key === "redness"
+              ? metricScore(features.redness_ratio ?? result.redness_ratio, true)
+              : item.key === "glow"
+                ? metricScore(features.glow?.score ?? result.glow?.score)
+                : item.key === "cleanliness"
+                  ? cleanlinessScore
+                  : null
+      : Math.max(0, 10 - item.count),
   }));
   const activeConcerns = concerns.filter((item) => item.count > 0);
   const detectedLabels = activeConcerns.map((item) => item.label);
@@ -214,10 +269,22 @@ export default function SkinAnalysisDetails({ result, image }) {
               {!item.isComingSoon && (
                 <>
                   <div className={styles.concernMeter}>
-                    <span>{item.score >= 8 ? "Excellent" : item.score >= 7 ? "good" : "Medium"}</span>
-                    <div className={styles.concernBar}><i style={{ width: `${item.score * 10}%` }} /></div>
+                    <span>
+                      {item.score == null
+                        ? "ไม่มีข้อมูล"
+                        : item.score >= 8
+                          ? "Excellent"
+                          : item.score >= 7
+                            ? "good"
+                            : "Medium"}
+                    </span>
+                    <div className={styles.concernBar}><i style={{ width: `${(item.score ?? 0) * 10}%` }} /></div>
                   </div>
-                  <b className={styles.concernScore}>{item.score}/10</b>
+                  <b className={styles.concernScore}>
+                    {item.score == null
+                      ? "-"
+                      : `${Number.isInteger(item.score) ? item.score : item.score.toFixed(1)}/10`}
+                  </b>
                 </>
               )}
             </div>

@@ -42,7 +42,40 @@ export default function SkinAnalysisResult({
 
   /* MARK: API Data */
 
-  const skinType = result.skin_type?.class_name || "-";
+  const payloadCandidates = [
+    result,
+    result?.data,
+    result?.result,
+    result?.data?.result,
+    result?.result?.data,
+  ];
+  const data = payloadCandidates.find(
+    (candidate) =>
+      candidate &&
+      typeof candidate === "object" &&
+      (candidate.skin_features || candidate.skin_evenness || candidate.detections || candidate.skin_type),
+  ) ?? result;
+  const firstValue = (...values) => values.find((value) => value !== undefined && value !== null);
+  const numberValue = (...values) => {
+    const value = Number(firstValue(...values));
+    return Number.isFinite(value) ? value : null;
+  };
+  const metricScore = (metric) =>
+    numberValue(typeof metric === "object" ? metric?.score : metric);
+  const toTen = (value) => {
+    const score = metricScore(value);
+    if (score === null) return null;
+    if (score <= 1) return score * 10;
+    if (score <= 10) return score;
+    if (score <= 100) return score / 10;
+    return score / 25.5;
+  };
+  const metricToScore = (value, { inverse = false } = {}) => {
+    const score = toTen(value);
+    if (score === null) return null;
+    return Math.max(0, Math.min(10, inverse ? 10 - score : score));
+  };
+  const skinType = String(firstValue(data.skin_type?.class_name, data.skin_type, "-"));
   const skinTypeLabels = {
     dry: "ผิวแห้ง",
     oily: "ผิวมัน",
@@ -51,11 +84,12 @@ export default function SkinAnalysisResult({
     sensitive: "ผิวบอบบางแพ้ง่าย",
   };
   const skinTypeLabel = skinTypeLabels[skinType.toLowerCase()] || skinType;
-  const detections = Array.isArray(result.detections) ? result.detections : [];
+  const features = data.skin_features ?? {};
+  const detections = Array.isArray(data.detections) ? data.detections : [];
   const totalDetectionCount = detections.length;
-  // This score is an easy-to-read estimate based only on the number of
-  // detected concern points, not the model confidence.
-  const skinQualityScore = Math.max(0, 100 - totalDetectionCount * 8);
+  const skinEvenness = firstValue(data.skin_evenness, features.skin_evenness);
+  const cleanliness = firstValue(data.skin_cleanliness, data.cleanliness, features.cleanliness);
+  const skinQualityScore = Math.round((metricToScore(cleanliness) ?? metricToScore(skinEvenness) ?? 0) * 10);
   const skinQualityLabel =
     skinQualityScore >= 90
       ? "ดีมาก"
@@ -78,20 +112,24 @@ export default function SkinAnalysisResult({
     { forehead: 0, left_cheek: 0, right_cheek: 0, nose: 0, chin: 0 },
   );
 
-  const products = Array.isArray(result.product_recommendations)
-    ? result.product_recommendations
+  const products = Array.isArray(data.product_recommendations)
+    ? data.product_recommendations
     : [];
+  const poreRatio = firstValue(data.pore_ratio, features.pore_ratio);
 
   /* MARK: Detection Data */
 
-  // The API returns detected points, not a separate clinical score.
-  // Keep the existing one-point-per-detection scale, capped at ten.
+  // Detection-based concerns stay in the original design; metric-based
+  // concerns use the values returned by the API instead of detection counts.
   const concernDefinitions = [
-    { key: "acne", label: "สิว", aliases: ["acne", "whitehead", "whiteheads", "pimple", "pimples"] },
+    { key: "acne", label: "สิว", aliases: ["acne", "blackhead", "blackheads", "whitehead", "whiteheads", "pimple", "pimples", "papule", "papules", "pustule", "pustules"] },
     {
       key: "pores",
       label: "รูขุมขน",
-      aliases: ["blackhead", "blackheads", "pores", "pore", "large_pores", "enlarged_pores"],
+      aliases: [],
+      isMetric: true,
+      metricValue: poreRatio,
+      inverseMetric: true,
     },
     { key: "wrinkle", label: "Coming soon", isComingSoon: true, aliases: [] },
     { key: "oiliness", label: "Coming soon", isComingSoon: true, aliases: [] },
@@ -101,7 +139,7 @@ export default function SkinAnalysisResult({
     const rawKey = String(detection.class_name || "unknown").trim().toLowerCase().replace(/[\s-]+/g, "_");
     const definition = concernDefinitions.find((item) => item.aliases.includes(rawKey));
     // Keep additional ML/API classes in `detections`, but only show the
-    // four supported concern categories in the summary card.
+    // supported concern categories in the summary card.
     if (definition) {
       groups.get(definition.key).count += 1;
     }
@@ -109,7 +147,11 @@ export default function SkinAnalysisResult({
   const concerns = Array.from(groups.values(), (item) => ({
     ...item,
     // Fewer detected concerns means a better skin score.
-    score: item.isComingSoon ? null : Math.max(0, 10 - item.count),
+    score: item.isComingSoon
+      ? null
+      : item.isMetric
+        ? metricToScore(item.metricValue, { inverse: item.inverseMetric })
+        : Math.max(0, 10 - item.count),
   }));
 
   return (
@@ -208,7 +250,7 @@ export default function SkinAnalysisResult({
         <div className={styles.apiInfoItem}>
           <span>เวลาในการวิเคราะห์</span>
 
-          <strong>{Number(result.inference_ms || 0).toFixed(0)} ms</strong>
+          <strong>{Number(data.inference_ms || 0).toFixed(0)} ms</strong>
         </div>
       </section>
 
@@ -247,20 +289,28 @@ export default function SkinAnalysisResult({
                 <>
                   <div className={styles.concernMeter}>
                     <span className={styles.concernStatus}>
-                      {item.score >= 8 ? "Excellent" : item.score >= 7 ? "good" : "Medium"}
+                      {item.score == null
+                        ? "ไม่มีข้อมูล"
+                        : item.score >= 8
+                          ? "Excellent"
+                          : item.score >= 7
+                            ? "good"
+                            : "Medium"}
                     </span>
                     <div className={styles.concernBar}>
                       <div
                         className={styles.concernBarValue}
                         style={{
-                          width: `${item.score * 10}%`,
+                          width: `${(item.score ?? 0) * 10}%`,
                         }}
                       />
                     </div>
                   </div>
 
                   <strong className={styles.concernScore}>
-                    {item.score}/10
+                    {item.score == null
+                      ? "-"
+                      : `${Number.isInteger(item.score) ? item.score : item.score.toFixed(1)}/10`}
                   </strong>
                 </>
               )}

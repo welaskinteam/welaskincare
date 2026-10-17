@@ -6,6 +6,7 @@ export default function FaceCamera({ onImageSelected }) {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const faceLandmarkerRef = useRef(null);
+  const imageFaceLandmarkerRef = useRef(null);
   const meshCanvasRef = useRef(null);
   const faceDetectionTimerRef = useRef(null);
   const meshAnimationFrameRef = useRef(null);
@@ -19,6 +20,7 @@ export default function FaceCamera({ onImageSelected }) {
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState("");
   const [isCapturing, setIsCapturing] = useState(false);
+  const [isValidatingImage, setIsValidatingImage] = useState(false);
   const [flash, setFlash] = useState(false);
   const [screenFlash, setScreenFlash] = useState(false);
   const [faceStatus, setFaceStatus] = useState("checking");
@@ -123,6 +125,8 @@ export default function FaceCamera({ onImageSelected }) {
 
     faceLandmarkerRef.current?.close();
     faceLandmarkerRef.current = null;
+    imageFaceLandmarkerRef.current?.close();
+    imageFaceLandmarkerRef.current = null;
 
     const canvas = meshCanvasRef.current;
     const context = canvas?.getContext("2d");
@@ -411,8 +415,66 @@ export default function FaceCamera({ onImageSelected }) {
 
   /* MARK: Capture */
 
+  const validateImageHasFace = async (file) => {
+    let imageSource = null;
+    let objectUrl = "";
+
+    try {
+      const { FaceLandmarker, FilesetResolver } = await import(
+        "@mediapipe/tasks-vision"
+      );
+
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm",
+      );
+
+      if (!imageFaceLandmarkerRef.current) {
+        imageFaceLandmarkerRef.current = await FaceLandmarker.createFromOptions(
+          vision,
+          {
+            baseOptions: {
+              modelAssetPath:
+                "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+            },
+            runningMode: "IMAGE",
+            numFaces: 1,
+            minFaceDetectionConfidence: 0.5,
+            minFacePresenceConfidence: 0.5,
+            minTrackingConfidence: 0.5,
+          },
+        );
+      }
+
+      if (typeof createImageBitmap === "function") {
+        imageSource = await createImageBitmap(file);
+      } else {
+        objectUrl = URL.createObjectURL(file);
+        imageSource = await new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve(image);
+          image.onerror = reject;
+          image.src = objectUrl;
+        });
+      }
+
+      const detection = imageFaceLandmarkerRef.current.detect(imageSource);
+      return Boolean(detection.faceLandmarks?.length);
+    } catch (error) {
+      console.warn("Uploaded Image Face Detection Error:", error);
+      throw new Error("ไม่สามารถตรวจใบหน้าในรูปภาพได้ กรุณาลองรูปอื่น");
+    } finally {
+      imageSource?.close?.();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    }
+  };
+
   const handleCapture = async () => {
-    if (!videoRef.current || !cameraReady || isCapturing) {
+    if (
+      !videoRef.current ||
+      !cameraReady ||
+      faceStatusRef.current !== "ready" ||
+      isCapturing
+    ) {
       return;
     }
 
@@ -497,10 +559,27 @@ export default function FaceCamera({ onImageSelected }) {
 
   /* MARK: Gallery */
 
-  const handleGalleryImage = (file) => {
-    stopCamera();
+  const handleGalleryImage = async (file) => {
+    if (isValidatingImage) return;
 
-    onImageSelected(file);
+    setIsValidatingImage(true);
+    setCameraError("");
+
+    try {
+      const hasFace = await validateImageHasFace(file);
+
+      if (!hasFace) {
+        setCameraError("ไม่พบใบหน้าคนในรูปภาพ กรุณาเลือกรูปใหม่");
+        return;
+      }
+
+      stopCamera();
+      onImageSelected(file);
+    } catch (error) {
+      setCameraError(error instanceof Error ? error.message : "ไม่สามารถตรวจรูปภาพได้");
+    } finally {
+      setIsValidatingImage(false);
+    }
   };
 
   /* MARK: Flash */
@@ -608,7 +687,12 @@ export default function FaceCamera({ onImageSelected }) {
             type="button"
             className={styles.captureButton}
             onClick={handleCapture}
-            disabled={!cameraReady || isCapturing}
+            disabled={
+              !cameraReady ||
+              faceStatus !== "ready" ||
+              isCapturing ||
+              isValidatingImage
+            }
             aria-label="ถ่ายภาพ"
           >
             <img
