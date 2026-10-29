@@ -21,6 +21,29 @@ export async function analyzeSkin({
   return normalizeSkinResult(response);
 }
 
+export async function saveSkinAnalysis(payload, accessToken) {
+  if (!accessToken) {
+    throw new Error("ไม่พบการยืนยันตัวตนของผู้ใช้");
+  }
+
+  const response = await fetch("/api/skin-analysis/create", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.error?.message || "ไม่สามารถบันทึกผลวิเคราะห์ได้");
+  }
+
+  return data;
+}
+
 export function normalizeSkinResult(response) {
   const data = response?.data ?? response?.result ?? response ?? {};
   const rawType = data.skin_type;

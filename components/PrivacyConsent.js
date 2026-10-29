@@ -12,7 +12,11 @@ export default function PrivacyConsent({ onAccept }) {
       return;
     }
 
-    onAccept();
+    onAccept({
+      imageConsent: true,
+      privacyConsent: true,
+      policyVersion: "v1",
+    });
   };
 
   return (

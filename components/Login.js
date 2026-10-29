@@ -85,7 +85,10 @@ export default function Login({ onGoogleSuccess }) {
             "wela-auth-user",
             JSON.stringify({ provider: "google", ...user }),
           );
-          onGoogleSuccess();
+          onGoogleSuccess({
+            user,
+            accessToken: response.access_token,
+          });
         } catch (error) {
           console.error("Google profile request failed:", error);
           setMessage("ไม่สามารถโหลดข้อมูลบัญชี Google ได้");

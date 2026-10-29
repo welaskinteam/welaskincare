@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
-import { analyzeSkin } from "../services/skinAnalysis";
+import { analyzeSkin, saveSkinAnalysis } from "../services/skinAnalysis";
 import { getProductRecommendations } from "../services/productRecommendations";
 import SkinAnalysisLoading from "../components/skin-analysis/SkinAnalysisLoading";
 import PrivacyConsent from "../components/PrivacyConsent";
@@ -17,27 +17,17 @@ import Head from "@/components/head";
 
 const ANALYSIS_STATE_KEY = "wela-skin-analysis-state";
 
-function blobToDataUrl(blob) {
-  return new Promise((resolve) => {
-    if (!(blob instanceof Blob)) {
-      resolve("");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
-    reader.onerror = () => resolve("");
-    reader.readAsDataURL(blob);
-  });
-}
-
 export default function Home() {
   const router = useRouter();
   const [step, setStep] = useState("welcome");
 
   const analyzing = useRef(false);
+  const saveInFlight = useRef(false);
   const [analysisError, setAnalysisError] = useState("");
+  const [saveError, setSaveError] = useState("");
   const [result, setResult] = useState(null);
+  const [auth, setAuth] = useState(null);
+  const [consent, setConsent] = useState(null);
 
   const [image, setImage] = useState(null);
 
@@ -60,7 +50,7 @@ export default function Home() {
       if (!parsedState?.result) return;
 
       setResult(parsedState.result);
-      setImage(parsedState.image || null);
+      setImage(null);
       setQuestionnaire((current) => ({
         ...current,
         ...(parsedState.questionnaire || {}),
@@ -76,20 +66,81 @@ export default function Home() {
     setResult(data);
     setStep("result");
 
-    void (async () => {
-      const imageDataUrl = await blobToDataUrl(image);
-      sessionStorage.setItem(
-        ANALYSIS_STATE_KEY,
-        JSON.stringify({
-          result: data,
-          image: imageDataUrl,
-          questionnaire,
-        }),
-      );
-    })();
+    if (!saveInFlight.current) {
+      saveInFlight.current = true;
+      setSaveError("");
+
+      const toArray = (value) => {
+        if (Array.isArray(value)) return value.filter(Boolean);
+        if (typeof value !== "string") return [];
+        return value
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
+      };
+
+      const recommendations = Array.isArray(data?.product_recommendations)
+        ? data.product_recommendations.map((product, index) => ({
+            product_id: product.id || product.product_id,
+            rank: index + 1,
+            recommendation_reason:
+              product.recommendation_reason ||
+              product.recommendation_focus ||
+              product.focus,
+            skin_type_score: product.skin_type_score,
+            concern_score: product.concern_score,
+            goal_score: product.goal_score,
+            name: product.name,
+            brand: product.brand,
+          }))
+        : [];
+
+      const persistedResult = { ...data };
+      delete persistedResult.product_recommendations;
+
+      void saveSkinAnalysis(
+        {
+          consent: consent
+            ? {
+                image_consent: consent.imageConsent,
+                privacy_consent: consent.privacyConsent,
+                policy_version: consent.policyVersion,
+              }
+            : undefined,
+          session: {
+            status: "completed",
+            source: "skin_analysis",
+            model_version: data?.model_version || null,
+            inference_ms: data?.inference_ms || null,
+          },
+          questionnaire: {
+            gender: questionnaire.gender,
+            age_range: questionnaire.ageRange,
+            skin_type: questionnaire.skinType,
+            concerns: toArray(questionnaire.concerns),
+            goals: toArray(questionnaire.goal),
+          },
+          result: persistedResult,
+          recommendations,
+        },
+        auth?.accessToken,
+      ).catch((error) => {
+        console.error("Unable to save skin analysis:", error);
+        setSaveError("แสดงผลแล้ว แต่ยังบันทึกข้อมูลลงระบบไม่สำเร็จ");
+      });
+    }
+
+    sessionStorage.setItem(
+      ANALYSIS_STATE_KEY,
+      JSON.stringify({
+        result: data,
+        questionnaire,
+      }),
+    );
   };
 
-  const handleAcceptPrivacy = () => {
+  const handleAcceptPrivacy = (consentData) => {
+    setConsent(consentData);
     setStep("scan-intro");
   };
 
@@ -97,7 +148,8 @@ export default function Home() {
     setStep("login");
   };
 
-  const handleGoogleSuccess = () => {
+  const handleGoogleSuccess = (authData) => {
+    setAuth(authData);
     setStep("privacy");
   };
 
@@ -106,6 +158,8 @@ export default function Home() {
   };
 
   const handleImageSelected = (file) => {
+    saveInFlight.current = false;
+    setSaveError("");
     setImage(file);
     setStep("scan-result");
   };
@@ -114,23 +168,10 @@ export default function Home() {
     setStep("questionnaire");
   };
 
-  const handleViewAllDetails = async () => {
-    let imageDataUrl = "";
-
-    if (typeof image === "string") {
-      imageDataUrl = image;
-    } else if (image instanceof Blob) {
-      imageDataUrl = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
-        reader.onerror = () => resolve("");
-        reader.readAsDataURL(image);
-      });
-    }
-
+  const handleViewAllDetails = () => {
     sessionStorage.setItem(
       "wela-skin-analysis-details",
-      JSON.stringify({ result, image: imageDataUrl }),
+      JSON.stringify({ result }),
     );
     sessionStorage.setItem(
       "wela-product-recommendations",
@@ -286,6 +327,11 @@ export default function Home() {
       return (
         <>
           <Head />
+          {saveError && (
+            <p role="alert" style={{ padding: 16, color: "#8A102F" }}>
+              {saveError}
+            </p>
+          )}
           <SkinAnalysisResult
             image={image}
             result={result}
