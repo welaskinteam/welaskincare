@@ -2,14 +2,17 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 
 import SkinAnalysisDetails from "../components/skin-analysis/SkinAnalysisDetails";
+import { getAnalysisImage } from "../services/skinAnalysisSession";
 
 export default function SkinAnalysisDetailsPage() {
   const [analysis, setAnalysis] = useState(null);
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     try {
       const storedAnalysis = sessionStorage.getItem("wela-skin-analysis-details");
       setAnalysis(storedAnalysis ? JSON.parse(storedAnalysis) : null);
+      setImage(getAnalysisImage());
     } catch (error) {
       console.error("Unable to load skin analysis details:", error);
       setAnalysis(null);
@@ -27,7 +30,7 @@ export default function SkinAnalysisDetailsPage() {
       </Head>
 
       {analysis?.result ? (
-        <SkinAnalysisDetails result={analysis.result} image={analysis.image} />
+        <SkinAnalysisDetails result={analysis.result} image={image} />
       ) : (
         <main style={{ padding: "var(--space-12) var(--page-padding-x)" }}>
           ไม่พบข้อมูลการวิเคราะห์ผิว กรุณากลับไปวิเคราะห์ผิวอีกครั้ง

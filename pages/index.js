@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { analyzeSkin, saveSkinAnalysis } from "../services/skinAnalysis";
+import { setAnalysisImage } from "../services/skinAnalysisSession";
 import { getProductRecommendations } from "../services/productRecommendations";
 import SkinAnalysisLoading from "../components/skin-analysis/SkinAnalysisLoading";
 import PrivacyConsent from "../components/PrivacyConsent";
@@ -160,6 +161,7 @@ export default function Home() {
   const handleImageSelected = (file) => {
     saveInFlight.current = false;
     setSaveError("");
+    setAnalysisImage(file);
     setImage(file);
     setStep("scan-result");
   };
