@@ -42,7 +42,18 @@ function customerString($value, $maxLength, $field)
 
 function customerInternalKey()
 {
+    global $SKIN_ANALYSIS_WRITE_API_KEY;
+
     $expectedKey = getenv("SKIN_ANALYSIS_WRITE_API_KEY");
+
+    if (!$expectedKey && defined("SKIN_ANALYSIS_WRITE_API_KEY")) {
+        $expectedKey = constant("SKIN_ANALYSIS_WRITE_API_KEY");
+    }
+
+    if (!$expectedKey && isset($SKIN_ANALYSIS_WRITE_API_KEY)) {
+        $expectedKey = $SKIN_ANALYSIS_WRITE_API_KEY;
+    }
+
     $providedKey = isset($_SERVER["HTTP_X_INTERNAL_API_KEY"])
         ? $_SERVER["HTTP_X_INTERNAL_API_KEY"]
         : "";
