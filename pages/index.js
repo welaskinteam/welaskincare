@@ -2,7 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { analyzeSkin, saveSkinAnalysis } from "../services/skinAnalysis";
-import { setAnalysisImage } from "../services/skinAnalysisSession";
+import {
+  getAnalysisImage,
+  setAnalysisImage,
+} from "../services/skinAnalysisSession";
 import { getProductRecommendations } from "../services/productRecommendations";
 import SkinAnalysisLoading from "../components/skin-analysis/SkinAnalysisLoading";
 import PrivacyConsent from "../components/PrivacyConsent";
@@ -51,7 +54,7 @@ export default function Home() {
       if (!parsedState?.result) return;
 
       setResult(parsedState.result);
-      setImage(null);
+      setImage(getAnalysisImage());
       setQuestionnaire((current) => ({
         ...current,
         ...(parsedState.questionnaire || {}),

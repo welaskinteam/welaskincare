@@ -188,14 +188,34 @@ function ConcernIcon({ type }) {
 
 export default function SkinAnalysisDetails({ result, image }) {
   const router = useRouter();
-  const [previewUrl, setPreviewUrl] = useState(image || "");
+  const [previewUrl, setPreviewUrl] = useState("");
   const data = getAnalysisData(result);
   const products = Array.isArray(result.product_recommendations)
     ? result.product_recommendations
     : [];
 
   useEffect(() => {
-    setPreviewUrl(image || "");
+    if (!image) {
+      setPreviewUrl("");
+      return undefined;
+    }
+
+    if (typeof image === "string") {
+      setPreviewUrl(image);
+      return undefined;
+    }
+
+    if (image instanceof Blob) {
+      const objectUrl = URL.createObjectURL(image);
+      setPreviewUrl(objectUrl);
+
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    }
+
+    setPreviewUrl("");
+    return undefined;
   }, [image]);
 
   const advice = [
