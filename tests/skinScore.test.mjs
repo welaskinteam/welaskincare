@@ -1,7 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { getWeightedSkinScore } from "../services/skinScore.mjs";
+import { getScoreLabel, getWeightedSkinScore } from "../services/skinScore.mjs";
+
+test("uses the same score labels across all pages", () => {
+  assert.equal(getScoreLabel(10), "Excellent");
+  assert.equal(getScoreLabel(9), "Excellent");
+  assert.equal(getScoreLabel(8), "Good");
+  assert.equal(getScoreLabel(7), "Good");
+  assert.equal(getScoreLabel(4), "Worth Monitoring");
+  assert.equal(getScoreLabel(3), "Worth Monitoring");
+  assert.equal(getScoreLabel(2), "Needs Attention");
+});
 
 test("weights trained scores at 80% and OpenCV scores at 20%", () => {
   const result = getWeightedSkinScore({

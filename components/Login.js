@@ -3,6 +3,7 @@ import styles from "../styles/Login.module.css";
 import { initializeLiff } from "../services/liff";
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+const LINE_LIFF_ID = process.env.NEXT_PUBLIC_LIFF_ID;
 
 function GoogleIcon() {
   return (
@@ -24,10 +25,22 @@ function MailIcon() {
   );
 }
 
+function LineIcon() {
+  return (
+    <img
+      className={styles.lineIcon}
+      src="/icons/line.svg"
+      alt=""
+      aria-hidden="true"
+    />
+  );
+}
+
 export default function Login({ onGoogleSuccess }) {
   const tokenClient = useRef(null);
   const [phone, setPhone] = useState("");
   const [googleReady, setGoogleReady] = useState(false);
+  const [lineLoading, setLineLoading] = useState(false);
   const [message, setMessage] = useState("");
   const liffClientRef = useRef(null);
 
@@ -59,6 +72,66 @@ export default function Login({ onGoogleSuccess }) {
 
     return () => script.removeEventListener("load", handleLoad);
   }, []);
+
+  const handleLineLogin = async () => {
+    if (lineLoading) return;
+
+    setLineLoading(true);
+    setMessage("");
+
+    try {
+      const liffClient = liffClientRef.current || (await initializeLiff());
+
+      if (!liffClient || !LINE_LIFF_ID) {
+        setMessage("ยังไม่ได้ตั้งค่า LINE LIFF ID");
+        return;
+      }
+
+      liffClientRef.current = liffClient;
+
+      if (!liffClient.isLoggedIn()) {
+        if (liffClient.isInClient()) {
+          setMessage("กรุณาเปิดหน้านี้จาก LINE OA อีกครั้งเพื่อเข้าสู่ระบบ");
+          return;
+        }
+
+        liffClient.login({ redirectUri: window.location.href });
+        return;
+      }
+
+      const idToken = liffClient.getIDToken();
+      if (!idToken) {
+        setMessage("ไม่พบข้อมูลบัญชี LINE กรุณาลองใหม่อีกครั้ง");
+        return;
+      }
+
+      const response = await fetch("/api/auth/line", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.user) {
+        throw new Error(data?.error?.message || "LINE authentication failed");
+      }
+
+      sessionStorage.setItem(
+        "wela-auth-user",
+        JSON.stringify(data.user),
+      );
+      onGoogleSuccess({
+        provider: "line",
+        user: data.user,
+        lineIdToken: idToken,
+      });
+    } catch (error) {
+      console.error("LINE login failed:", error);
+      setMessage("เข้าสู่ระบบด้วย LINE ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setLineLoading(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -170,6 +243,17 @@ export default function Login({ onGoogleSuccess }) {
         </div>
 
         <div className={styles.alternativeActions}>
+          <button
+            type="button"
+            className={`${styles.secondaryButton} ${styles.lineButton}`}
+            onClick={handleLineLogin}
+            disabled={lineLoading}
+            aria-busy={lineLoading}
+          >
+            <LineIcon />
+            <span>{lineLoading ? "กำลังเข้าสู่ระบบ..." : "Continue with LINE"}</span>
+          </button>
+
           <button
             type="button"
             className={styles.secondaryButton}

@@ -21,17 +21,24 @@ export async function analyzeSkin({
   return normalizeSkinResult(response);
 }
 
-export async function saveSkinAnalysis(payload, accessToken) {
-  if (!accessToken) {
+export async function saveSkinAnalysis(payload, auth) {
+  const accessToken = typeof auth === "string" ? auth : auth?.accessToken;
+  const lineIdToken = auth?.provider === "line" ? auth.lineIdToken : null;
+
+  if (!accessToken && !lineIdToken) {
     throw new Error("ไม่พบการยืนยันตัวตนของผู้ใช้");
+  }
+
+  const headers = { "content-type": "application/json" };
+  if (lineIdToken) {
+    headers["x-line-id-token"] = lineIdToken;
+  } else {
+    headers.Authorization = `Bearer ${accessToken}`;
   }
 
   const response = await fetch("/api/skin-analysis/create", {
     method: "POST",
-    headers: {
-      "content-type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 

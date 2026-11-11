@@ -59,6 +59,16 @@ export function metricToScore(value, { inverse = false } = {}) {
   return inverse ? 10 - bounded : bounded;
 }
 
+export function getScoreLabel(value) {
+  const score = Number(value);
+
+  if (!Number.isFinite(score)) return "ไม่มีข้อมูล";
+  if (score >= 9) return "Excellent";
+  if (score >= 7) return "Good";
+  if (score >= 3) return "Worth Monitoring";
+  return "Needs Attention";
+}
+
 function average(values) {
   const available = values.filter((value) => value !== null);
 

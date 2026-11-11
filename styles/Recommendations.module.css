@@ -29,6 +29,19 @@
   font-size: var(--font-size-lg);
 }
 
+.routineVisual {
+  width: 100%;
+  margin: 0 0 var(--space-4);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.routineVisual img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .resultCard {
   padding: var(--space-4);
   border: var(--border-default);

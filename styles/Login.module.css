@@ -65,11 +65,34 @@
 
 .alternativeActions { display: grid; gap: var(--space-5); }
 .secondaryButton {
-  display: flex; align-items: center; justify-content: center; gap: var(--space-5);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: var(--border-default); background: var(--color-white); color: var(--color-black);
   box-shadow: var(--shadow-sm); cursor: pointer;
 }
 .secondaryButton:disabled { opacity: 0.6; cursor: not-allowed; }
+.lineButton {
+  border-color: #00B900;
+  background: #00B900;
+  color: var(--color-white);
+  box-shadow: none;
+}
+.lineButton:not(:disabled):hover { background: #00B900; }
+.lineIcon {
+  display: block;
+  position: absolute;
+  left: var(--space-6);
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+}
+.googleIcon,
+.mailIcon {
+  position: absolute;
+  left: var(--space-6);
+}
 .googleIcon {
   width: 25px;
   height: 25px;

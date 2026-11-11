@@ -1,4 +1,5 @@
-const GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
+import { getAuthenticatedIdentity } from "../../../lib/lineAuth";
+
 const CUSTOMER_API_URL = (
   process.env.SKIN_ANALYSIS_CUSTOMER_API_URL ||
   (process.env.SKIN_ANALYSIS_SAVE_API_URL || "").replace(/\/create\.php\/?$/, "/customer.php")
@@ -35,28 +36,11 @@ export default async function handler(request, response) {
     return;
   }
 
-  const authorization = request.headers.authorization || "";
-  const tokenMatch = authorization.match(/^Bearer\s+(.+)$/i);
-
-  if (!tokenMatch) {
-    sendError(response, 401, "UNAUTHORIZED", "Google authentication is required");
-    return;
-  }
-
   try {
-    const userResponse = await fetch(GOOGLE_USERINFO_URL, {
-      headers: { Authorization: `Bearer ${tokenMatch[1]}` },
-    });
+    const identity = await getAuthenticatedIdentity(request);
 
-    if (!userResponse.ok) {
-      sendError(response, 401, "UNAUTHORIZED", "Google authentication is invalid or expired");
-      return;
-    }
-
-    const user = await userResponse.json();
-
-    if (!user?.sub) {
-      sendError(response, 401, "UNAUTHORIZED", "Google account information is incomplete");
+    if (!identity) {
+      sendError(response, 401, "UNAUTHORIZED", "LINE or Google authentication is invalid or expired");
       return;
     }
 
@@ -71,8 +55,8 @@ export default async function handler(request, response) {
         "x-internal-api-key": WRITE_API_KEY,
       },
       body: JSON.stringify({
-        provider: "google",
-        provider_user_id: user.sub,
+        provider: identity.provider,
+        provider_user_id: identity.providerUserId,
         limit,
         offset,
       }),
