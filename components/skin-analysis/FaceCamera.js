@@ -75,13 +75,23 @@ export default function FaceCamera({ onImageSelected }) {
         throw new Error("กล้องไม่สามารถใช้งานได้บนอุปกรณ์นี้");
       }
 
+      const supportedConstraints =
+        navigator.mediaDevices.getSupportedConstraints?.() || {};
       const portraitVideo = {
-        facingMode: "user",
-        // ขอให้ iPhone ส่งภาพ portrait โดยตรง ไม่ใช่รับ landscape แล้วหมุนเอง
-        aspectRatio: { exact: 9 / 16 },
-        width: { ideal: 720, max: 960 },
+        facingMode: { ideal: "user" },
+        // ใช้ ideal แทน exact เพราะมือถือบางรุ่นไม่มี native portrait mode
+        // และจะ fallback เป็นภาพ landscape เมื่อ exact ทำไม่ได้
+        width: { ideal: 720, max: 720 },
         height: { ideal: 1280, max: 1280 },
       };
+
+      if (supportedConstraints.aspectRatio) {
+        portraitVideo.aspectRatio = { ideal: 9 / 16 };
+      }
+
+      if (supportedConstraints.resizeMode) {
+        portraitVideo.resizeMode = { ideal: "crop-and-scale" };
+      }
 
       let stream;
 
@@ -91,18 +101,45 @@ export default function FaceCamera({ onImageSelected }) {
           audio: false,
         });
       } catch (error) {
-        // กล้องบางรุ่นไม่รองรับ exact aspect ratio ให้ลองแบบ ideal ต่อ
         if (error.name !== "OverconstrainedError") {
           throw error;
         }
 
+        // fallback สำหรับ browser ที่ไม่รองรับ portrait/crop constraint
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            ...portraitVideo,
-            aspectRatio: { ideal: 9 / 16 },
+            facingMode: { ideal: "user" },
+            width: { ideal: 720 },
+            height: { ideal: 1280 },
           },
           audio: false,
         });
+      }
+
+      const videoTrack = stream.getVideoTracks()[0];
+      const currentSettings = videoTrack?.getSettings?.();
+
+      // บาง mobile browser รับ stream แนวนอนแม้จะส่ง portrait เป็น ideal
+      // ลองบังคับให้ crop-and-scale ที่ track อีกครั้งก่อนแสดงผล
+      if (videoTrack && currentSettings?.aspectRatio > 1) {
+        const trackConstraints = {
+          width: { ideal: 720, max: 720 },
+          height: { ideal: 1280, max: 1280 },
+        };
+
+        if (supportedConstraints.aspectRatio) {
+          trackConstraints.aspectRatio = { ideal: 9 / 16 };
+        }
+
+        if (supportedConstraints.resizeMode) {
+          trackConstraints.resizeMode = { ideal: "crop-and-scale" };
+        }
+
+        try {
+          await videoTrack.applyConstraints(trackConstraints);
+        } catch (error) {
+          console.warn("Portrait camera constraints were not applied:", error);
+        }
       }
 
       if (cameraAttemptRef.current !== attemptId || !videoRef.current) {
