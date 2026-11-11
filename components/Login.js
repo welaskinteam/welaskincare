@@ -82,7 +82,10 @@ export default function Login({ onGoogleSuccess }) {
     const liffClient = liffClientRef.current;
 
     if (liffClient?.isInClient()) {
-      const externalLoginUrl = new URL(window.location.href);
+      const externalLoginUrl = new URL(
+        window.location.pathname || "/",
+        window.location.origin,
+      );
       externalLoginUrl.searchParams.set("auth", "external");
 
       setMessage("กำลังเปิดเบราว์เซอร์เพื่อเข้าสู่ระบบด้วย Google...");
