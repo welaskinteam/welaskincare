@@ -46,6 +46,11 @@ export default function Home() {
   useEffect(() => {
     if (!router.isReady) return;
 
+    if (router.query.auth === "external") {
+      setStep("login");
+      return;
+    }
+
     try {
       const storedState = sessionStorage.getItem(ANALYSIS_STATE_KEY);
       if (!storedState) return;

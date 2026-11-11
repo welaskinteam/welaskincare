@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "../styles/Login.module.css";
+import { initializeLiff } from "../services/liff";
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
@@ -28,6 +29,7 @@ export default function Login({ onGoogleSuccess }) {
   const [phone, setPhone] = useState("");
   const [googleReady, setGoogleReady] = useState(false);
   const [message, setMessage] = useState("");
+  const liffClientRef = useRef(null);
 
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID) {
@@ -58,7 +60,39 @@ export default function Login({ onGoogleSuccess }) {
     return () => script.removeEventListener("load", handleLoad);
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    initializeLiff()
+      .then((liffClient) => {
+        if (active) {
+          liffClientRef.current = liffClient;
+        }
+      })
+      .catch((error) => {
+        console.warn("LIFF initialization for Google login failed:", error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const handleGoogleLogin = () => {
+    const liffClient = liffClientRef.current;
+
+    if (liffClient?.isInClient()) {
+      const externalLoginUrl = new URL(window.location.href);
+      externalLoginUrl.searchParams.set("auth", "external");
+
+      setMessage("กำลังเปิดเบราว์เซอร์เพื่อเข้าสู่ระบบด้วย Google...");
+      liffClient.openWindow({
+        url: externalLoginUrl.toString(),
+        external: true,
+      });
+      return;
+    }
+
     if (!GOOGLE_CLIENT_ID || !googleReady || !window.google?.accounts?.oauth2) {
       setMessage("ไม่สามารถเชื่อมต่อ Google ได้ในขณะนี้");
       return;
