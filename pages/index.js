@@ -169,6 +169,13 @@ export default function Home() {
     setStep("scan-result");
   };
 
+  const handleRetake = () => {
+    setImage(null);
+    setAnalysisImage(null);
+    setAnalysisError("");
+    setStep("camera");
+  };
+
   const handleContinueQuestionnaire = () => {
     setStep("questionnaire");
   };
@@ -311,6 +318,7 @@ export default function Home() {
             image={image}
             onContinue={handleContinueQuestionnaire}
             onAnalyzeNow={handleSkipQuestionnaire}
+            onRetake={handleRetake}
           />
         </>
       );

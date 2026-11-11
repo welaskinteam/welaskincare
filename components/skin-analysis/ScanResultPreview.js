@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/skin-analysis/ScanResultPreview.module.css";
 
-export default function ScanResultPreview({ image, onContinue, onAnalyzeNow }) {
+export default function ScanResultPreview({
+  image,
+  onContinue,
+  onAnalyzeNow,
+  onRetake,
+}) {
   const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
@@ -36,6 +41,42 @@ export default function ScanResultPreview({ image, onContinue, onAnalyzeNow }) {
               className={styles.image}
             />
           )}
+        </div>
+
+        <div className={styles.imageActions}>
+          <button
+            type="button"
+            className={styles.retakeButton}
+            onClick={onRetake}
+            aria-label="ถ่ายรูปใหม่"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              overflow="visible"
+              aria-hidden="true"
+            >
+              <path
+                d="M4.25 8.25V19H19.75V8.25C19.75 7.56 19.19 7 18.5 7H16.4L15 4.75H9L7.6 7H5.5C4.81 7 4.25 7.56 4.25 8.25Z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle
+                cx="12"
+                cy="12.5"
+                r="3.25"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+              />
+            </svg>
+            <span>ถ่ายใหม่</span>
+          </button>
         </div>
 
         {/* MARK: Result */}

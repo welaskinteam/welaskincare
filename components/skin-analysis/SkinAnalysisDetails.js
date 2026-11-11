@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import styles from "../../styles/skin-analysis/SkinAnalysisDetails.module.css";
+import {
+  getWeightedSkinScore,
+  metricToScore,
+} from "../../services/skinScore.mjs";
 
 const skinTypeLabels = {
   dry: "ผิวแห้ง",
@@ -76,12 +80,6 @@ function getAnalysisData(result) {
   const detections = Array.isArray(result.detections) ? result.detections : [];
   const poreRatio = result.pore_ratio ?? result.skin_features?.pore_ratio;
   const features = result.skin_features ?? {};
-  const metricScore = (value, inverse = false) => {
-    const raw = Number(value);
-    if (!Number.isFinite(raw)) return null;
-    const normalized = raw <= 1 ? raw * 10 : raw <= 10 ? raw : raw <= 100 ? raw / 10 : raw / 25.5;
-    return Math.max(0, Math.min(10, inverse ? 10 - normalized : normalized));
-  };
   const toneVariance = Number(
     result.tone_variance ?? result.skin_features?.tone_variance ?? result.data?.tone_variance ?? result.result?.tone_variance,
   );
@@ -89,10 +87,10 @@ function getAnalysisData(result) {
     result.skin_evenness?.score ?? result.data?.skin_evenness?.score ?? result.result?.skin_evenness?.score,
   );
   const totalDetectionCount = detections.length;
-  const cleanlinessScore = metricScore(features.cleanliness?.score ?? result.cleanliness?.score);
-  const skinQualityScore = cleanlinessScore === null
-    ? Math.max(0, 100 - totalDetectionCount * 8)
-    : Math.round(cleanlinessScore * 10);
+  const cleanlinessScore = metricToScore(
+    features.cleanliness?.score ?? result.cleanliness?.score,
+  );
+  const skinQualityScore = getWeightedSkinScore(result).score;
   const skinQualityLabel =
     skinQualityScore >= 90
       ? "ดีมาก"
@@ -119,15 +117,18 @@ function getAnalysisData(result) {
     ...item,
     score: item.isMetric
       ? item.key === "pores"
-        ? metricScore(poreRatio, true)
+        ? metricToScore(poreRatio, { inverse: true })
         : item.key === "consistency"
-          ? metricScore(skinEvennessScore)
+          ? metricToScore(skinEvennessScore)
           : item.key === "smoothness"
-            ? metricScore(features.smoothness?.score ?? result.smoothness?.score)
+            ? metricToScore(features.smoothness?.score ?? result.smoothness?.score)
             : item.key === "redness"
-              ? metricScore(features.redness_ratio ?? result.redness_ratio, true)
+              ? metricToScore(
+                  features.redness_ratio ?? result.redness_ratio,
+                  { inverse: true },
+                )
               : item.key === "glow"
-                ? metricScore(features.glow?.score ?? result.glow?.score)
+                ? metricToScore(features.glow?.score ?? result.glow?.score)
                 : item.key === "cleanliness"
                   ? cleanlinessScore
                   : null

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/skin-analysis/SkinAnalysisResult.module.css";
+import {
+  getWeightedSkinScore,
+  metricToScore,
+} from "../../services/skinScore.mjs";
 
 export default function SkinAnalysisResult({
   image,
@@ -56,25 +60,6 @@ export default function SkinAnalysisResult({
       (candidate.skin_features || candidate.skin_evenness || candidate.detections || candidate.skin_type),
   ) ?? result;
   const firstValue = (...values) => values.find((value) => value !== undefined && value !== null);
-  const numberValue = (...values) => {
-    const value = Number(firstValue(...values));
-    return Number.isFinite(value) ? value : null;
-  };
-  const metricScore = (metric) =>
-    numberValue(typeof metric === "object" ? metric?.score : metric);
-  const toTen = (value) => {
-    const score = metricScore(value);
-    if (score === null) return null;
-    if (score <= 1) return score * 10;
-    if (score <= 10) return score;
-    if (score <= 100) return score / 10;
-    return score / 25.5;
-  };
-  const metricToScore = (value, { inverse = false } = {}) => {
-    const score = toTen(value);
-    if (score === null) return null;
-    return Math.max(0, Math.min(10, inverse ? 10 - score : score));
-  };
   const skinType = String(firstValue(data.skin_type?.class_name, data.skin_type, "-"));
   const skinTypeLabels = {
     dry: "ผิวแห้ง",
@@ -87,9 +72,7 @@ export default function SkinAnalysisResult({
   const features = data.skin_features ?? {};
   const detections = Array.isArray(data.detections) ? data.detections : [];
   const totalDetectionCount = detections.length;
-  const skinEvenness = firstValue(data.skin_evenness, features.skin_evenness);
-  const cleanliness = firstValue(data.skin_cleanliness, data.cleanliness, features.cleanliness);
-  const skinQualityScore = Math.round((metricToScore(cleanliness) ?? metricToScore(skinEvenness) ?? 0) * 10);
+  const skinQualityScore = getWeightedSkinScore(data).score;
   const skinQualityLabel =
     skinQualityScore >= 90
       ? "ดีมาก"

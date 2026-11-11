@@ -16,6 +16,7 @@ export default function FaceCamera({ onImageSelected }) {
   const meshVisibleRef = useRef(false);
   const faceStatusRef = useRef("checking");
   const isDetectingRef = useRef(false);
+  const cameraAttemptRef = useRef(0);
 
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState("");
@@ -39,6 +40,7 @@ export default function FaceCamera({ onImageSelected }) {
     startCamera();
 
     return () => {
+      cameraAttemptRef.current += 1;
       stopCamera();
     };
   }, []);
@@ -46,6 +48,11 @@ export default function FaceCamera({ onImageSelected }) {
   /* MARK: Camera */
 
   const startCamera = async () => {
+    const attemptId = cameraAttemptRef.current + 1;
+    cameraAttemptRef.current = attemptId;
+
+    stopCamera();
+
     try {
       setFlash(false);
       setScreenFlash(false);
@@ -85,17 +92,43 @@ export default function FaceCamera({ onImageSelected }) {
         });
       }
 
-      streamRef.current = stream;
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-
-        await videoRef.current.play();
-
-        setCameraReady(true);
-        startFaceDetection();
+      if (cameraAttemptRef.current !== attemptId || !videoRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
       }
+
+      streamRef.current = stream;
+      const video = videoRef.current;
+      video.srcObject = stream;
+
+      try {
+        await video.play();
+      } catch (error) {
+        if (error?.name === "AbortError") {
+          if (cameraAttemptRef.current === attemptId) {
+            stopCamera();
+          }
+
+          return;
+        }
+
+        throw error;
+      }
+
+      if (cameraAttemptRef.current !== attemptId || videoRef.current !== video) {
+        return;
+      }
+
+      setCameraReady(true);
+      startFaceDetection();
     } catch (error) {
+      if (
+        error?.name === "AbortError" ||
+        cameraAttemptRef.current !== attemptId
+      ) {
+        return;
+      }
+
       console.error("Camera Error:", error);
 
       setCameraError(
@@ -132,15 +165,16 @@ export default function FaceCamera({ onImageSelected }) {
     const context = canvas?.getContext("2d");
     context?.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (!streamRef.current) {
-      return;
-    }
-
-    streamRef.current.getTracks().forEach((track) => {
+    streamRef.current?.getTracks().forEach((track) => {
       track.stop();
     });
 
     streamRef.current = null;
+
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.srcObject = null;
+    }
 
     setCameraReady(false);
   };
