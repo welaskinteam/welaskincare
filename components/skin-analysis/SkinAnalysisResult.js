@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import styles from "../../styles/skin-analysis/SkinAnalysisResult.module.css";
 import {
   getWeightedSkinScore,
+  getScoreLabel,
   metricToScore,
 } from "../../services/skinScore.mjs";
+import { getDisplayProducts } from "../../services/productFallback";
 
 export default function SkinAnalysisResult({
   image,
@@ -95,10 +97,20 @@ export default function SkinAnalysisResult({
     { forehead: 0, left_cheek: 0, right_cheek: 0, nose: 0, chin: 0 },
   );
 
-  const products = Array.isArray(data.product_recommendations)
-    ? data.product_recommendations
-    : [];
+  const products = getDisplayProducts(data.product_recommendations);
   const poreRatio = firstValue(data.pore_ratio, features.pore_ratio);
+  const skinEvennessScore = firstValue(
+    data.skin_evenness?.score,
+    data.skin_evenness,
+    features.skin_evenness?.score,
+    features.skin_evenness,
+  );
+  const smoothnessScore = firstValue(
+    data.smoothness?.score,
+    data.smoothness,
+    features.smoothness?.score,
+    features.smoothness,
+  );
 
   /* MARK: Detection Data */
 
@@ -114,8 +126,20 @@ export default function SkinAnalysisResult({
       metricValue: poreRatio,
       inverseMetric: true,
     },
-    { key: "wrinkle", label: "Coming soon", isComingSoon: true, aliases: [] },
-    { key: "oiliness", label: "Coming soon", isComingSoon: true, aliases: [] },
+    {
+      key: "consistency",
+      label: "ความสม่ำเสมอ",
+      aliases: [],
+      isMetric: true,
+      metricValue: skinEvennessScore,
+    },
+    {
+      key: "smoothness",
+      label: "ความเรียบเนียน",
+      aliases: [],
+      isMetric: true,
+      metricValue: smoothnessScore,
+    },
   ];
   const groups = new Map(concernDefinitions.map((item) => [item.key, { ...item, count: 0 }]));
   for (const detection of detections) {
@@ -241,7 +265,7 @@ export default function SkinAnalysisResult({
 
       <section className={styles.detailCard}>
         <div className={styles.sectionHeader}>
-          <h2>รายละเอียดแต่ละด้าน</h2>
+          <h2 className={styles.analysisTitle}>ผลการวิเคราะห์ผิวของคุณ</h2>
 
           <button
             type="button"
@@ -272,13 +296,7 @@ export default function SkinAnalysisResult({
                 <>
                   <div className={styles.concernMeter}>
                     <span className={styles.concernStatus}>
-                      {item.score == null
-                        ? "ไม่มีข้อมูล"
-                        : item.score >= 8
-                          ? "Excellent"
-                          : item.score >= 7
-                            ? "good"
-                            : "Medium"}
+                      {getScoreLabel(item.score)}
                     </span>
                     <div className={styles.concernBar}>
                       <div
@@ -346,7 +364,7 @@ export default function SkinAnalysisResult({
             <p className={styles.productEyebrow}>ชุดสกินแคร์ที่เหมาะกับคุณ</p>
 
             <h2 className={styles.productTitle}>
-              Your Personalized Skincare Set
+              Skincare Extras for You
             </h2>
           </div>
 
@@ -383,7 +401,7 @@ export default function SkinAnalysisResult({
                     />
                   </div>
                   <h3>{product.category || "Skincare"}</h3>
-                  <p>{product.recommendation_focus || "-"}</p>
+                  <p>{product.recommendation_focus || product.description || "-"}</p>
                 </article>
               );
             })

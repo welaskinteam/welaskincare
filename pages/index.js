@@ -7,6 +7,7 @@ import {
   setAnalysisImage,
 } from "../services/skinAnalysisSession";
 import { getProductRecommendations } from "../services/productRecommendations";
+import { getDisplayProducts } from "../services/productFallback";
 import SkinAnalysisLoading from "../components/skin-analysis/SkinAnalysisLoading";
 import PrivacyConsent from "../components/PrivacyConsent";
 import ScanIntro from "../components/skin-analysis/ScanIntro";
@@ -132,7 +133,7 @@ export default function Home() {
           result: persistedResult,
           recommendations,
         },
-        auth?.accessToken,
+        auth,
       ).catch((error) => {
         console.error("Unable to save skin analysis:", error);
         setSaveError("แสดงผลแล้ว แต่ยังบันทึกข้อมูลลงระบบไม่สำเร็จ");
@@ -202,9 +203,7 @@ export default function Home() {
   };
 
   const handleViewAllProducts = () => {
-    const recommendations = Array.isArray(result?.product_recommendations)
-      ? result.product_recommendations
-      : [];
+    const recommendations = getDisplayProducts(result?.product_recommendations);
 
     sessionStorage.setItem(
       "wela-product-recommendations",

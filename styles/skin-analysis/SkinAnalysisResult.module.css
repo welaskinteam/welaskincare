@@ -62,6 +62,7 @@
 .detailCard, .productCard { margin-top: 18px; padding: 24px 34px 28px; border-radius: 26px; background: #fcf6f3; }
 .sectionHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .sectionHeader h2 { margin: 0; font-size: 20px; font-weight: 400; }
+.analysisTitle { font-weight: var(--font-weight-bold) !important; }
 .viewAllButton { display: inline-flex; justify-content: center; align-items: center; gap: 12px; flex-shrink: 0; border: 1px solid transparent; border-radius: 99px; padding: 8px 22px; min-height: 44px; background: var(--color-primary); color: white; font: inherit; font-size: 18px; cursor: pointer; }
 .viewAllButton span { font-size: 30px; line-height: .8; font-weight: 300; }
 .viewAllButton:hover { background: #811937; }
@@ -70,7 +71,7 @@
 .concernItem { display: grid; grid-template-columns: 42px 112px minmax(0, 1fr) 44px; align-items: center; gap: 12px; }
 .concernIcon { width: 40px; height: 40px; display: grid; place-items: center; color: #bd4e61; background: radial-gradient(ellipse, #ffede5, transparent 72%); }
 .concernIcon svg { width: 38px; height: 38px; }
-.concernLabel { font-size: 19px; }
+.concernLabel { font-size: 19px; white-space: nowrap; }
 .concernMeter { min-width: 0; }
 .concernStatus { display: block; margin-bottom: 7px; color: #263044; font-size: 12px; }
 .concernBar { height: 6px; overflow: hidden; border-radius: 99px; background: #EEE0DB; }
@@ -122,10 +123,10 @@
   .viewAllButton { min-height: 32px; padding: 5px 14px; font-size: 13px; gap: 8px; }
   .viewAllButton span { font-size: 24px; }
   .concernList { gap: 14px; margin-top: 20px; }
-  .concernItem { grid-template-columns: 30px 72px minmax(0, 1fr) 36px; gap: 8px; }
+  .concernItem { grid-template-columns: 30px 112px minmax(0, 1fr) 36px; gap: 8px; }
   .concernIcon, .concernIcon svg { width: 28px; height: 30px; }
   .concernLabel { font-size: 14px; }
-  .concernStatus { font-size: 10px; }
+  .concernStatus { font-size: 12px; }
   .concernScore { font-size: 12px; }
   .concernBar { height: 4px; }
   .productEyebrow { font-size: var(--font-size-md); }
@@ -137,7 +138,7 @@
 @media (max-width: 360px) {
   .scoreCard { padding: 14px; gap: 12px; }
   .detailCard, .productCard { padding-inline: 14px; }
-  .concernItem { grid-template-columns: 26px 62px minmax(0, 1fr) 32px; gap: 6px; }
+  .concernItem { grid-template-columns: 26px 104px minmax(0, 1fr) 32px; gap: 6px; }
   .productCard .sectionHeader { flex-wrap: wrap; }
 }
 
@@ -161,10 +162,10 @@
 .viewAllButton { min-height: 32px; padding: 5px 14px; font-size: 13px; gap: 8px; }
 .viewAllButton span { font-size: 24px; }
 .concernList { gap: 14px; margin-top: 20px; }
-.concernItem { grid-template-columns: 30px 72px minmax(0, 1fr) 36px; gap: 8px; }
+.concernItem { grid-template-columns: 30px 112px minmax(0, 1fr) 36px; gap: 8px; }
 .concernIcon, .concernIcon svg { width: 28px; height: 30px; }
 .concernLabel { font-size: 14px; }
-.concernStatus { font-size: 10px; }
+.concernStatus { font-size: 12px; }
 .concernScore { font-size: 12px; }
 .concernBar { height: 4px; }
 .productEyebrow { font-size: var(--font-size-md); }

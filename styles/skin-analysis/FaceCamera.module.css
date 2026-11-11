@@ -47,15 +47,12 @@
 
 .faceMesh {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: var(--controls-height);
-  left: 0;
+  inset: 0;
 
   z-index: 1;
 
   width: 100%;
-  height: calc(100% - var(--controls-height));
+  height: 100%;
 
   pointer-events: none;
 }

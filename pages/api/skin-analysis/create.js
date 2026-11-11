@@ -1,4 +1,5 @@
-const GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
+import { getAuthenticatedIdentity } from "../../../lib/lineAuth";
+
 const SAVE_API_URL = (process.env.SKIN_ANALYSIS_SAVE_API_URL || "").replace(/\/$/, "");
 const WRITE_API_KEY = process.env.SKIN_ANALYSIS_WRITE_API_KEY || "";
 
@@ -32,28 +33,11 @@ export default async function handler(request, response) {
     return;
   }
 
-  const authorization = request.headers.authorization || "";
-  const tokenMatch = authorization.match(/^Bearer\s+(.+)$/i);
-
-  if (!tokenMatch) {
-    sendError(response, 401, "UNAUTHORIZED", "Google authentication is required");
-    return;
-  }
-
   try {
-    const userResponse = await fetch(GOOGLE_USERINFO_URL, {
-      headers: { Authorization: `Bearer ${tokenMatch[1]}` },
-    });
+    const identity = await getAuthenticatedIdentity(request);
 
-    if (!userResponse.ok) {
-      sendError(response, 401, "UNAUTHORIZED", "Google authentication is invalid or expired");
-      return;
-    }
-
-    const user = await userResponse.json();
-
-    if (!user?.sub) {
-      sendError(response, 401, "UNAUTHORIZED", "Google account information is incomplete");
+    if (!identity) {
+      sendError(response, 401, "UNAUTHORIZED", "LINE or Google authentication is invalid or expired");
       return;
     }
 
@@ -61,11 +45,12 @@ export default async function handler(request, response) {
     const payload = {
       ...body,
       customer: {
-        provider: "google",
-        provider_user_id: user.sub,
-        email: typeof user.email === "string" ? user.email : null,
-        display_name: typeof user.name === "string" ? user.name : null,
-        email_verified: user.email_verified === true,
+        provider: identity.provider,
+        provider_user_id: identity.providerUserId,
+        email: identity.email,
+        display_name: identity.displayName,
+        picture_url: identity.pictureUrl,
+        email_verified: identity.emailVerified,
       },
     };
 

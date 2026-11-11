@@ -41,13 +41,14 @@
 
 .summaryCard, .analysisCard { margin-top: var(--space-3); padding: var(--space-6) var(--space-7); }
 .summaryCard h2, .analysisCard h2 { margin: 0; font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); }
-.summaryCard p { margin: var(--space-2) 0 0; font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); }
+.analysisTitle { font-weight: var(--font-weight-bold) !important; }
+.summaryCard p { margin: var(--space-2) 0 0; font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); white-space: pre-line; }
 
 .concernList { display: flex; flex-direction: column; gap: var(--space-4); margin-top: var(--space-6); }
 .concernItem { display: grid; grid-template-columns: 42px 112px minmax(0, 1fr) 44px; align-items: center; gap: var(--space-3); }
 .concernIcon { width: 40px; height: 40px; display: grid; place-items: center; color: #bd4e61; background: radial-gradient(ellipse, #ffede5, transparent 72%); }
 .concernIcon svg { width: 38px; height: 38px; }
-.concernLabel { font-size: var(--font-size-lg); }
+.concernLabel { font-size: var(--font-size-lg); white-space: nowrap; }
 .concernMeter { min-width: 0; }
 .concernMeter > span { display: block; margin-bottom: var(--space-1); color: #263044; font-size: var(--font-size-xs); }
 .concernBar { height: 6px; overflow: hidden; border-radius: var(--radius-full); background: #eaded9; }
@@ -88,10 +89,10 @@
   .typeCard, .summaryCard p, .advice p, .advice ul { font-size: var(--font-size-md); }
   .typeCard strong { font-size: var(--font-size-lg); }
   .summaryCard h2, .analysisCard h2 { font-size: var(--font-size-lg); }
-  .concernItem { grid-template-columns: 30px 72px minmax(0, 1fr) 36px; gap: var(--space-2); }
+  .concernItem { grid-template-columns: 30px 112px minmax(0, 1fr) 36px; gap: var(--space-2); }
   .concernIcon, .concernIcon svg { width: 28px; height: 30px; }
   .concernLabel { font-size: var(--font-size-md); }
-  .concernMeter > span { font-size: var(--font-size-xs-tight); }
+  .concernMeter > span { font-size: 12px; }
   .concernBar { height: 4px; }
   .concernScore { font-size: var(--font-size-xs); }
   .productCard { padding: var(--space-5); border-radius: var(--radius-md); }
@@ -124,10 +125,10 @@
 .typeCard, .summaryCard p, .advice p, .advice ul { font-size: var(--font-size-md); }
 .typeCard strong { font-size: var(--font-size-lg); }
 .summaryCard h2, .analysisCard h2 { font-size: var(--font-size-lg); }
-.concernItem { grid-template-columns: 30px 72px minmax(0, 1fr) 36px; gap: var(--space-2); }
+.concernItem { grid-template-columns: 30px 112px minmax(0, 1fr) 36px; gap: var(--space-2); }
 .concernIcon, .concernIcon svg { width: 28px; height: 30px; }
 .concernLabel { font-size: var(--font-size-md); }
-.concernMeter > span { font-size: var(--font-size-xs-tight); }
+.concernMeter > span { font-size: 12px; }
 .concernBar { height: 4px; }
 .concernScore { font-size: var(--font-size-xs); }
 .productCard { padding: var(--space-5); border-radius: var(--radius-md); }
@@ -151,7 +152,7 @@
 }
 
 .analysisCard .concernItem {
-  grid-template-columns: 30px 72px minmax(0, 1fr) 36px;
+  grid-template-columns: 30px 112px minmax(0, 1fr) 36px;
   gap: 8px;
 }
 
@@ -173,7 +174,7 @@
 
 .analysisCard .concernMeter > span {
   margin-bottom: 4px;
-  font-size: var(--font-size-xs-tight);
+  font-size: 12px;
 }
 
 .analysisCard .concernBar {

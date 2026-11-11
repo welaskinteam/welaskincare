@@ -12,6 +12,9 @@ export default function FaceCamera({ onImageSelected }) {
   const meshAnimationFrameRef = useRef(null);
   const meshLandmarksRef = useRef(null);
   const meshConnectionsRef = useRef([]);
+  const meshContextRef = useRef(null);
+  const meshSizeRef = useRef({ width: 0, height: 0, pixelRatio: 0 });
+  const meshLastDrawTimeRef = useRef(0);
   const meshRevealStartRef = useRef(0);
   const meshVisibleRef = useRef(false);
   const faceStatusRef = useRef("checking");
@@ -34,6 +37,16 @@ export default function FaceCamera({ onImageSelected }) {
   const updateFaceStatus = (status) => {
     faceStatusRef.current = status;
     setFaceStatus(status);
+  };
+
+  const updateCameraChecks = (nextValues) => {
+    setCameraChecks((previous) => {
+      const hasChanged = Object.entries(nextValues).some(
+        ([key, value]) => previous[key] !== value,
+      );
+
+      return hasChanged ? { ...previous, ...nextValues } : previous;
+    });
   };
 
   useEffect(() => {
@@ -66,8 +79,8 @@ export default function FaceCamera({ onImageSelected }) {
         facingMode: "user",
         // ขอให้ iPhone ส่งภาพ portrait โดยตรง ไม่ใช่รับ landscape แล้วหมุนเอง
         aspectRatio: { exact: 9 / 16 },
-        width: { ideal: 720, max: 1280 },
-        height: { ideal: 1280, max: 1920 },
+        width: { ideal: 720, max: 960 },
+        height: { ideal: 1280, max: 1280 },
       };
 
       let stream;
@@ -148,6 +161,9 @@ export default function FaceCamera({ onImageSelected }) {
     isDetectingRef.current = false;
     meshLandmarksRef.current = null;
     meshConnectionsRef.current = [];
+    meshContextRef.current = null;
+    meshSizeRef.current = { width: 0, height: 0, pixelRatio: 0 };
+    meshLastDrawTimeRef.current = 0;
     meshVisibleRef.current = false;
     meshRevealStartRef.current = 0;
 
@@ -253,22 +269,20 @@ export default function FaceCamera({ onImageSelected }) {
             }
 
             brightness /= pixels.length / 4;
-            setCameraChecks((previous) => ({
-              ...previous,
+            updateCameraChecks({
               lighting:
                 brightness >= 55 && brightness <= 220
                   ? "ready"
                   : "not-ready",
-            }));
+            });
           }
 
           if (!landmarks?.length) {
             updateFaceStatus("not-found");
-            setCameraChecks((previous) => ({
-              ...previous,
+            updateCameraChecks({
               position: "not-ready",
               lookingStraight: "not-ready",
-            }));
+            });
             return;
           }
 
@@ -307,11 +321,10 @@ export default function FaceCamera({ onImageSelected }) {
               eyeTilt / eyeGap < 0.3;
           }
 
-          setCameraChecks((previous) => ({
-            ...previous,
+          updateCameraChecks({
             position: positionReady ? "ready" : "not-ready",
             lookingStraight: lookingStraight ? "ready" : "not-ready",
-          }));
+          });
 
           if (faceWidthRatio < 0.24) {
             updateFaceStatus("too-far");
@@ -331,14 +344,15 @@ export default function FaceCamera({ onImageSelected }) {
 
       meshConnectionsRef.current = FaceLandmarker.FACE_LANDMARKS_TESSELATION;
       const animateMesh = (time) => {
-        if (meshLandmarksRef.current?.length) {
+        // Keep the camera at its native frame rate while updating the
+        // expensive mesh at a lighter, steady cadence.
+        if (time - meshLastDrawTimeRef.current >= 66) {
           drawFaceMesh(
             meshLandmarksRef.current,
             meshConnectionsRef.current,
             time,
           );
-        } else {
-          drawFaceMesh(null, meshConnectionsRef.current, time);
+          meshLastDrawTimeRef.current = time;
         }
 
         meshAnimationFrameRef.current = window.requestAnimationFrame(animateMesh);
@@ -372,7 +386,11 @@ export default function FaceCamera({ onImageSelected }) {
   const drawFaceMesh = (landmarks, connections, time = performance.now()) => {
     const canvas = meshCanvasRef.current;
     const video = videoRef.current;
-    const context = canvas?.getContext("2d");
+    const context = meshContextRef.current || canvas?.getContext("2d");
+
+    if (context && !meshContextRef.current) {
+      meshContextRef.current = context;
+    }
 
     if (!canvas || !video || !context || !landmarks?.length) {
       context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
@@ -380,7 +398,7 @@ export default function FaceCamera({ onImageSelected }) {
     }
 
     const rect = canvas.getBoundingClientRect();
-    const devicePixelRatio = window.devicePixelRatio || 1;
+    const devicePixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
     const width = rect.width;
     const height = rect.height;
     const videoWidth = video.videoWidth;
@@ -395,9 +413,18 @@ export default function FaceCamera({ onImageSelected }) {
     const pixelWidth = Math.round(width * devicePixelRatio);
     const pixelHeight = Math.round(height * devicePixelRatio);
 
-    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+    if (
+      meshSizeRef.current.width !== width ||
+      meshSizeRef.current.height !== height ||
+      meshSizeRef.current.pixelRatio !== devicePixelRatio
+    ) {
       canvas.width = pixelWidth;
       canvas.height = pixelHeight;
+      meshSizeRef.current = {
+        width,
+        height,
+        pixelRatio: devicePixelRatio,
+      };
     }
 
     context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
@@ -408,13 +435,13 @@ export default function FaceCamera({ onImageSelected }) {
       1,
       Math.max(0, (time - meshRevealStartRef.current) / 420),
     );
-    const pulse = (0.16 + (Math.sin(time / 420) + 1) * 0.035) * reveal;
-    const sweep = (time / 1800) % 1;
+    const pulse = (0.22 + (Math.sin(time / 420) + 1) * 0.025) * reveal;
 
-    context.lineWidth = 0.8;
+    context.lineWidth = 0.7;
     context.lineJoin = "round";
     context.lineCap = "round";
-    context.shadowBlur = 0;
+    context.strokeStyle = `rgba(${baseColor}, ${pulse})`;
+    context.beginPath();
 
     for (let index = 0; index < connections.length; index += 1) {
       const connection = connections[index];
@@ -430,21 +457,11 @@ export default function FaceCamera({ onImageSelected }) {
       const endX = width - (end.x * renderedWidth - offsetX);
       const endY = end.y * renderedHeight - offsetY;
 
-      const midpointY = (startY + endY) / 2 / height;
-      const distanceFromSweep = Math.abs(midpointY - sweep);
-      const wrappedDistance = Math.min(distanceFromSweep, 1 - distanceFromSweep);
-      const highlight = Math.max(0, 1 - wrappedDistance / 0.12);
-
-      context.beginPath();
       context.moveTo(startX, startY);
       context.lineTo(endX, endY);
-      context.strokeStyle = `rgba(${baseColor}, ${pulse + highlight * 0.16 * reveal})`;
-      context.shadowColor = `rgba(${baseColor}, ${highlight * 0.22})`;
-      context.shadowBlur = highlight * 4;
-      context.stroke();
     }
 
-    context.shadowBlur = 0;
+    context.stroke();
   };
 
   /* MARK: Capture */

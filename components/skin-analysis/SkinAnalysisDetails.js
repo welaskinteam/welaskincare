@@ -4,8 +4,13 @@ import { useRouter } from "next/router";
 import styles from "../../styles/skin-analysis/SkinAnalysisDetails.module.css";
 import {
   getWeightedSkinScore,
+  getScoreLabel,
   metricToScore,
 } from "../../services/skinScore.mjs";
+import { getDisplayProducts } from "../../services/productFallback";
+
+const DEFAULT_SUMMARY = "ผลสแกนครั้งนี้อยู่ในเกณฑ์ดี WELA จึงคัดตัวเลือกเสริมไว้ให้คุณเลือก\nเติมการดูแลผิวในแบบที่ชอบและเป็นห่วง";
+const LEGACY_SUMMARY = "ผิวของคุณยังไม่พบจุดที่น่ากังวลเป็นพิเศษ ควรดูแลผิวอย่างสม่ำเสมอเพื่อรักษาสมดุลของผิว";
 
 const skinTypeLabels = {
   dry: "ผิวแห้ง",
@@ -143,10 +148,12 @@ function getAnalysisData(result) {
         ? result.summary
         : "";
   const summaryText =
-    summary ||
+    summary && summary !== LEGACY_SUMMARY
+      ? summary
+      :
     (detectedLabels.length
       ? `ส่วนล่างของใบหน้าคุณมีลักษณะ${detectedLabels.join(" และ ")} เมื่อผิวของคุณเริ่มมีสัญญาณเหล่านี้ ควรดูแลอย่างสม่ำเสมอและเลือกผลิตภัณฑ์ที่เหมาะกับผิวคุณ`
-      : "ผิวของคุณยังไม่พบจุดที่น่ากังวลเป็นพิเศษ ควรดูแลผิวอย่างสม่ำเสมอเพื่อรักษาสมดุลของผิว");
+      : DEFAULT_SUMMARY);
 
   return {
     skinType,
@@ -191,9 +198,7 @@ export default function SkinAnalysisDetails({ result, image }) {
   const router = useRouter();
   const [previewUrl, setPreviewUrl] = useState("");
   const data = getAnalysisData(result);
-  const products = Array.isArray(result.product_recommendations)
-    ? result.product_recommendations
-    : [];
+  const products = getDisplayProducts(result.product_recommendations);
 
   useEffect(() => {
     if (!image) {
@@ -279,7 +284,7 @@ export default function SkinAnalysisDetails({ result, image }) {
       </section>
 
       <section className={styles.analysisCard}>
-        <h2>การวิเคราะห์ผิวด้วย AI ของคุณ</h2>
+        <h2 className={styles.analysisTitle}>ผลการวิเคราะห์ผิวของคุณ</h2>
         <div className={styles.concernList}>
           {data.concerns.map((item) => (
             <div key={item.key} className={styles.concernItem}>
@@ -291,13 +296,7 @@ export default function SkinAnalysisDetails({ result, image }) {
                 <>
                   <div className={styles.concernMeter}>
                     <span>
-                      {item.score == null
-                        ? "ไม่มีข้อมูล"
-                        : item.score >= 8
-                          ? "Excellent"
-                          : item.score >= 7
-                            ? "good"
-                            : "Medium"}
+                      {getScoreLabel(item.score)}
                     </span>
                     <div className={styles.concernBar}><i style={{ width: `${(item.score ?? 0) * 10}%` }} /></div>
                   </div>
@@ -323,7 +322,7 @@ export default function SkinAnalysisDetails({ result, image }) {
         <div className={styles.productHeader}>
           <div>
             <p className={styles.productEyebrow}>ชุดสกินแคร์ที่เหมาะกับคุณ</p>
-            <h2>Your Personalized Skincare Set</h2>
+            <h2>Skincare Extras for You</h2>
           </div>
 
           <button type="button" className={styles.viewAllButton} onClick={handleViewAllProducts}>
@@ -350,7 +349,7 @@ export default function SkinAnalysisDetails({ result, image }) {
                     />
                   </div>
                   <h3>{product.category || "Skincare"}</h3>
-                  <p>{product.recommendation_focus || "-"}</p>
+                  <p>{product.recommendation_focus || product.description || "-"}</p>
                 </article>
               );
             })

@@ -18,6 +18,7 @@ function normalizeProducts(products) {
 
 export default function RecommendationsPage() {
   const [recommendedProducts, setRecommendedProducts] = useState(null);
+  const [showRoutineVisual, setShowRoutineVisual] = useState(true);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -85,6 +86,16 @@ export default function RecommendationsPage() {
             <h1>Skincare Recommend</h1>
             <p>ชุดสกินแคร์ที่เหมาะกับคุณ</p>
           </header>
+
+          {showRoutineVisual && (
+            <div className={styles.routineVisual}>
+              <img
+                src="/images/recommendations/routine-set.png"
+                alt="ชุดสกินแคร์แนะนำจาก WELA"
+                onError={() => setShowRoutineVisual(false)}
+              />
+            </div>
+          )}
 
           <section className={styles.resultCard}>
             <strong>ผลลัพธ์ :</strong>
