@@ -15,7 +15,8 @@
   width: 100%;
   min-height: 100dvh;
 
-  --controls-height: 220px;
+  /* Keep the camera controls close to the bottom edge like a native camera UI. */
+  --controls-height: 164px;
 
   overflow: hidden;
 }
@@ -26,13 +27,12 @@
 .video {
   position: absolute;
 
-  top: 0;
-  right: 0;
-  bottom: var(--controls-height);
-  left: 0;
+  inset: 0;
+
+  z-index: 0;
 
   width: 100%;
-  height: calc(100% - var(--controls-height));
+  height: 100%;
 
   transform: scaleX(-1);
 
@@ -307,17 +307,29 @@
   min-height: var(--controls-height);
 
   padding:
+    var(--space-5)
     var(--space-8)
-    var(--space-8)
-    calc(var(--space-8) + env(safe-area-inset-bottom));
+    calc(var(--space-5) + env(safe-area-inset-bottom));
 
-  background: rgba(224, 196, 184, 0.45);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(244, 232, 226, 0.5) 100%
+    );
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 -12px 30px rgba(91, 55, 45, 0.1);
+  backdrop-filter: blur(28px) saturate(76%) contrast(90%);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .controls {
+    background: rgba(244, 232, 226, 0.82);
+  }
 }
 
 
