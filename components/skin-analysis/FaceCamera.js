@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import ImageUploader from "./ImageUploader";
 import styles from "../../styles/skin-analysis/FaceCamera.module.css";
 
+const CAMERA_ASPECT_RATIO = 3 / 4;
+
 export default function FaceCamera({ onImageSelected }) {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -82,11 +84,11 @@ export default function FaceCamera({ onImageSelected }) {
         // ใช้ ideal แทน exact เพราะมือถือบางรุ่นไม่มี native portrait mode
         // และจะ fallback เป็นภาพ landscape เมื่อ exact ทำไม่ได้
         width: { ideal: 720, max: 720 },
-        height: { ideal: 1280, max: 1280 },
+        height: { ideal: 960, max: 960 },
       };
 
       if (supportedConstraints.aspectRatio) {
-        portraitVideo.aspectRatio = { ideal: 9 / 16 };
+        portraitVideo.aspectRatio = { ideal: CAMERA_ASPECT_RATIO };
       }
 
       if (supportedConstraints.resizeMode) {
@@ -110,7 +112,7 @@ export default function FaceCamera({ onImageSelected }) {
           video: {
             facingMode: { ideal: "user" },
             width: { ideal: 720 },
-            height: { ideal: 1280 },
+            height: { ideal: 960 },
           },
           audio: false,
         });
@@ -124,11 +126,11 @@ export default function FaceCamera({ onImageSelected }) {
       if (videoTrack && currentSettings?.aspectRatio > 1) {
         const trackConstraints = {
           width: { ideal: 720, max: 720 },
-          height: { ideal: 1280, max: 1280 },
+          height: { ideal: 960, max: 960 },
         };
 
         if (supportedConstraints.aspectRatio) {
-          trackConstraints.aspectRatio = { ideal: 9 / 16 };
+          trackConstraints.aspectRatio = { ideal: CAMERA_ASPECT_RATIO };
         }
 
         if (supportedConstraints.resizeMode) {
@@ -577,7 +579,7 @@ export default function FaceCamera({ onImageSelected }) {
 
     const canvas = document.createElement("canvas");
 
-    const targetAspectRatio = 9 / 16;
+    const targetAspectRatio = CAMERA_ASPECT_RATIO;
 
     const cropWidth = Math.min(
       video.videoWidth,
